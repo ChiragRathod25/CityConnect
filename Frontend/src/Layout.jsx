@@ -1,7 +1,8 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import Home from "./Pages/Home/Home";
+import Home from "./Pages/Home";
 import Footer from "./components/Footer";
-import  { SignUpPageUI,LoginPageUI } from "./components/SnackMovingStyling";
+import SignUpPageUI from "./Pages/Signup";
+import LoginPageUI from "./Pages/Login";
 import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
 import Navbar from "./components/navbar";
 
@@ -26,7 +27,7 @@ const Layout = () => {
         <Route path="/signup" element={<SignUpPageUI />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
       </Routes>
-      
+
       {!hideNavbarFooter && <Footer />}
     </>
   );

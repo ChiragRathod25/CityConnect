@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Phone, ArrowLeft, CheckCircle } from 'lucide-react';
-import { GeometricShapes, MovingDots } from '../Home/Home';
+import { GeometricShapes, MovingDots } from '../../components/CustomAnimation';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);

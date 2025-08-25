@@ -5,12 +5,11 @@ const Footer = () => {
 
   return (
     <footer className="bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#1f2937] text-white relative overflow-hidden">
-      {/* Background decorative elements */}
+    
       <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/20 to-transparent"></div>
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#2e8f0]/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#6b7280]/10 rounded-full blur-3xl"></div>
       
-      {/* Newsletter Section */}
       <div className="relative border-b border-[#d1d5db]/20 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -249,95 +248,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-//!================================================================== 
-
-// import { Mail, MapPin, Phone, Store } from "lucide-react";
-
-// const Footer = () => {
-//   return(
-//          <footer className="bg-gray-900 text-white py-12">
-//         <div className="container mx-auto px-4">
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-//             <div>
-//               <div className="flex items-center space-x-2 mb-6">
-//                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-//                   <Store className="text-white" size={24} />
-//                 </div>
-//                 <span className="text-xl font-bold">LocalConnect</span>
-//               </div>
-//               <p className="text-gray-400 mb-6">
-//                 Connecting local businesses with customers in your community.
-//               </p>
-//               <div className="flex space-x-4">
-//                 <div className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
-//                   <span className="text-sm">FB</span>
-//                 </div>
-//                 <div className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
-//                   <span className="text-sm">IG</span>
-//                 </div>
-//                 <div className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
-//                   <span className="text-sm">TW</span>
-//                 </div>
-//                 <div className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
-//                   <span className="text-sm">LI</span>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div>
-//               <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
-//               <ul className="space-y-3">
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Businesses</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Categories</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-//               </ul>
-//             </div>
-
-//             <div>
-//               <h4 className="text-lg font-semibold mb-6">Categories</h4>
-//               <ul className="space-y-3">
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Restaurants</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Retail</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Services</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Health & Wellness</a></li>
-//                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Home Services</a></li>
-//               </ul>
-//             </div>
-
-//             <div>
-//               <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
-//               <div className="space-y-4">
-//                 <div className="flex items-center space-x-3">
-//                   <div className="bg-blue-600 p-2 rounded-lg">
-//                     <Mail size={16} />
-//                   </div>
-//                   <span className="text-gray-400">info@localconnect.com</span>
-//                 </div>
-//                 <div className="flex items-center space-x-3">
-//                   <div className="bg-blue-600 p-2 rounded-lg">
-//                     <Phone size={16} />
-//                   </div>
-//                   <span className="text-gray-400">+1 (555) 123-4567</span>
-//                 </div>
-//                 <div className="flex items-center space-x-3">
-//                   <div className="bg-blue-600 p-2 rounded-lg">
-//                     <MapPin size={16} />
-//                   </div>
-//                   <span className="text-gray-400">123 Business Ave, City</span>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-//             <p>© {new Date().getFullYear()} LocalConnect. All rights reserved.</p>
-//           </div>
-//         </div>
-//       </footer>
-//   );
-// }
-
-// export default Footer;

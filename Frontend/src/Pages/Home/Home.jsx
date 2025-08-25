@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -20,213 +20,29 @@ import {
   Award,
   Search,
   Verified,
-  Eye,
   ThumbsUp,
   Gauge,
   Calendar,
   MessageCircle,
   Bookmark,
-  Filter
-} from 'lucide-react';
-import StylingBackground1 from '../../components/MovingDots1';
+} from "lucide-react";
+import {
+  GeometricShapes,
+  MovingDots,
+  MovingLines,
+  MovingSnakes,
+  StylingHomePageBackground
+} from "../../components/CustomAnimation";
+import {
+  mockBusinessList,
+  mockRecommendations,
+  mockSlides,
+} from "../../constants/Home";
 
-export const MovingDotsBackground = () => {
-  return (
-    <div className="fixed inset-0 -z-10">
-      {/* Enhanced gradient background matching homepage colors */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100" />
-      
-      {/* CSS-only animated dots */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating dots with matching colors */}
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-gray-600 rounded-full opacity-20 animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${15 + Math.random() * 10}s`
-            }}
-          />
-        ))}
-        
-        {/* Additional larger dots */}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={`large-${i}`}
-            className="absolute w-1 h-1 bg-gray-700 rounded-full opacity-30 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 8}s`,
-              animationDuration: `${20 + Math.random() * 15}s`
-            }}
-          />
-        ))}
-      </div>
-      
-      {/* Gradient overlays for depth with matching colors */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-300/10 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-gray-400/5 via-transparent to-gray-500/5 pointer-events-none" />
-    </div>
-  );
-};
 
-const StylingBackground = () => {
-  return (
-    <>
-      <MovingDotsBackground />
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px) translateX(0px);
-            opacity: 0.2;
-          }
-          25% {
-            transform: translateY(-20px) translateX(10px);
-            opacity: 0.4;
-          }
-          50% {
-            transform: translateY(-40px) translateX(-5px);
-            opacity: 0.6;
-          }
-          75% {
-            transform: translateY(-20px) translateX(-15px);
-            opacity: 0.3;
-          }
-        }
-        
-        .animate-float {
-          animation: float linear infinite;
-        }
-      `}</style>
-    </>
-  );
-};
 
-// Enhanced Animated Background Components
-export const MovingDots = ({ density = 15, speed = 8 }) => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(density)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-gray-600/30 rounded-full"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-        }}
-        animate={{
-          y: [0, -30, 0],
-          x: [0, Math.random() * 20 - 10, 0],
-          opacity: [0.2, 0.6, 0.2],
-        }}
-        transition={{
-          duration: speed + Math.random() * 4,
-          repeat: Infinity,
-          delay: Math.random() * 2,
-          ease: "easeInOut"
-        }}
-      />
-    ))}
-  </div>
-);
 
-export const MovingLines = ({ count = 6 }) => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <svg className="w-full h-full opacity-5">
-      {[...Array(count)].map((_, i) => {
-        const startX = Math.random() * 100;
-        const startY = Math.random() * 100;
-        const endX = Math.random() * 100;
-        const endY = Math.random() * 100;
-        
-        return (
-          <motion.line
-            key={i}
-            x1={`${startX}%`}
-            y1={`${startY}%`}
-            x2={`${endX}%`}
-            y2={`${endY}%`}
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-gray-700"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.2 }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: i * 0.5
-            }}
-          />
-        );
-      })}
-    </svg>
-  </div>
-);
-
-export const MovingSnakes = ({ count = 4 }) => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(count)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-0.5 bg-gradient-to-b from-gray-600/20 via-gray-700/15 to-transparent"
-        style={{
-          height: '300px',
-          left: `${20 + i * 25}%`,
-        }}
-        animate={{
-          y: [-300, typeof window !== 'undefined' ? window.innerHeight + 100 : 800],
-          x: [
-            0, 
-            Math.sin(Date.now() / 1000 + i) * 50,
-            Math.cos(Date.now() / 1000 + i) * 30
-          ]
-        }}
-        transition={{
-          duration: 8 + Math.random() * 4,
-          repeat: Infinity,
-          ease: "linear",
-          delay: i * 1.5
-        }}
-      />
-    ))}
-  </div>
-);
-
-export const GeometricShapes = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(8)].map((_, i) => (
-      <motion.div
-        key={i}
-        className={`absolute ${
-          i % 3 === 0 ? 'w-4 h-4 rotate-45 border border-gray-600/15' :
-          i % 3 === 1 ? 'w-3 h-3 rounded-full bg-gray-700/10' :
-          'w-6 h-1 bg-gray-600/15'
-        }`}
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-        }}
-        animate={{
-          rotate: [0, 360],
-          scale: [1, 1.2, 1],
-          opacity: [0.1, 0.3, 0.1]
-        }}
-        transition={{
-          duration: 6 + Math.random() * 4,
-          repeat: Infinity,
-          delay: Math.random() * 2
-        }}
-      />
-    ))}
-  </div>
-);
-
-// Enhanced Custom Components
-const GlassCard = ({ children, className = '', hover = false, ...props }) => (
+const GlassCard = ({ children, className = "", hover = false, ...props }) => (
   <div
     className={`bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-2xl transition-all duration-300 ${className}`}
     {...props}
@@ -235,18 +51,27 @@ const GlassCard = ({ children, className = '', hover = false, ...props }) => (
   </div>
 );
 
-const GradientButton = ({ children, className = '', variant = 'primary', loading = false, ...props }) => {
-  const baseClasses = "px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed";
+const GradientButton = ({
+  children,
+  className = "",
+  variant = "primary",
+  loading = false,
+  ...props
+}) => {
+  const baseClasses =
+    "px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed";
   const variants = {
     primary: "bg-black text-white hover:bg-gray-800 hover:shadow-xl",
-    secondary: "bg-white text-black border-2 border-black hover:bg-black hover:text-white",
-    outline: "bg-transparent border-2 border-white text-white hover:bg-white hover:text-black",
-    ghost: "bg-gray-100 text-gray-800 hover:bg-gray-200"
+    secondary:
+      "bg-white text-black border-2 border-black hover:bg-black hover:text-white",
+    outline:
+      "bg-transparent border-2 border-white text-white hover:bg-white hover:text-black",
+    ghost: "bg-gray-100 text-gray-800 hover:bg-gray-200",
   };
-  
+
   return (
-    <button 
-      className={`${baseClasses} ${variants[variant]} ${className}`} 
+    <button
+      className={`${baseClasses} ${variants[variant]} ${className}`}
       disabled={loading}
       {...props}
     >
@@ -258,155 +83,6 @@ const GradientButton = ({ children, className = '', variant = 'primary', loading
     </button>
   );
 };
-
-// Mock data with enhanced content
-const mockSlides = [
-  {
-    id: 1,
-    // image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=600&fit=crop",
-    title: "Discover Local Businesses",
-    subtitle: "Connect with amazing local services near you",
-    features: ["Verified Search", "Real-time Availability", "Instant Booking"]
-  },
-  {
-    id: 2,
-    // image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=600&fit=crop",
-    title: "Quality Assured Services",
-    subtitle: "Find verified professionals in your area",
-    features: ["Verified Reviews", "Background Checks", "Money-back Guarantee"]
-  },
-  {
-    id: 3,
-    // image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
-    title: "Smart & Fast",
-    subtitle: "Book services with smart recommendations",
-    features: ["1-Click Booking", "Smart Matching", "Instant Confirmation"]
-  }
-];
-
-const mockBusinessList = [
-  {
-    _id: "1",
-    businessName: "Artisan Coffee Roasters",
-    categoryOfBusiness: "Premium Coffee & Pastries",
-    image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "1.2 km",
-    rating: 4.9,
-    reviews: 234,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "20% OFF Today",
-    responseTime: "Responds in 5 min",
-    price: "$$",
-    nextAvailable: "Today 2:30 PM"
-  },
-  {
-    _id: "2",
-    businessName: "TechFix Pro Solutions",
-    categoryOfBusiness: "Electronics & Device Repair",
-    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "0.8 km",
-    rating: 4.8,
-    reviews: 156,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "Free Diagnosis",
-    responseTime: "Responds in 2 min",
-    price: "$$$",
-    nextAvailable: "Today 3:00 PM"
-  },
-  {
-    _id: "3",
-    businessName: "Bloom & Blossom Florist",
-    categoryOfBusiness: "Luxury Flowers & Events",
-    image: "https://images.unsplash.com/photo-1563181735-6f6fb66719d3?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "2.1 km",
-    rating: 4.7,
-    reviews: 189,
-    isVerified: true,
-    isOpen: false,
-    specialOffer: "Same-day Delivery",
-    responseTime: "Responds in 10 min",
-    price: "$$$$",
-    nextAvailable: "Tomorrow 9:00 AM"
-  },
-  {
-    _id: "4",
-    businessName: "Elite Fitness Studio",
-    categoryOfBusiness: "Personal Training & Wellness",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "1.5 km",
-    rating: 4.9,
-    reviews: 298,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "Free Trial Session",
-    responseTime: "Responds in 3 min",
-    price: "$$$",
-    nextAvailable: "Today 4:00 PM"
-  }
-];
-
-const mockRecommendations = [
-  {
-    _id: "5",
-    businessName: "Green Garden Restaurant",
-    categoryOfBusiness: "Organic Food & Dining",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "0.5 km",
-    rating: 4.8,
-    reviews: 312,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "Happy Hour 2-5 PM",
-    responseTime: "Responds in 3 min",
-    price: "$$$",
-    nextAvailable: "Today 1:00 PM",
-    isRecommended: true,
-    matchScore: 95
-  },
-  {
-    _id: "6",
-    businessName: "Quick Print Solutions",
-    categoryOfBusiness: "Printing & Design Services",
-    image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "1.0 km",
-    rating: 4.6,
-    reviews: 87,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "Same Day Service",
-    responseTime: "Responds in 8 min",
-    price: "$$",
-    nextAvailable: "Today 2:00 PM",
-    isRecommended: true,
-    matchScore: 88
-  },
-  {
-    _id: "7",
-    businessName: "Urban Spa Wellness",
-    categoryOfBusiness: "Spa & Wellness Center",
-    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop",
-    city: "New York",
-    distance: "1.8 km",
-    rating: 4.9,
-    reviews: 203,
-    isVerified: true,
-    isOpen: true,
-    specialOffer: "New Client 30% OFF",
-    responseTime: "Responds in 5 min",
-    price: "$$$$",
-    nextAvailable: "Today 5:00 PM",
-    isRecommended: true,
-    matchScore: 92
-  }
-];
 
 const StunningLandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -453,7 +129,7 @@ const StunningLandingPage = () => {
             alt={business.businessName}
             className="w-full h-52 object-cover"
           />
-          
+
           {/* Top badges row */}
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
             <div className="flex flex-col gap-2">
@@ -469,7 +145,7 @@ const StunningLandingPage = () => {
                 </div>
               )}
             </div>
-            
+
             {business.specialOffer && (
               <div className="bg-red-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium">
                 {business.specialOffer}
@@ -483,22 +159,32 @@ const StunningLandingPage = () => {
               onClick={() => handleSave(business._id)}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
                 savedBusinesses.has(business._id)
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white/90 text-gray-700 hover:bg-blue-600 hover:text-white'
+                  ? "bg-blue-600 text-white"
+                  : "bg-white/90 text-gray-700 hover:bg-blue-600 hover:text-white"
               } shadow-lg`}
             >
-              <Bookmark size={14} className={savedBusinesses.has(business._id) ? 'fill-current' : ''} />
+              <Bookmark
+                size={14}
+                className={
+                  savedBusinesses.has(business._id) ? "fill-current" : ""
+                }
+              />
             </button>
-            
+
             <button
               onClick={() => handleLike(business._id)}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
                 likedBusinesses.has(business._id)
-                  ? 'bg-red-600 text-white'
-                  : 'bg-white/90 text-gray-700 hover:bg-red-600 hover:text-white'
+                  ? "bg-red-600 text-white"
+                  : "bg-white/90 text-gray-700 hover:bg-red-600 hover:text-white"
               } shadow-lg`}
             >
-              <Heart size={14} className={likedBusinesses.has(business._id) ? 'fill-current' : ''} />
+              <Heart
+                size={14}
+                className={
+                  likedBusinesses.has(business._id) ? "fill-current" : ""
+                }
+              />
             </button>
           </div>
         </div>
@@ -510,13 +196,13 @@ const StunningLandingPage = () => {
               <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1">
                 {business.businessName}
               </h3>
-              
+
               <p className="text-gray-600 text-sm flex items-center gap-2 mb-2">
                 <ShoppingBag size={12} className="text-gray-400" />
                 {business.categoryOfBusiness}
               </p>
             </div>
-            
+
             <div className="text-gray-500 text-sm font-medium">
               {business.price}
             </div>
@@ -530,9 +216,10 @@ const StunningLandingPage = () => {
                   <Star
                     key={i}
                     size={14}
-                    className={i < Math.floor(business.rating) 
-                      ? "text-yellow-400 fill-current" 
-                      : "text-gray-300"
+                    className={
+                      i < Math.floor(business.rating)
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
                     }
                   />
                 ))}
@@ -541,7 +228,7 @@ const StunningLandingPage = () => {
                 {business.rating} ({business.reviews})
               </span>
             </div>
-            
+
             <div className="flex items-center text-sm text-gray-500 gap-1">
               <MapPin size={12} />
               {business.distance}
@@ -550,15 +237,17 @@ const StunningLandingPage = () => {
 
           {/* Status row */}
           <div className="flex items-center justify-between mb-4">
-            <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-              business.isOpen 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
+            <div
+              className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                business.isOpen
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
               <Clock size={10} />
               {business.isOpen ? "Open Now" : "Closed"}
             </div>
-            
+
             <div className="text-xs text-gray-500 flex items-center gap-1">
               <Calendar size={10} />
               {business.nextAvailable}
@@ -572,7 +261,9 @@ const StunningLandingPage = () => {
                 <MessageCircle size={12} />
                 Response Time
               </span>
-              <span className="font-medium text-gray-900">{business.responseTime}</span>
+              <span className="font-medium text-gray-900">
+                {business.responseTime}
+              </span>
             </div>
           </div>
 
@@ -582,7 +273,7 @@ const StunningLandingPage = () => {
               View Details
               <ArrowRight size={14} />
             </button>
-            
+
             <button className="px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
               <MessageCircle size={16} />
             </button>
@@ -594,14 +285,13 @@ const StunningLandingPage = () => {
 
   return (
     <>
-      <StylingBackground1/>
+      <StylingHomePageBackground />
       <div className="min-h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
-        {/* Hero Section */}
-        
+
         <div className="relative h-screen overflow-hidden">
-      <MovingDots density={520} speed={100} />
+          <MovingDots density={520} speed={100} />
           <GeometricShapes />
-          
+
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -612,8 +302,8 @@ const StunningLandingPage = () => {
               className="absolute inset-0"
               style={{
                 backgroundImage: `url(${mockSlides[currentSlide].image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundSize: "cover",
+                backgroundPosition: "center",
               }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
@@ -668,7 +358,9 @@ const StunningLandingPage = () => {
                     transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
                   >
                     <GlassCard className="px-6 py-3 hover:bg-white/20">
-                      <span className="text-white/95 font-medium">{feature}</span>
+                      <span className="text-white/95 font-medium">
+                        {feature}
+                      </span>
                     </GlassCard>
                   </motion.div>
                 ))}
@@ -685,7 +377,7 @@ const StunningLandingPage = () => {
                   <Search size={20} />
                   Explore Now
                 </GradientButton>
-                
+
                 <GradientButton variant="outline">
                   <Store size={20} />
                   Become a Seller
@@ -697,7 +389,11 @@ const StunningLandingPage = () => {
           {/* Slider Controls */}
           <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20">
             <button
-              onClick={() => setCurrentSlide((prev) => (prev - 1 + mockSlides.length) % mockSlides.length)}
+              onClick={() =>
+                setCurrentSlide(
+                  (prev) => (prev - 1 + mockSlides.length) % mockSlides.length
+                )
+              }
               className="w-14 h-14 bg-black/20 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/30 transition-all duration-300"
             >
               <ChevronLeft size={24} />
@@ -706,7 +402,9 @@ const StunningLandingPage = () => {
 
           <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20">
             <button
-              onClick={() => setCurrentSlide((prev) => (prev + 1) % mockSlides.length)}
+              onClick={() =>
+                setCurrentSlide((prev) => (prev + 1) % mockSlides.length)
+              }
               className="w-14 h-14 bg-black/20 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/30 transition-all duration-300"
             >
               <ChevronRight size={24} />
@@ -721,8 +419,8 @@ const StunningLandingPage = () => {
                 onClick={() => setCurrentSlide(index)}
                 className={`transition-all duration-300 rounded-full ${
                   index === currentSlide
-                    ? 'w-12 h-3 bg-white'
-                    : 'w-3 h-3 bg-white/50 hover:bg-white/75'
+                    ? "w-12 h-3 bg-white"
+                    : "w-3 h-3 bg-white/50 hover:bg-white/75"
                 }`}
               />
             ))}
@@ -733,7 +431,7 @@ const StunningLandingPage = () => {
         <div className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
           <MovingLines count={8} />
           <GeometricShapes />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -752,10 +450,30 @@ const StunningLandingPage = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { icon: Store, number: "5,000+", label: "Verified Businesses", color: "bg-blue-500" },
-                { icon: Users, number: "100K+", label: "Happy Customers", color: "bg-green-500" },
-                { icon: MapPin, number: "250+", label: "Cities Covered", color: "bg-purple-500" },
-                { icon: Award, number: "4.9★", label: "Average Rating", color: "bg-yellow-500" }
+                {
+                  icon: Store,
+                  number: "5,000+",
+                  label: "Verified Businesses",
+                  color: "bg-blue-500",
+                },
+                {
+                  icon: Users,
+                  number: "100K+",
+                  label: "Happy Customers",
+                  color: "bg-green-500",
+                },
+                {
+                  icon: MapPin,
+                  number: "250+",
+                  label: "Cities Covered",
+                  color: "bg-purple-500",
+                },
+                {
+                  icon: Award,
+                  number: "4.9★",
+                  label: "Average Rating",
+                  color: "bg-yellow-500",
+                },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -765,14 +483,16 @@ const StunningLandingPage = () => {
                   viewport={{ once: true }}
                 >
                   <div className="text-center p-8 bg-white rounded-3xl shadow-lg border border-gray-200">
-                    <div className={`w-20 h-20 mx-auto mb-6 ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg`}>
+                    <div
+                      className={`w-20 h-20 mx-auto mb-6 ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg`}
+                    >
                       <stat.icon size={36} />
                     </div>
-                    
+
                     <div className="text-4xl md:text-5xl font-black text-gray-800 mb-2">
                       {stat.number}
                     </div>
-                    
+
                     <div className="text-gray-600 font-semibold text-lg">
                       {stat.label}
                     </div>
@@ -786,8 +506,8 @@ const StunningLandingPage = () => {
         {/* Video Section */}
         <div className="py-20 bg-white relative overflow-hidden">
           <MovingSnakes count={100} />
-         <MovingDots density={1500} speed={100} count={1000} />
-          
+          <MovingDots density={1500} speed={100} count={1000} />
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -800,7 +520,7 @@ const StunningLandingPage = () => {
                 <Play size={16} className="text-gray-600" />
                 Watch Our Story
               </div>
-              
+
               <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
                 Experience the Future
               </h2>
@@ -825,7 +545,7 @@ const StunningLandingPage = () => {
                         alt="Platform demo"
                         className="absolute inset-0 w-full h-full object-cover opacity-70"
                       />
-                      
+
                       <button
                         onClick={() => setIsVideoPlaying(true)}
                         className="relative z-10 w-24 h-24 bg-white/20 backdrop-blur-xl border-2 border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 shadow-2xl"
@@ -848,11 +568,15 @@ const StunningLandingPage = () => {
                     ></iframe>
                   )}
                 </div>
-                
+
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/20 to-transparent p-6">
                   <div className="text-white text-center">
-                    <h3 className="text-xl font-semibold mb-2">Platform Overview</h3>
-                    <p className="text-white/80">Discover how businesses and customers connect seamlessly</p>
+                    <h3 className="text-xl font-semibold mb-2">
+                      Platform Overview
+                    </h3>
+                    <p className="text-white/80">
+                      Discover how businesses and customers connect seamlessly
+                    </p>
                   </div>
                 </div>
               </div>
@@ -862,7 +586,7 @@ const StunningLandingPage = () => {
 
         {/* Recommendations Section */}
         <div className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-        <MovingDots density={1500} speed={100} count={1000} />
+          <MovingDots density={1500} speed={100} count={1000} />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -875,7 +599,8 @@ const StunningLandingPage = () => {
                 Recommended for You
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Discover handpicked businesses that match your preferences and needs
+                Discover handpicked businesses that match your preferences and
+                needs
               </p>
             </motion.div>
 
@@ -907,7 +632,8 @@ const StunningLandingPage = () => {
                   Discover More Businesses
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Explore our complete directory of verified local businesses in your area.
+                  Explore our complete directory of verified local businesses in
+                  your area.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <GradientButton variant="primary">
@@ -923,7 +649,7 @@ const StunningLandingPage = () => {
         {/* Business Listings */}
         <div className="py-20 bg-white relative overflow-hidden">
           <MovingDots density={150} speed={100} count={500} />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -936,7 +662,8 @@ const StunningLandingPage = () => {
                 Explore All Businesses
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Discover amazing local services and businesses in your area with verified reviews and instant booking
+                Discover amazing local services and businesses in your area with
+                verified reviews and instant booking
               </p>
             </motion.div>
 
@@ -954,14 +681,12 @@ const StunningLandingPage = () => {
               ))}
             </div>
 
-          
-             <div className="text-center">
+            <div className="text-center">
               <GradientButton variant="primary">
                 <Store size={20} />
                 View All Categories
               </GradientButton>
             </div>
-        
           </div>
         </div>
 
@@ -969,7 +694,7 @@ const StunningLandingPage = () => {
         <div className="py-20 bg-black relative overflow-hidden">
           <MovingLines count={12} />
           <MovingSnakes count={6} />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -982,12 +707,13 @@ const StunningLandingPage = () => {
                 <Award size={16} />
                 Premium Features
               </div>
-              
+
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Why Choose Us?
               </h2>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Experience the next generation of local business discovery with cutting-edge technology
+                Experience the next generation of local business discovery with
+                cutting-edge technology
               </p>
             </motion.div>
 
@@ -996,39 +722,45 @@ const StunningLandingPage = () => {
                 {
                   icon: Zap,
                   title: "Lightning Fast",
-                  description: "Find and book services in seconds with our smart search engine and recommendations.",
-                  gradient: "from-yellow-400 to-orange-500"
+                  description:
+                    "Find and book services in seconds with our smart search engine and recommendations.",
+                  gradient: "from-yellow-400 to-orange-500",
                 },
                 {
                   icon: Shield,
                   title: "100% Secure",
-                  description: "Your data and transactions are protected with bank-level security and encrypted payments.",
-                  gradient: "from-green-400 to-blue-500"
+                  description:
+                    "Your data and transactions are protected with bank-level security and encrypted payments.",
+                  gradient: "from-green-400 to-blue-500",
                 },
                 {
                   icon: Gauge,
                   title: "Real-time Updates",
-                  description: "Get instant notifications about availability, confirmations, and business updates.",
-                  gradient: "from-purple-400 to-pink-500"
+                  description:
+                    "Get instant notifications about availability, confirmations, and business updates.",
+                  gradient: "from-purple-400 to-pink-500",
                 },
                 {
                   icon: Award,
                   title: "Quality Guaranteed",
-                  description: "All businesses are verified and rated by real customers with authentic reviews.",
-                  gradient: "from-blue-400 to-indigo-500"
+                  description:
+                    "All businesses are verified and rated by real customers with authentic reviews.",
+                  gradient: "from-blue-400 to-indigo-500",
                 },
                 {
                   icon: ThumbsUp,
                   title: "Customer First",
-                  description: "24/7 support and money-back guarantee for complete peace of mind.",
-                  gradient: "from-pink-400 to-red-500"
+                  description:
+                    "24/7 support and money-back guarantee for complete peace of mind.",
+                  gradient: "from-pink-400 to-red-500",
                 },
                 {
                   icon: TrendingUp,
                   title: "Growth Partner",
-                  description: "Help local businesses grow with powerful analytics, insights, and marketing tools.",
-                  gradient: "from-indigo-400 to-purple-500"
-                }
+                  description:
+                    "Help local businesses grow with powerful analytics, insights, and marketing tools.",
+                  gradient: "from-indigo-400 to-purple-500",
+                },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -1038,14 +770,16 @@ const StunningLandingPage = () => {
                   viewport={{ once: true }}
                 >
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full text-center hover:bg-white/10 transition-all duration-300">
-                    <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center text-white shadow-2xl`}>
+                    <div
+                      className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center text-white shadow-2xl`}
+                    >
                       <feature.icon size={32} />
                     </div>
-                    
+
                     <h3 className="text-2xl font-bold text-white mb-4">
                       {feature.title}
                     </h3>
-                    
+
                     <p className="text-gray-300 leading-relaxed">
                       {feature.description}
                     </p>
@@ -1060,7 +794,7 @@ const StunningLandingPage = () => {
         <div className="py-20 bg-gradient-to-br from-gray-100 to-white relative overflow-hidden">
           <MovingDots density={720} speed={100} />
           <GeometricShapes />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               // initial={{ opacity: 0, scale: 0.8 }}
@@ -1078,7 +812,7 @@ const StunningLandingPage = () => {
                 >
                   <Store size={80} className="mx-auto mb-6 text-gray-800" />
                 </motion.div>
-                
+
                 <motion.h2
                   // initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
@@ -1087,14 +821,15 @@ const StunningLandingPage = () => {
                 >
                   Ready to Transform Your Business?
                 </motion.h2>
-                
+
                 <motion.p
                   // initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   // transition={{ delay: 0, duration: 0.2 }}
                   className="text-xl md:text-2xl mb-12 text-gray-600 max-w-3xl mx-auto"
                 >
-                  Join thousands of successful businesses and reach more customers in your local area
+                  Join thousands of successful businesses and reach more
+                  customers in your local area
                 </motion.p>
 
                 <motion.div
@@ -1107,7 +842,7 @@ const StunningLandingPage = () => {
                     <Store size={24} />
                     Start Selling Today
                   </GradientButton>
-                  
+
                   <GradientButton variant="secondary">
                     <Phone size={24} />
                     Contact Our Team
@@ -1124,7 +859,7 @@ const StunningLandingPage = () => {
                     { icon: Verified, text: "Verified Platform" },
                     { icon: Shield, text: "Secure & Safe" },
                     { icon: Award, text: "Award Winning" },
-                    { icon: Users, text: "100K+ Users" }
+                    { icon: Users, text: "100K+ Users" },
                   ].map((item, index) => (
                     <div
                       key={index}
@@ -1195,7 +930,7 @@ export default StunningLandingPage;
 //     secondary: "bg-gradient-to-r from-emerald-400 to-cyan-400 text-white hover:shadow-2xl hover:shadow-cyan-400/25",
 //     outline: "bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-800"
 //   };
-  
+
 //   return (
 //     <button className={`${baseClasses} ${variants[variant]} ${className}`} {...props}>
 //       {children}
@@ -1415,7 +1150,7 @@ export default StunningLandingPage;
 //             alt={business.businessName}
 //             className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
 //           />
-          
+
 //           {/* Verified Badge */}
 //           {business.isVerified && (
 //             <div className="absolute top-3 left-3 bg-green-600 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
@@ -1449,7 +1184,7 @@ export default StunningLandingPage;
 //           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
 //             {business.businessName}
 //           </h3>
-          
+
 //           <p className="text-gray-600 text-sm mb-3 flex items-center gap-2">
 //             <ShoppingBag size={14} className="text-indigo-600" />
 //             {business.categoryOfBusiness}
@@ -1463,8 +1198,8 @@ export default StunningLandingPage;
 //                   <Star
 //                     key={i}
 //                     size={14}
-//                     className={i < Math.floor(business.rating) 
-//                       ? "text-amber-400 fill-current" 
+//                     className={i < Math.floor(business.rating)
+//                       ? "text-amber-400 fill-current"
 //                       : "text-gray-300"
 //                     }
 //                   />
@@ -1481,8 +1216,8 @@ export default StunningLandingPage;
 //           {/* Status and Response Time */}
 //           <div className="flex items-center justify-between mb-4">
 //             <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${
-//               business.isOpen 
-//                 ? 'bg-green-100 text-green-800' 
+//               business.isOpen
+//                 ? 'bg-green-100 text-green-800'
 //                 : 'bg-red-100 text-red-800'
 //             }`}>
 //               <Clock size={12} />
@@ -1507,7 +1242,7 @@ export default StunningLandingPage;
 //       <StylingBackground/>
 //       <div className="relative h-screen overflow-hidden">
 //         <FloatingElements />
-        
+
 //         <AnimatePresence mode="wait">
 //           <motion.div
 //             key={currentSlide}
@@ -1583,7 +1318,7 @@ export default StunningLandingPage;
 //                 <Search size={20} />
 //                 Explore Now
 //               </GradientButton>
-              
+
 //               <GradientButton variant="outline">
 //                 <Store size={20} />
 //                 Become a Seller
@@ -1638,7 +1373,7 @@ export default StunningLandingPage;
 //             />
 //           ))}
 //         </div>
-        
+
 //         <div className="container mx-auto px-4 relative z-10">
 //           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 //             {[
@@ -1658,15 +1393,15 @@ export default StunningLandingPage;
 //               >
 //                 <div className="text-center p-8 bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/30 relative overflow-hidden">
 //                   <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500 from-blue-400 to-purple-500" />
-                  
+
 //                   <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-r ${stat.gradient} rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:rotate-6 transition-transform duration-300`}>
 //                     <stat.icon size={36} />
 //                   </div>
-                  
+
 //                   <div className="text-4xl md:text-5xl font-black text-gray-800 mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
 //                     {stat.number}
 //                   </div>
-                  
+
 //                   <div className="text-gray-600 font-semibold text-lg">
 //                     {stat.label}
 //                   </div>
@@ -1694,7 +1429,7 @@ export default StunningLandingPage;
 //           <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-emerald-200/20 rounded-full blur-2xl"></div>
 //         </div>
 //         <FloatingElements />
-        
+
 //         <div className="container mx-auto px-4 relative z-10">
 //           <motion.div
 //             initial={{ opacity: 0, y: 50 }}
@@ -1727,7 +1462,7 @@ export default StunningLandingPage;
 //                     isVideoPlaying ? 'opacity-0 scale-110' : 'opacity-70 scale-100'
 //                   }`}
 //                 />
-                
+
 //                 <motion.button
 //                   whileHover={{ scale: 1.1 }}
 //                   whileTap={{ scale: 0.9 }}
@@ -1738,7 +1473,7 @@ export default StunningLandingPage;
 //                 </motion.button>
 
 //                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                
+
 //                 {/* Video overlay effects */}
 //                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20" />
 //               </div>
@@ -1840,16 +1575,16 @@ export default StunningLandingPage;
 //           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.1),transparent_50%)]"></div>
 //           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(14,165,233,0.1),transparent_50%)]"></div>
 //           <div className="absolute inset-0 bg-[conic-gradient(from_45deg,transparent,rgba(99,102,241,0.03),transparent)]"></div>
-          
+
 //           {/* Animated shapes */}
 //           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-indigo-400 rounded-full animate-pulse opacity-60"></div>
 //           <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-cyan-400 rounded-full animate-pulse opacity-40"></div>
 //           <div className="absolute top-1/2 left-3/4 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse opacity-50"></div>
-          
+
 //           {/* Grid pattern overlay */}
 //           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[length:50px_50px]"></div>
 //         </div>
-        
+
 //         <div className="container mx-auto px-4 relative z-10">
 //           <motion.div
 //             initial={{ opacity: 0, y: 50 }}
@@ -1917,11 +1652,11 @@ export default StunningLandingPage;
 //                   <div className={`w-16 h-16 mx-auto mb-6 bg-${feature.color}-600 rounded-xl flex items-center justify-center text-white shadow-lg`}>
 //                     <feature.icon size={32} />
 //                   </div>
-                  
+
 //                   <h3 className="text-xl font-bold text-white mb-4">
 //                     {feature.title}
 //                   </h3>
-                  
+
 //                   <p className="text-slate-300 leading-relaxed">
 //                     {feature.description}
 //                   </p>
@@ -1937,13 +1672,13 @@ export default StunningLandingPage;
 //         <div className="absolute inset-0">
 //           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.1),transparent_70%)]"></div>
 //           <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,transparent_0deg,rgba(255,255,255,0.03)_180deg,transparent_360deg)]"></div>
-          
+
 //           {/* Floating geometric shapes */}
 //           <div className="absolute top-1/4 left-1/6 w-4 h-4 border border-white/20 rotate-45 animate-pulse"></div>
 //           <div className="absolute bottom-1/3 right-1/4 w-6 h-6 bg-white/10 rounded-full animate-bounce"></div>
 //           <div className="absolute top-1/2 right-1/6 w-3 h-8 bg-gradient-to-t from-transparent to-white/10 transform rotate-12"></div>
 //         </div>
-        
+
 //         <div className="container mx-auto px-4 relative z-10">
 //           <motion.div
 //             initial={{ opacity: 0, scale: 0.8 }}
@@ -1956,11 +1691,11 @@ export default StunningLandingPage;
 //               <div className="mb-8">
 //                 <Store size={64} className="mx-auto mb-6 text-white" />
 //               </div>
-              
+
 //               <h2 className="text-4xl md:text-6xl font-bold mb-8 text-white leading-tight">
 //                 Ready to Transform Your Business?
 //               </h2>
-              
+
 //               <p className="text-xl md:text-2xl mb-12 text-white/90 max-w-3xl mx-auto">
 //                 Join thousands of successful businesses and reach more customers in your local area
 //               </p>
@@ -1970,7 +1705,7 @@ export default StunningLandingPage;
 //                   <Store size={24} />
 //                   Start Selling Today
 //                 </button>
-                
+
 //                 <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center gap-2 text-lg">
 //                   <Phone size={24} />
 //                   Contact Our Team
@@ -2002,20 +1737,18 @@ export default StunningLandingPage;
 
 // export default StunningLandingPage;
 
-//?============================================= 
-
-
+//?=============================================
 
 // import { useState, useEffect, useRef } from "react";
 // import { motion, AnimatePresence } from "framer-motion";
-// import { 
-//   ChevronLeft, 
-//   ChevronRight, 
-//   MapPin, 
-//   Star, 
-//   Play, 
-//   Users, 
-//   Store, 
+// import {
+//   ChevronLeft,
+//   ChevronRight,
+//   MapPin,
+//   Star,
+//   Play,
+//   Users,
+//   Store,
 //   ShoppingBag,
 //   ArrowRight,
 //   Sparkles,
@@ -2027,29 +1760,29 @@ export default StunningLandingPage;
 
 // // Mock data for demo
 // const mockSlides = [
-//   { 
-//     id: 1, 
+//   {
+//     id: 1,
 //     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=600&fit=crop",
 //     title: "Discover Local Businesses",
 //     subtitle: "Connect with amazing local services near you",
 //     color: "from-blue-600 to-purple-600"
 //   },
-//   { 
-//     id: 2, 
+//   {
+//     id: 2,
 //     image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=600&fit=crop",
 //     title: "Quality Services",
 //     subtitle: "Find trusted professionals in your area",
 //     color: "from-emerald-500 to-teal-600"
 //   },
-//   { 
-//     id: 3, 
+//   {
+//     id: 3,
 //     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
 //     title: "Easy & Fast",
 //     subtitle: "Book services with just a few clicks",
 //     color: "from-orange-500 to-red-500"
 //   },
-//   { 
-//     id: 4, 
+//   {
+//     id: 4,
 //     image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=600&fit=crop",
 //     title: "Join Our Community",
 //     subtitle: "Become a seller and grow your business",
@@ -2069,11 +1802,11 @@ export default StunningLandingPage;
 //     reviews: 150
 //   },
 //   {
-//     _id: "2", 
+//     _id: "2",
 //     businessName: "TechFix Solutions",
 //     categoryOfBusiness: "Electronics Repair",
 //     image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop",
-//     city: "New York", 
+//     city: "New York",
 //     distance: "0.8 km",
 //     rating: 4.9,
 //     reviews: 89
@@ -2084,7 +1817,7 @@ export default StunningLandingPage;
 //     categoryOfBusiness: "Flowers & Gifts",
 //     image: "https://images.unsplash.com/photo-1563181735-6f6fb66719d3?w=400&h=300&fit=crop",
 //     city: "New York",
-//     distance: "2.1 km", 
+//     distance: "2.1 km",
 //     rating: 4.7,
 //     reviews: 203
 //   },
@@ -2124,7 +1857,7 @@ export default StunningLandingPage;
 //       initial={{ opacity: 0, y: 20 }}
 //       animate={{ opacity: 1, y: 0 }}
 //       transition={{ delay: index * 0.1, duration: 0.5 }}
-//       whileHover={{ 
+//       whileHover={{
 //         y: -8,
 //         scale: 1.02,
 //         transition: { duration: 0.2 }
@@ -2138,24 +1871,24 @@ export default StunningLandingPage;
 //           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
 //         />
 //         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-//         <motion.div 
+//         <motion.div
 //           whileHover={{ scale: 1.1 }}
 //           className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300"
 //         >
 //           <Heart size={16} className="text-red-500" />
 //         </motion.div>
 //       </div>
-      
+
 //       <div className="p-5">
 //         <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-200">
 //           {business.businessName}
 //         </h3>
-        
+
 //         <p className="text-gray-600 text-sm mb-3 flex items-center">
 //           <ShoppingBag size={14} className="mr-2 text-blue-500" />
 //           {business.categoryOfBusiness}
 //         </p>
-        
+
 //         <div className="flex items-center justify-between mb-3">
 //           <div className="flex items-center space-x-1">
 //             {renderStars(business.rating || 5)}
@@ -2168,7 +1901,7 @@ export default StunningLandingPage;
 //             {business.distance || "1.2 km"}
 //           </div>
 //         </div>
-        
+
 //         <div className="flex items-center justify-between">
 //           <span className="text-sm font-medium text-gray-700 flex items-center">
 //             <Clock size={14} className="mr-1 text-green-500" />
@@ -2228,12 +1961,12 @@ export default StunningLandingPage;
 //             transition={{ duration: 0.7 }}
 //             className="absolute inset-0"
 //           >
-//             <div 
+//             <div
 //               className="w-full h-full bg-cover bg-center relative"
 //               style={{ backgroundImage: `url(${mockSlides[currentSlide].image})` }}
 //             >
 //               <div className={`absolute inset-0 bg-gradient-to-r ${mockSlides[currentSlide].color} opacity-80`}></div>
-              
+
 //               {/* Hero Content */}
 //               <div className="relative z-10 flex items-center justify-center h-full text-white text-center px-4">
 //                 <motion.div
@@ -2242,7 +1975,7 @@ export default StunningLandingPage;
 //                   transition={{ delay: 0.3, duration: 0.8 }}
 //                   className="max-w-4xl"
 //                 >
-//                   <motion.h1 
+//                   <motion.h1
 //                     className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
 //                     initial={{ y: 20, opacity: 0 }}
 //                     animate={{ y: 0, opacity: 1 }}
@@ -2250,7 +1983,7 @@ export default StunningLandingPage;
 //                   >
 //                     {mockSlides[currentSlide].title}
 //                   </motion.h1>
-//                   <motion.p 
+//                   <motion.p
 //                     className="text-lg md:text-xl lg:text-2xl mb-8 text-white/90"
 //                     initial={{ y: 20, opacity: 0 }}
 //                     animate={{ y: 0, opacity: 1 }}
@@ -2363,7 +2096,7 @@ export default StunningLandingPage;
 //               Discover how easy it is to find and connect with local businesses in your area
 //             </p>
 //           </motion.div>
-          
+
 //           <motion.div
 //             initial={{ opacity: 0, scale: 0.95 }}
 //             whileInView={{ opacity: 1, scale: 1 }}
@@ -2420,7 +2153,7 @@ export default StunningLandingPage;
 //                 <ArrowRight size={20} />
 //               </motion.button>
 //             </div>
-            
+
 //             {recommendations.length > 0 ? (
 //               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 //                 <Card businessList={recommendations} />
@@ -2458,7 +2191,7 @@ export default StunningLandingPage;
 //                 View All Categories
 //               </motion.button>
 //             </div>
-            
+
 //             {businessList.length > 0 ? (
 //               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 //                 <Card businessList={businessList} />
@@ -2520,270 +2253,6 @@ export default StunningLandingPage;
 //             </div>
 //           </motion.div>
 //         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;
-
-
-
-
-
-//! ====================================================================
-
-
-// import { useState, useEffect, useRef } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { getItem } from "../../utils/localStorageManager";
-// // import Card from "../../components/Card";
-// import locales from "../../locales/local.json";
-// import { fetchAllSeller } from "../../features/businessSlice";
-// import Card from "../../components/Card";
-// import ad1 from "../../assets/ad1.jpg";
-// import ad2 from "../../assets/ad2.jpg";
-// import ad3 from "../../assets/ad3.png";
-// import ad4 from "../../assets/ad4.jpg";
-// import axiosClient from "../../utils/axiosClient";
-// import { translateText } from "../../utils/translateService";
-// const slides = [
-//   { id: 1, color: "bg-red-500", image: ad1 },
-//   { id: 2, color: "bg-blue-500", image: ad2 },
-//   { id: 3, color: "bg-yellow-400", image: ad3 },
-//   { id: 4, color: "bg-emerald-500", image: ad4 },
-// ];
-
-// const Home = () => {
-//   const currentSlide = useRef(0);
-//   const imageRef = useRef(null);
-//   const sliderRef = useRef(null); // Local state for rendering
-
-//   const [businessList, setBusinessList] = useState([]);
-//   const [isLocationFetched, setIsLocationFetched] = useState(false);
-//   const [recommendations, setRecommendations] = useState([]);
-//   const { user } = useSelector((state) => state.user);
-//   const { language } = useSelector((state) => state.user);
-//   const { category } = useSelector((state) => state.user);
-//   const dispatch = useDispatch();
-//   const city = getItem("city");
-//   console.log(category);
-//   console.log(language);
-
-//   const t = locales[language];
-
-//   // #########################3
-
-//   const translateBusinessList = async (list, lang) => {
-//     if (!list.length) return list;
-  
-//     return await Promise.all(
-//       list.map(async (business) => ({
-//         ...business,
-//         businessName: await translateText(business.businessName, lang),
-//         categoryOfBusiness: await translateText(business.categoryOfBusiness, lang),
-//         city: await translateText(business.city, lang), // ✅ Translate city names
-//       }))
-//     );
-//   };
-  
-
-//   const fetchBusinesses = async () => {
-//     try {
-//       const result = await dispatch(fetchAllSeller({ city, category }));
-//       if (result.payload?.success) {
-//         const fetchedBusinesses = result.payload?.message?.businesses;
-
-//         // 🔹 Apply translation
-//         const translatedBusinesses = await translateBusinessList(fetchedBusinesses, language);
-//         setBusinessList(translatedBusinesses);
-//       } else {
-//         setBusinessList([]);
-//       }
-//     } catch (error) {
-//       console.error("Error in fetchBusinesses:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const applyTranslation = async () => {
-//       if (businessList.length > 0) {
-//         const translatedBusinesses = await translateBusinessList(businessList, language);
-//         setBusinessList(translatedBusinesses);
-//         const translatedRecommendation = await translateText(recommendations,language)
-//         setRecommendations(translatedRecommendation)
-//       }
-//     };
-  
-//     applyTranslation();
-//  },[language]);
-
-//   const userId = user?._id;
-
-//   // const fetchRecommendations = async () => {
-//   //   try {
-//   //     if (!userId) return;
-//   //     console.log("Fetching recommendations for user:", userId);
-
-//   //     const response = await axiosClient.post("/recommend", {
-//   //       user_id: userId,
-//   //       city,
-//   //     });
-
-//   //     console.log("API Response:", response.data);
-
-//   //     if (response.data?.length > 0) {
-//   //       setRecommendations(response.data);
-//   //       const translatedRecommendation = await translateBusinessList(recommendations, language);
-//   //       setRecommendations(translatedRecommendation)
-        
-//   //     } else {
-//   //       setRecommendations([]);
-//   //       console.log("No recommendations found");
-//   //     }
-//   //   } catch (error) {
-//   //     console.log(error);
-//   //     console.error("Error fetching recommendations:", error);
-//   //   }
-//   // };
-//   const fetchRecommendations = async () => {
-//     try {
-//       if (!userId) return;
-//       console.log("Fetching recommendations for user:", userId);
-
-//       const response = await axiosClient.post("/recommend", {
-//         user_id: userId,
-//         city,
-//       });
-
-//       console.log("API Response:", response.data);
-
-//       if (response.data?.length > 0) {
-//         setRecommendations(response.data);
-//       } else {
-//         setRecommendations([]);
-//         console.log("No recommendations found");
-//       }
-//     } catch (error) {
-//       console.log(error);
-//       console.error("Error fetching recommendations:", error);
-// }
-// };
-//   useEffect(() => {
-//     if (city) {
-//       fetchBusinesses();
-//     }
-//     if (userId) {
-//       fetchRecommendations();
-//     }
-//   }, [city, category,user]); // Fetch businesses & recommendations when city/user chan
-//   useEffect(() => {
-//     if (businessList.length > 0 && !isLocationFetched) {
-//        getUserLocationAndCalculateDistances();
-//       setIsLocationFetched(true);
-//     }
-//   }, [businessList, isLocationFetched]);
-  
-// const getUserLocationAndCalculateDistances = () => {
-//     if (navigator.geolocation) {
-//       navigator.geolocation.getCurrentPosition(async (position) => {
-//         const userLatitude = position.coords.latitude;
-//         const userLongitude = position.coords.longitude;
-
-//         try {
-//           const response = await axiosClient.post("/location", {
-//             userLatitude,
-//             userLongitude,
-//             businessLocations: businessList
-//               .filter(business => business.businessLocation?.latitude && business.businessLocation?.longitude)
-//               .map(business => ({
-//                 id: business._id,
-//                 latitude: business.businessLocation.latitude,
-//                 longitude: business.businessLocation.longitude,
-//               }))
-//           });
-
-//           const updatedBusinessList = businessList.map(business => {
-//             const distanceInfo = response.data.find(item => item.id === business._id);
-//             return { ...business, distance: distanceInfo ? distanceInfo.distance : "N/A" };
-//           });
-
-//           setBusinessList(updatedBusinessList);
-//         } catch (error) {
-//           console.error("Error calculating distances:", error);
-//         }
-//       });
-//     } else {
-//       alert("Geolocation is not supported by this browser.");
-//     }
-//   };
-
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       currentSlide.current = (currentSlide.current + 1) % slides.length;
-
-//       // Update the image source directly
-//       if (imageRef.current) {
-//         imageRef.current.src = slides[currentSlide.current].image;
-//       }
-
-//       // Update the background color directly
-//       if (sliderRef.current) {
-//         sliderRef.current.className = `sliderAx mt-2 mb-10 md:mb-20 relative w-full h-96 ${slides[currentSlide.current].color}`;
-//       }
-//     }, 4000);
-
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   return (
-//     <div className="bg-[#FEF6EF]">
-//  <div ref={sliderRef} className={`sliderAx mt-2 mb-10 md:mb-20 relative w-full h-96 ${slides[0].color}`}>
-//       <img
-//         ref={imageRef}
-//         src={slides[0].image}
-//         className="w-full h-full object-cover"
-//         alt="Ad Slide"
-//       />
-//     </div>
-
-//       <div>
-//         <h1 className="text-xl md:text-4xl font-bold text-left mt-10 md:mt-16 ml-4 md:ml-10">
-//           {t.recommendation}
-//         </h1>
-//         <div>
-//           <section className="dark:bg-dark mt-4 mx-4 md:mx-10 pb-10 md:pb-20">
-//             <div className="container mx-auto">
-//               {recommendations.length > 0 ? (
-//                 <div className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-6">
-//                   <Card businessList={recommendations} />
-//                 </div>
-//               ) : (
-//                 <p className="text-center text-gray-500">
-//                   {t.no_recommendations}
-//                 </p>
-//               )}
-//             </div>
-//           </section>
-//         </div>
-
-//         {/* All Businesses Section */}
-//         <h1 className="text-xl md:text-4xl font-bold text-left mt-10 md:mt-16 ml-4">
-//           {t.explore}
-//         </h1>
-
-//         <section className="dark:bg-dark mt-4 mx-4 md:mx-10 pb-10 md:pb-20">
-//           <div className="container mx-auto">
-//             {businessList.length > 0 ? (
-//               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-//                 <Card businessList={businessList} />
-//               </div>
-//             ) : (
-//               `${t.no_recommendations}`
-//             )}
-//           </div>
-//         </section>
 //       </div>
 //     </div>
 //   );
