@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Webcam from "react-webcam";
 import axiosClient from "../../utils/axiosClient";
-import Business from "../../../../Backend/models/Business";
 import BusinessProfile from "../../components/BusinessProfile";
 import ProductForm from "../../components/ProductForm";
 import ProductList from "../../components/ProductList";
