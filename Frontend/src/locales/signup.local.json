@@ -1,0 +1,39 @@
+{
+    "English": {
+      "create_account": "Create Account",
+      "username": "Username",
+      "enter_name": "Enter your Name",
+      "email": "Email",
+      "email_placeholder": "email@gmail.com",
+      "password": "Password",
+      "enter_password": "Enter your password",
+      "create_account_button": "Create Account",
+      "already_have_account": "Already have an account?",
+      "sign_in": "Sign in"
+    },
+    "Hindi": {
+      "create_account": "खाता बनाएं",
+      "username": "उपयोगकर्ता नाम",
+      "enter_name": "अपना नाम दर्ज करें",
+      "email": "ईमेल",
+      "email_placeholder": "email@gmail.com",
+      "password": "पासवर्ड",
+      "enter_password": "अपना पासवर्ड दर्ज करें",
+      "create_account_button": "खाता बनाएं",
+      "already_have_account": "पहले से ही एक खाता है?",
+      "sign_in": "साइन इन करें"
+    },
+    "Gujarati": {
+      "create_account": "એકાઉન્ટ બનાવો",
+      "username": "વપરાશકર્તા નામ",
+      "enter_name": "તમારું નામ દાખલ કરો",
+      "email": "ઈમેલ",
+      "email_placeholder": "email@gmail.com",
+      "password": "પાસવર્ડ",
+      "enter_password": "તમારો પાસવર્ડ દાખલ કરો",
+      "create_account_button": "એકાઉન્ટ બનાવો",
+      "already_have_account": "પહેલેથી જ એક એકાઉન્ટ છે?",
+      "sign_in": "સાઇન ઇન કરો"
+    }
+  }
+  

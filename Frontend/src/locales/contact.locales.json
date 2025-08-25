@@ -1,0 +1,27 @@
+{
+    "English": {
+      "contact_us": "CONTACT US",
+      "enter_name": "Enter Your Name",
+      "email": "E-mail",
+      "your_message": "Your Message",
+      "send": "Send",
+      "address": "Address"
+    },
+    "Hindi": {
+      "contact_us": "संपर्क करें",
+      "enter_name": "अपना नाम दर्ज करें",
+      "email": "ई-मेल",
+      "your_message": "आपका संदेश",
+      "send": "भेजें",
+      "address": "पता"
+    },
+    "Gujarati": {
+      "contact_us": "અમારો સંપર્ક કરો",
+      "enter_name": "તમારું નામ દાખલ કરો",
+      "email": "ઇ-મેલ",
+      "your_message": "તમારો સંદેશ",
+      "send": "મોકલો",
+      "address": "સરનામું"
+    }
+  }
+  

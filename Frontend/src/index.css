@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+::-webkit-scrollbar {
+  @apply hidden;
+}
+
+/* Custom styles for react-select */
+.react-select-container .react-select__control {
+  border: 1px solid #dbd1d1; /* Gray border */
+  border-radius: 0.5rem; /* Rounded corners */
+  padding: 0.2rem; /* Padding inside the dropdown */
+  min-height: 40px; /* Minimum height */
+  background-color: white; /* Background color */
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: #3b82f6; /* Blue border when focused */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue shadow when focused */
+}
+
+.react-select-container .react-select__menu {
+  border-radius: 0.5rem; /* Rounded corners for the dropdown menu */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for the dropdown menu */
+  margin-top: 0.5rem; /* Space between the input and the dropdown menu */
+}
+
+.react-select-container .react-select__option {
+  padding: 0.75rem 1rem; /* Padding for each option */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.react-select-container .react-select__option--is-focused {
+  background-color: #f3f4f6; /* Light gray background for focused option */
+}
+
+.react-select-container .react-select__option--is-selected {
+  background-color: #3b82f6; /* Blue background for selected option */
+  color: white; /* White text for selected option */
+}
+
+.react-select-container .react-select__placeholder {
+  color: #9ca3af; /* Gray placeholder text */
+}
+
+.react-select-container .react-select__single-value {
+  color: #374151; /* Dark gray text for selected value */
+}
+
+.react-select-container .react-select__indicator-separator {
+  background-color: #d1d5db; /* Gray separator line */
+}
+
+.react-select-container .react-select__dropdown-indicator {
+  color: #6b7280; /* Gray dropdown arrow */
+}
+
+.react-select-container .react-select__dropdown-indicator:hover {
+  color: #3b82f6; /* Blue dropdown arrow on hover */
+}

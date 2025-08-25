@@ -1,0 +1,47 @@
+{
+  "English": {
+    "recommendation": "Recommended for you",
+    "explore": "Explore Businesses",
+    "no_recommendations": "No recommendations found.",
+    "companyName": "NearByGo",
+    "companyDescription": "Connecting local businesses with customers efficiently, know about the deals and sellers near you.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "category": "Category",
+    "about": "About",
+    "contactUs": "Contact Us",
+    "subscribe": "Subscribe to our Newsletter",
+    "enterEmail": "Enter your email",
+    "subscribeButton": "Subscribe"
+  },
+  "Hindi": {
+    "recommendation": "आपके लिए सिफारिश",
+    "explore": "व्यवसायों का अन्वेषण करें",
+    "no_recommendations": "कोई सिफारिश नहीं मिली।",
+    "companyName": "नियरबायगो",
+    "companyDescription": "स्थानीय व्यवसायों को ग्राहकों से कुशलता से जोड़ना, आपके आस-पास के सौदों और विक्रेताओं के बारे में जानें।",
+    "quickLinks": "त्वरित लिंक",
+    "home": "मुखपृष्ठ",
+    "category": "श्रेणी",
+    "about": "हमारे बारे में",
+    "contactUs": "संपर्क करें",
+    "subscribe": "हमारे न्यूज़लेटर की सदस्यता लें",
+    "enterEmail": "अपना ईमेल दर्ज करें",
+    "subscribeButton": "सदस्यता लें"
+  },
+  "Gujarati": {
+    "recommendation": "તમારા માટે ભલામણ",
+    "explore": "વ્યવસાયો શોધો",
+    "no_recommendations": "કોઈ ભલામણ મળી નથી.",
+    "companyName": "નિયરબાયગો",
+    "companyDescription": "સ્થાનિક વ્યવસાયો અને ગ્રાહકોને અસરકારક રીતે જોડવા, તમારા આસપાસની ડીલ્સ અને વેચાણકર્તાઓ વિશે જાણો.",
+    "quickLinks": "ઝડપી લિંક્સ",
+    "home": "હોમ",
+    "category": "શ્રેણી",
+    "about": "અમારા વિશે",
+    "contactUs": "સંપર્ક કરો",
+    "subscribe": "અમારા સમાચારપત્રની સભ્યતા લો",
+    "enterEmail": "તમારું ઇમેઇલ દાખલ કરો",
+    "subscribeButton": "સબસ્ક્રાઇબ કરો"
+  }
+}
