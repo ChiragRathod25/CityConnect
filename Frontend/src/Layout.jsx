@@ -5,6 +5,8 @@ import SignUpPageUI from "./Pages/Signup";
 import LoginPageUI from "./Pages/Login";
 import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
 import Navbar from "./components/navbar";
+import Extra from './components/Extra'
+import ModernSellerForm from "./components/BusinessForm";
 
 const Layout = () => {
   const location = useLocation();
@@ -23,7 +25,9 @@ const Layout = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/extra" element={<Extra />} />
         <Route path="/login" element={<LoginPageUI />} />
+        <Route path="/abc" element={<ModernSellerForm />} />
         <Route path="/signup" element={<SignUpPageUI />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
       </Routes>
