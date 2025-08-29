@@ -5,14 +5,17 @@ import SignUpPageUI from "./Pages/Signup";
 import LoginPageUI from "./Pages/Login";
 import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
 import Navbar from "./components/navbar";
-import Extra from './components/Extra'
 import ModernSellerForm from "./components/BusinessForm";
+import UserProfileDashboard from "./components/UserProfile";
+import CategoryPageUi from "./Pages/Category";
+import CityConnectLanding from "./components/LandingPage";
 
 const Layout = () => {
   const location = useLocation();
   const hideNavbarFooter =
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
+    location.pathname === "/start" ||
     location.pathname === "/reset-password";
 
   return (
@@ -25,10 +28,12 @@ const Layout = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/extra" element={<Extra />} />
         <Route path="/login" element={<LoginPageUI />} />
+        <Route path="/category" element={<CategoryPageUi />} />
+        <Route path="/start" element={<CityConnectLanding />} />
         <Route path="/abc" element={<ModernSellerForm />} />
         <Route path="/signup" element={<SignUpPageUI />} />
+        <Route path="/user" element={<UserProfileDashboard />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
       </Routes>
 
