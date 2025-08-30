@@ -1017,11 +1017,8 @@ import {
   ArrowRight, 
   Menu, 
   X, 
-  Wrench, 
   Utensils, 
-  Book, 
   Scissors, 
-  Hammer, 
   Shield,
   Clock,
   CreditCard,
@@ -1031,9 +1028,6 @@ import {
   Instagram,
   Linkedin,
   Play,
-  ChevronLeft,
-  ChevronRight,
-  Navigation,
   Zap,
   HardHat,
   Car,
@@ -1041,6 +1035,7 @@ import {
   PenTool,
   Sparkles
 } from 'lucide-react';
+import  { Vortex } from './Vortex';
 
 // Enhanced Animated List Component
 const AnimatedList = ({ children, delay = 2000, className = "" }) => {
@@ -1409,6 +1404,7 @@ const CityConnectLanding = () => {
     return () => observer.disconnect();
   }, []);
 
+
   const handleSubscribe = (e) => {
     e.preventDefault();
     alert('Thank you for subscribing!');
@@ -1418,6 +1414,8 @@ const CityConnectLanding = () => {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Content */}
+      
+
       <div className="relative z-10">
         {/* Enhanced Navigation */}
         <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-gray-800/50">
@@ -1471,7 +1469,7 @@ const CityConnectLanding = () => {
         </nav>
 
         {/* Enhanced Hero Section with iPhone */}
-        <section className="min-h-screen flex items-center justify-center pt-16">
+        <section className="min-h-screen  flex items-center justify-center pt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="text-center lg:text-left order-2 lg:order-1">
@@ -1485,7 +1483,7 @@ const CityConnectLanding = () => {
                 </h1>
               </div>
               
-              <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="animate-slide-up mx-5 md:mx-0" style={{ animationDelay: '0.2s' }}>
                 <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
                   Discover services and shops around you with CityConnect. Find local businesses, book services, and support your community.
                 </p>
@@ -1493,7 +1491,7 @@ const CityConnectLanding = () => {
 
               {/* Enhanced Search Bar */}
               <div className="relative mb-8 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                <div className="flex items-center bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-4 hover:border-green-500/50 hover:bg-gray-800/70 transition-all duration-300 shadow-2xl">
+                <div className="flex  items-center bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-4 hover:border-green-500/50 hover:bg-gray-800/70 transition-all duration-300 shadow-2xl">
                   <Search className="text-gray-400 mr-3" size={24} />
                   <input
                     type="text"
@@ -1506,7 +1504,7 @@ const CityConnectLanding = () => {
                 </div>
               </div>
 
-              <div className="animate-slide-up" style={{ animationDelay: '0.6s' }}>
+              <div className="animate-slide-up mb-7" style={{ animationDelay: '0.6s' }}>
                 <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-2xl text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30">
                   Get Started <ArrowRight className="inline ml-2" size={20} />
                 </button>
@@ -1515,10 +1513,10 @@ const CityConnectLanding = () => {
 
             {/* Right Content - iPhone Demo with Orbiting Elements */}
             <div className="flex justify-center order-1 lg:order-2">
-              <div className="scale-75 md:scale-90 lg:scale-100">
+              <div className="scale-85 md:scale-90 lg:scale-100">
                 <OrbitingCircles>
                   <iPhone15Mockup>
-                    <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 h-full rounded-[30px] p-4 flex flex-col backdrop-blur-md">
+                    <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10  rounded-[30px] p-4 flex flex-col backdrop-blur-md w-full">
                       <div className="text-white text-lg font-bold mb-4 flex items-center">
                         <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
                           <MapPin size={16} className="text-white" />
@@ -1565,7 +1563,7 @@ const CityConnectLanding = () => {
 
         {/* Enhanced Marquee Section */}
         <section className="py-12 border-y border-gray-800/50 bg-black/60 backdrop-blur-xl">
-          <Marquee speed={60}>
+          <Marquee speed={40}>
             <div className="flex items-center space-x-16 text-gray-400">
               <span className="text-2xl font-bold flex items-center"><span className="text-3xl mr-2">🏪</span> Local Shops</span>
               <span className="text-2xl font-bold flex items-center"><span className="text-3xl mr-2">🔧</span> Quick Services</span>
@@ -1991,7 +1989,7 @@ const CityConnectLanding = () => {
                   </p>
                   
                   <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                    <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30">
+                    <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30">
                       Register as Seller <ArrowRight className="inline ml-2" size={20} />
                     </button>
                     <button className="border border-gray-600 hover:border-green-500 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 hover:bg-green-500/10 backdrop-blur-md">
@@ -2000,7 +1998,7 @@ const CityConnectLanding = () => {
                   </div>
                   
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-700/50">
+                  <div className="grid md:grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-700/50">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-400 mb-2">2,400+</div>
                       <div className="text-gray-400">Active Sellers</div>

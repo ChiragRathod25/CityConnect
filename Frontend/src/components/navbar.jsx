@@ -287,13 +287,13 @@ const Navbar = ({ isAuthenticated = true }) => {
               </div>
 
               {/* Profile or Login */}
-              <div className="flex items-center">
+              <div className="flex  items-center">
                 {isAuthenticated ? (
                   <NavLink to="/profile">
                     <motion.button
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
+                      className="flex items-center sm:space-x-2 px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
                     >
                       <User size={18} />
                       <span className="hidden sm:inline">Profile</span>
@@ -354,7 +354,8 @@ const Navbar = ({ isAuthenticated = true }) => {
                 transition={{ duration: 0.3 }}
                 className="xl:hidden overflow-hidden"
               >
-                <div className="py-8 space-y-6 bg-white backdrop-blur-xl rounded-2xl mt-4 border border-gray-200 shadow-2xl overflow-hidden">
+                <div className="py-8 space-y-6 bg-white backdrop-blur-xl rounded-2xl mt-2
+                sm:mt-4 mb-6 border border-gray-200  overflow-hidden">
                   {/* Mobile Navigation Links */}
                   <div className="space-y-3 px-6">
                     {navItems.map((item, index) => (
