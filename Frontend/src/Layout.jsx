@@ -21,7 +21,7 @@ const Layout = () => {
   return (
     <>
       {!hideNavbarFooter && (
-        <div className="mb-20">
+        <div className="md:mb-20 mb-16">
           <Navbar />
         </div>
       )}
