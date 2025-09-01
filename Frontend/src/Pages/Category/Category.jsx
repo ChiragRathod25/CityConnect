@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Star, TrendingUp, Zap, Award, ChevronDown, ChevronUp, Wrench, ShirtIcon, Hammer, BookOpen, Utensils, Sprout, Bike, Car, Home, Heart, Camera, Gamepad2, Plane, Gift, Users, Tag, MapPin, Clock } from 'lucide-react';
+import { Search, Filter, Star, TrendingUp, Zap, Award, ArrowLeft, MapPin, Clock, Users, Tag, Wrench, ShirtIcon, Hammer, BookOpen, Utensils, Sprout, Gift, ChevronDown, X, Heart, Bookmark } from 'lucide-react';
 
-// Enhanced category data structure with services and products
-const mockCategories = [
+// Constants with updated data including images
+const CATEGORIES_DATA = [
   {
     id: 1,
     name: "Plumber",
@@ -15,10 +15,38 @@ const mockCategories = [
     rating: 4.8,
     color: "from-blue-500 to-cyan-500",
     subcategories: [
-      { id: 101, name: "Emergency Plumbing", description: "24/7 urgent repairs" },
-      { id: 102, name: "Pipe Installation", description: "New pipe fitting services" },
-      { id: 103, name: "Drain Cleaning", description: "Blocked drain solutions" },
-      { id: 104, name: "Water Heater Repair", description: "Geyser maintenance & repair" }
+      { 
+        id: 101, 
+        name: "Emergency Plumbing", 
+        description: "24/7 urgent repairs", 
+        distance: 0.5, 
+        location: "Sayajigunj",
+        image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 102, 
+        name: "Pipe Installation", 
+        description: "New pipe fitting services", 
+        distance: 1.2, 
+        location: "Alkapuri",
+        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 103, 
+        name: "Drain Cleaning", 
+        description: "Blocked drain solutions", 
+        distance: 0.8, 
+        location: "Fatehgunj",
+        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 104, 
+        name: "Water Heater Repair", 
+        description: "Geyser maintenance & repair", 
+        distance: 2.1, 
+        location: "Manjalpur",
+        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop"
+      }
     ]
   },
   {
@@ -32,9 +60,30 @@ const mockCategories = [
     rating: 4.3,
     color: "from-amber-500 to-orange-500",
     subcategories: [
-      { id: 201, name: "Shoe Repair", description: "Fix worn out shoes" },
-      { id: 202, name: "Leather Polishing", description: "Professional shoe shine" },
-      { id: 203, name: "Sole Replacement", description: "Replace old soles" }
+      { 
+        id: 201, 
+        name: "Shoe Repair", 
+        description: "Fix worn out shoes", 
+        distance: 0.3, 
+        location: "RC Dutt Road",
+        image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 202, 
+        name: "Leather Polishing", 
+        description: "Professional shoe shine", 
+        distance: 1.5, 
+        location: "Karelibaug",
+        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 203, 
+        name: "Sole Replacement", 
+        description: "Replace old soles", 
+        distance: 0.9, 
+        location: "Gotri",
+        image: "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop"
+      }
     ]
   },
   {
@@ -46,11 +95,32 @@ const mockCategories = [
     badge: "Trending",
     views: 324,
     rating: 4.5,
-    color: "from-gray-600 to-gray-800",
+    color: "from-slate-600 to-slate-800",
     subcategories: [
-      { id: 301, name: "Tool Making", description: "Custom tool forging" },
-      { id: 302, name: "Gate Repair", description: "Metal gate services" },
-      { id: 303, name: "Key Making", description: "Duplicate keys & locks" }
+      { 
+        id: 301, 
+        name: "Tool Making", 
+        description: "Custom tool forging", 
+        distance: 1.8, 
+        location: "Waghodia Road",
+        image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 302, 
+        name: "Gate Repair", 
+        description: "Metal gate services", 
+        distance: 0.7, 
+        location: "Nizampura",
+        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 303, 
+        name: "Key Making", 
+        description: "Duplicate keys & locks", 
+        distance: 1.1, 
+        location: "Subhanpura",
+        image: "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop"
+      }
     ]
   },
   {
@@ -62,12 +132,40 @@ const mockCategories = [
     badge: "New",
     views: 1245,
     rating: 4.7,
-    color: "from-green-500 to-emerald-500",
+    color: "from-emerald-500 to-teal-500",
     subcategories: [
-      { id: 401, name: "Academic Books", description: "Educational textbooks" },
-      { id: 402, name: "Fiction & Novels", description: "Stories and literature" },
-      { id: 403, name: "Stationery", description: "Pens, notebooks & supplies" },
-      { id: 404, name: "Children's Books", description: "Books for kids" }
+      { 
+        id: 401, 
+        name: "Academic Books", 
+        description: "Educational textbooks", 
+        distance: 0.6, 
+        location: "University Road",
+        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 402, 
+        name: "Fiction & Novels", 
+        description: "Stories and literature", 
+        distance: 2.3, 
+        location: "Productivity Road",
+        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 403, 
+        name: "Stationery", 
+        description: "Pens, notebooks & supplies", 
+        distance: 0.4, 
+        location: "Sayajigunj",
+        image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 404, 
+        name: "Children's Books", 
+        description: "Books for kids", 
+        distance: 1.6, 
+        location: "Sama",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
+      }
     ]
   },
   {
@@ -79,14 +177,56 @@ const mockCategories = [
     badge: "Popular",
     views: 3456,
     rating: 4.6,
-    color: "from-red-500 to-pink-500",
+    color: "from-rose-500 to-pink-500",
     subcategories: [
-      { id: 501, name: "Veg Restaurant", description: "Pure vegetarian cuisine" },
-      { id: 502, name: "Non-Veg Restaurant", description: "Meat and seafood dishes" },
-      { id: 503, name: "Fast Food", description: "Quick bites and snacks" },
-      { id: 504, name: "Bakery & Cafe", description: "Fresh baked goods & coffee" },
-      { id: 505, name: "Street Food", description: "Local street delicacies" },
-      { id: 506, name: "Fine Dining", description: "Premium restaurant experience" }
+      { 
+        id: 501, 
+        name: "Veg Restaurant", 
+        description: "Pure vegetarian cuisine", 
+        distance: 0.2, 
+        location: "Alkapuri",
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 502, 
+        name: "Non-Veg Restaurant", 
+        description: "Meat and seafood dishes", 
+        distance: 1.4, 
+        location: "Fatehgunj",
+        image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 503, 
+        name: "Fast Food", 
+        description: "Quick bites and snacks", 
+        distance: 0.8, 
+        location: "Sayajigunj",
+        image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 504, 
+        name: "Bakery & Cafe", 
+        description: "Fresh baked goods & coffee", 
+        distance: 1.0, 
+        location: "RC Dutt Road",
+        image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 505, 
+        name: "Street Food", 
+        description: "Local street delicacies", 
+        distance: 0.5, 
+        location: "Mandvi",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 506, 
+        name: "Fine Dining", 
+        description: "Premium restaurant experience", 
+        distance: 2.5, 
+        location: "VIP Road",
+        image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop"
+      }
     ]
   },
   {
@@ -98,67 +238,45 @@ const mockCategories = [
     badge: "Top Rated",
     views: 876,
     rating: 4.9,
-    color: "from-green-400 to-lime-500",
+    color: "from-lime-500 to-green-500",
     subcategories: [
-      { id: 601, name: "Garden Maintenance", description: "Regular garden care" },
-      { id: 602, name: "Plant Installation", description: "New plant setup" },
-      { id: 603, name: "Lawn Care", description: "Grass cutting & maintenance" },
-      { id: 604, name: "Landscaping", description: "Garden design services" }
-    ]
-  },
-  {
-    id: 7,
-    name: "Rickshawala",
-    type: "service",
-    icon: Bike,
-    description: "Local transportation services",
-    badge: null,
-    views: 654,
-    rating: 4.2,
-    color: "from-yellow-500 to-orange-500",
-    subcategories: [
-      { id: 701, name: "Auto Rickshaw", description: "Three-wheeler transport" },
-      { id: 702, name: "Cycle Rickshaw", description: "Eco-friendly rides" },
-      { id: 703, name: "Goods Transport", description: "Small cargo delivery" }
-    ]
-  },
-  {
-    id: 8,
-    name: "Electronics Shop",
-    type: "product",
-    icon: Camera,
-    description: "Latest gadgets and electronic devices",
-    badge: "Trending",
-    views: 2134,
-    rating: 4.4,
-    color: "from-purple-500 to-indigo-500",
-    subcategories: [
-      { id: 801, name: "Mobile Phones", description: "Smartphones & accessories" },
-      { id: 802, name: "Laptops & Computers", description: "Computing devices" },
-      { id: 803, name: "Home Appliances", description: "Kitchen & household items" },
-      { id: 804, name: "Audio & Video", description: "Entertainment systems" }
-    ]
-  },
-  {
-    id: 9,
-    name: "Salon & Spa",
-    type: "service",
-    icon: Heart,
-    description: "Beauty and wellness services",
-    badge: "Popular",
-    views: 1789,
-    rating: 4.6,
-    color: "from-pink-500 to-rose-500",
-    subcategories: [
-      { id: 901, name: "Hair Cut & Styling", description: "Professional hair services" },
-      { id: 902, name: "Facial & Skincare", description: "Beauty treatments" },
-      { id: 903, name: "Massage Therapy", description: "Relaxation & wellness" },
-      { id: 904, name: "Bridal Services", description: "Wedding preparation" }
+      { 
+        id: 601, 
+        name: "Garden Maintenance", 
+        description: "Regular garden care", 
+        distance: 1.3, 
+        location: "Gotri",
+        image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 602, 
+        name: "Plant Installation", 
+        description: "New plant setup", 
+        distance: 0.9, 
+        location: "Manjalpur",
+        image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 603, 
+        name: "Lawn Care", 
+        description: "Grass cutting & maintenance", 
+        distance: 1.7, 
+        location: "New VIP Road",
+        image: "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop"
+      },
+      { 
+        id: 604, 
+        name: "Landscaping", 
+        description: "Garden design services", 
+        distance: 2.0, 
+        location: "Vasna",
+        image: "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop"
+      }
     ]
   }
 ];
 
-// Enhanced Badge Component
+// Utility Components
 const Badge = ({ type }) => {
   const badgeStyles = {
     'New': 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white',
@@ -178,11 +296,10 @@ const Badge = ({ type }) => {
 
   return (
     <motion.div 
-      className={`absolute -top-2 -right-2 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeStyles[type]} shadow-xl backdrop-blur-sm`}
+      className={`absolute -top-2 -right-2 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeStyles[type]} shadow-xl backdrop-blur-sm z-10`}
       initial={{ scale: 0, rotate: -15 }}
       animate={{ scale: 1, rotate: 0 }}
       transition={{ delay: 0.3, type: "spring", stiffness: 400, damping: 15 }}
-      whileHover={{ scale: 1.1, rotate: 5 }}
     >
       <IconComponent className="w-3 h-3" />
       {type}
@@ -190,196 +307,373 @@ const Badge = ({ type }) => {
   );
 };
 
-// Type Badge Component
 const TypeBadge = ({ type }) => (
-  <div className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+  <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
     type === 'service' 
-      ? 'bg-blue-100 text-blue-800' 
-      : 'bg-green-100 text-green-800'
+      ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
   }`}>
-    {type === 'service' ? '🛠️ Service' : '🏪 Product'}
+    {type === 'service' ? 'Service' : 'Product'}
   </div>
 );
 
-// Subcategory Item Component
-const SubcategoryItem = ({ subcategory, onClick }) => (
-  <motion.div
-    className="bg-gray-50 rounded-xl p-4 cursor-pointer group hover:bg-white hover:shadow-md transition-all duration-300 border border-gray-100"
-    whileHover={{ scale: 1.02, y: -2 }}
-    whileTap={{ scale: 0.98 }}
-    onClick={() => onClick(subcategory)}
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    exit={{ opacity: 0, x: -20 }}
-  >
-    <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-      {subcategory.name}
-    </h4>
-    <p className="text-sm text-gray-600 leading-relaxed">
-      {subcategory.description}
-    </p>
-  </motion.div>
+// Search Input Component
+const SearchInput = ({ 
+  searchTerm, 
+  setSearchTerm, 
+  suggestions, 
+  showSuggestions, 
+  setShowSuggestions, 
+  onSuggestionClick 
+}) => (
+  <div className="relative flex-1 max-w-2xl">
+    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+    <input
+      type="text"
+      placeholder="Search services and products..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      onFocus={() => setShowSuggestions(true)}
+      className="w-full pl-14 pr-12 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 placeholder-slate-400 font-medium transition-all duration-300 shadow-lg"
+    />
+    {searchTerm && (
+      <button
+        onClick={() => {
+          setSearchTerm('');
+          setShowSuggestions(false);
+        }}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+      >
+        <X className="w-5 h-5" />
+      </button>
+    )}
+    
+    {showSuggestions && suggestions.length > 0 && (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl shadow-xl z-50"
+      >
+        {suggestions.map((suggestion, index) => (
+          <button
+            key={index}
+            onClick={() => onSuggestionClick(suggestion)}
+            className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-xl last:rounded-b-xl border-b border-slate-100 last:border-b-0"
+          >
+            <div className="flex items-center gap-3">
+              <Search className="w-4 h-4 text-slate-400" />
+              <span className="text-slate-700 font-medium">{suggestion}</span>
+            </div>
+          </button>
+        ))}
+      </motion.div>
+    )}
+  </div>
 );
 
-// Enhanced Category Card with Expandable Subcategories
-const CategoryCard = ({ category, onClick, isExpanded, onToggleExpand }) => {
+// Filter Dropdown Component
+const FilterDropdown = ({ filterType, setFilterType, className = "" }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const filterOptions = [
+    { value: 'all', label: 'All Badges', icon: Filter },
+    { value: 'popular', label: 'Popular', icon: Users },
+    { value: 'trending', label: 'Trending', icon: TrendingUp },
+    { value: 'new', label: 'New', icon: Zap },
+    { value: 'top-rated', label: 'Top Rated', icon: Award }
+  ];
+  
+  const currentFilter = filterOptions.find(opt => opt.value === filterType);
+  const CurrentIcon = currentFilter?.icon || Filter;
+  
+  return (
+    <div className={`relative ${className}`}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 font-medium text-slate-700 transition-all duration-300 shadow-lg min-w-[180px]"
+      >
+        <CurrentIcon className="w-5 h-5" />
+        <span>{currentFilter?.label}</span>
+        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ml-auto ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden"
+          >
+            {filterOptions.map((option) => {
+              const IconComponent = option.icon;
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setFilterType(option.value);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0 ${
+                    filterType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                  }`}
+                >
+                  <IconComponent className="w-4 h-4" />
+                  <span className="font-medium">{option.label}</span>
+                  {filterType === option.value && (
+                    <div className="w-2 h-2 bg-blue-500 rounded-full ml-auto"></div>
+                  )}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// Hover Effect Card Components
+const HoverEffectCard = ({ category, onClick, className = "" }) => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const IconComponent = category.icon;
-  const hasSubcategories = category.subcategories && category.subcategories.length > 0;
+  
+  const handleFavorite = (e) => {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleSave = (e) => {
+    e.stopPropagation();
+    setIsSaved(!isSaved);
+  };
   
   return (
     <motion.div
-      className="relative bg-white rounded-3xl shadow-lg cursor-pointer overflow-hidden group border border-gray-100 hover:border-gray-300"
-      initial={{ opacity: 0, y: 30 }}
+      className={`relative group block p-2 h-full w-full ${className}`}
+      onMouseEnter={() => setHoveredIndex(0)}
+      onMouseLeave={() => setHoveredIndex(null)}
+      onClick={() => onClick(category)}
+      whileHover={{ y: -5 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ 
-        scale: isExpanded ? 1 : 1.03, 
-        y: isExpanded ? 0 : -8,
-        transition: { type: "spring", stiffness: 300, damping: 20 }
-      }}
-      layout
-      style={{
-        boxShadow: isExpanded ? '0 20px 60px rgba(0,0,0,0.15)' : '0 10px 40px rgba(0,0,0,0.1)'
-      }}
+      transition={{ duration: 0.3 }}
     >
-      {/* Main Card Content */}
-      <div className="p-6" onClick={() => hasSubcategories ? onToggleExpand() : onClick(category)}>
-        {/* Gradient Background on Hover */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 opacity-0 group-hover:opacity-60 transition-opacity duration-500"
-          initial={false}
-        />
-        
-        {/* Badge */}
+      <AnimatePresence>
+        {hoveredIndex === 0 && (
+          <motion.span
+            className="absolute inset-0 h-full w-full bg-white/80 backdrop-blur-sm block rounded-3xl shadow-2xl border border-slate-200"
+            layoutId={`hoverBackground-${category.id}`}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              transition: { duration: 0.15 },
+            }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.15, delay: 0.2 },
+            }}
+          />
+        )}
+      </AnimatePresence>
+      
+      <div className="rounded-3xl h-full w-full p-6 overflow-hidden bg-white/60 backdrop-blur-sm border border-slate-200 group-hover:border-slate-300 relative z-20 shadow-lg">
         {category.badge && <Badge type={category.badge} />}
         
-        {/* Content */}
-        <div className="relative z-10">
-          {/* Header with Icon and Type */}
+        {/* Action buttons */}
+        <div className="absolute top-4 left-4 flex gap-2 z-30">
+          <motion.button
+            onClick={handleFavorite}
+            className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-200 ${
+              isFavorite 
+                ? 'bg-red-500 border-red-500 text-white' 
+                : 'bg-white/80 border-slate-200 text-slate-600 hover:text-red-500'
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          </motion.button>
+          
+          <motion.button
+            onClick={handleSave}
+            className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-200 ${
+              isSaved 
+                ? 'bg-blue-500 border-blue-500 text-white' 
+                : 'bg-white/80 border-slate-200 text-slate-600 hover:text-blue-500'
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+          </motion.button>
+        </div>
+        
+        <div className="relative z-50 mt-8">
           <div className="flex items-start justify-between mb-4">
             <motion.div
-              className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center group-hover:shadow-2xl`}
-              whileHover={{ 
-                rotate: [0, -8, 8, -4, 4, 0],
-                scale: 1.1,
-                transition: { duration: 0.6 }
-              }}
+              className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl`}
+              whileHover={{ rotate: [0, -8, 8, -4, 4, 0], scale: 1.1 }}
+              transition={{ duration: 0.6 }}
             >
               <IconComponent className="w-7 h-7 text-white" />
             </motion.div>
             <TypeBadge type={category.type} />
           </div>
           
-          {/* Title */}
-          <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+          <h3 className="text-slate-900 font-bold text-xl mb-3 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
             {category.name}
           </h3>
           
-          {/* Description */}
-          <p className="text-gray-600 text-sm leading-relaxed mb-4 group-hover:text-gray-700 transition-colors">
+          <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
             {category.description}
           </p>
           
-          {/* Stats Row */}
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-gray-500">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-medium">{category.rating}</span>
-              <span>•</span>
+            <div className="flex items-center gap-2 text-slate-500">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <span className="font-medium text-slate-700">{category.rating}</span>
+              <span className="text-slate-400">•</span>
               <span>{category.views.toLocaleString()} views</span>
             </div>
             
-            {/* Expand Button */}
-            {hasSubcategories && (
-              <motion.div
-                className="flex items-center gap-1 text-blue-600 font-medium"
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-              >
-                <span className="text-xs">{category.subcategories.length} options</span>
-                <ChevronDown className="w-4 h-4" />
-              </motion.div>
+            {category.subcategories && (
+              <div className="text-blue-600 font-medium text-xs bg-blue-50 px-2 py-1 rounded-full">
+                {category.subcategories.length} options
+              </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Expandable Subcategories Section */}
-      <AnimatePresence>
-        {isExpanded && hasSubcategories && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="border-t border-gray-200 bg-gray-50 overflow-hidden"
-          >
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Tag className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-semibold text-gray-700">
-                  Available Options ({category.subcategories.length})
-                </span>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-3">
-                <AnimatePresence>
-                  {category.subcategories.map((subcategory, index) => (
-                    <motion.div
-                      key={subcategory.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <SubcategoryItem
-                        subcategory={subcategory}
-                        onClick={(sub) => onClick(category, sub)}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 };
 
-// Loading Skeleton Component
+// Subcategory Card Component
+const SubcategoryCard = ({ subcategory, onClick }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleFavorite = (e) => {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleSave = (e) => {
+    e.stopPropagation();
+    setIsSaved(!isSaved);
+  };
+
+  return (
+    <motion.div
+      className="bg-white/70 backdrop-blur-sm rounded-2xl cursor-pointer group border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
+      whileHover={{ scale: 1.02, y: -3 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => onClick(subcategory)}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={subcategory.image}
+          alt={subcategory.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        
+        {/* Action buttons overlay */}
+        <div className="absolute top-3 right-3 flex gap-2">
+          <motion.button
+            onClick={handleFavorite}
+            className={`p-2 rounded-full backdrop-blur-md border transition-all duration-200 ${
+              isFavorite 
+                ? 'bg-red-500 border-red-500 text-white' 
+                : 'bg-white/90 border-white/50 text-slate-600 hover:text-red-500'
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          </motion.button>
+          
+          <motion.button
+            onClick={handleSave}
+            className={`p-2 rounded-full backdrop-blur-md border transition-all duration-200 ${
+              isSaved 
+                ? 'bg-blue-500 border-blue-500 text-white' 
+                : 'bg-white/90 border-white/50 text-slate-600 hover:text-blue-500'
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+          </motion.button>
+        </div>
+
+        {/* Distance badge */}
+        <div className="absolute bottom-3 left-3">
+          <div className="flex items-center gap-1 text-white text-sm bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
+            <MapPin className="w-3 h-3" />
+            <span className="font-medium">{subcategory.distance}km</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-3">
+          <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors leading-tight">
+            {subcategory.name}
+          </h4>
+        </div>
+        
+        <p className="text-slate-600 text-sm leading-relaxed mb-4">
+          {subcategory.description}
+        </p>
+        
+        <div className="flex items-center text-sm text-slate-500">
+          <MapPin className="w-4 h-4 mr-2" />
+          <span className="font-medium">{subcategory.location}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Loading Skeleton
 const CategorySkeleton = () => (
-  <div className="bg-white rounded-3xl p-6 shadow-lg animate-pulse border border-gray-200">
+  <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg animate-pulse border border-slate-200">
     <div className="flex justify-between mb-4">
-      <div className="w-14 h-14 bg-gray-300 rounded-2xl"></div>
-      <div className="w-20 h-6 bg-gray-200 rounded-lg"></div>
+      <div className="w-14 h-14 bg-slate-300 rounded-2xl"></div>
+      <div className="w-20 h-6 bg-slate-200 rounded-lg"></div>
     </div>
-    <div className="h-6 bg-gray-300 rounded-lg mb-3 w-3/4"></div>
-    <div className="h-4 bg-gray-200 rounded-lg w-full mb-2"></div>
-    <div className="h-4 bg-gray-200 rounded-lg w-2/3 mb-4"></div>
+    <div className="h-6 bg-slate-300 rounded-lg mb-3 w-3/4"></div>
+    <div className="h-4 bg-slate-200 rounded-lg w-full mb-2"></div>
+    <div className="h-4 bg-slate-200 rounded-lg w-2/3 mb-4"></div>
     <div className="flex justify-between">
-      <div className="h-4 bg-gray-200 rounded-lg w-24"></div>
-      <div className="h-4 bg-gray-200 rounded-lg w-16"></div>
+      <div className="h-4 bg-slate-200 rounded-lg w-24"></div>
+      <div className="h-4 bg-slate-200 rounded-lg w-16"></div>
     </div>
   </div>
 );
 
-// Main Component
-const CategoryPage = () => {
+// Main Components
+const CategoriesPage = ({ onCategoryClick }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [categoryType, setCategoryType] = useState('all'); // all, service, product
+  const [categoryType, setCategoryType] = useState('all');
   const [categories, setCategories] = useState([]);
-  const [expandedCards, setExpandedCards] = useState(new Set());
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Simulate loading
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCategories(mockCategories);
+      setCategories(CATEGORIES_DATA);
       setLoading(false);
-    }, 1800);
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -389,12 +683,10 @@ const CategoryPage = () => {
       const newSuggestions = new Set();
       
       categories.forEach(category => {
-        // Add category names
         if (category.name.toLowerCase().includes(searchTerm.toLowerCase())) {
           newSuggestions.add(category.name);
         }
         
-        // Add subcategory names
         category.subcategories?.forEach(sub => {
           if (sub.name.toLowerCase().includes(searchTerm.toLowerCase())) {
             newSuggestions.add(sub.name);
@@ -410,29 +702,21 @@ const CategoryPage = () => {
     }
   }, [searchTerm, categories]);
 
-  // Enhanced filtering logic
   const filteredCategories = useMemo(() => {
     let filtered = categories;
 
-    // Apply category type filter (service/product)
     if (categoryType !== 'all') {
       filtered = filtered.filter(cat => cat.type === categoryType);
     }
 
-    // Apply search filter (search in categories and subcategories)
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase().trim();
       filtered = filtered.filter(category =>
         category.name.toLowerCase().includes(query) ||
-        category.description.toLowerCase().includes(query) ||
-        category.subcategories?.some(sub => 
-          sub.name.toLowerCase().includes(query) ||
-          sub.description.toLowerCase().includes(query)
-        )
+        category.description.toLowerCase().includes(query)
       );
     }
 
-    // Apply badge filter
     switch (filterType) {
       case 'popular':
         filtered = filtered.filter(cat => cat.badge === 'Popular');
@@ -453,81 +737,59 @@ const CategoryPage = () => {
     return filtered.sort((a, b) => b.views - a.views);
   }, [categories, searchTerm, filterType, categoryType]);
 
-  const handleCategoryClick = (category, subcategory = null) => {
-    if (subcategory) {
-      console.log(`Navigating to ${category.name} -> ${subcategory.name}`);
-    } else {
-      console.log(`Navigating to ${category.name}`);
-    }
-  };
-
-  const handleToggleExpand = (categoryId) => {
-    setExpandedCards(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(categoryId)) {
-        newSet.delete(categoryId);
-      } else {
-        newSet.add(categoryId);
-      }
-      return newSet;
-    });
-  };
+  const serviceCount = categories.filter(cat => cat.type === 'service').length;
+  const productCount = categories.filter(cat => cat.type === 'product').length;
 
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion);
     setShowSuggestions(false);
   };
 
-  // Stats
-  const serviceCount = categories.filter(cat => cat.type === 'service').length;
-  const productCount = categories.filter(cat => cat.type === 'product').length;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100">
-      {/* Enhanced Header */}
-      <div className="bg-white shadow-lg  top-0 z-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen w-full relative font-inter">
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%)",
+        }}
+      />
+      
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <h1 className="text-5xl font-black  mb-4 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-              Discover Services & Products
+            <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent leading-tight">
+              Discover Services
             </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
-              Find the best local services and products with expandable subcategories
+            <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+              Find the best local services and products in your area
             </p>
             
-            {/* Stats */}
-            <div className="flex justify-center gap-6 mt-6">
+            <div className="flex justify-center gap-8 mt-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{serviceCount}</div>
-                <div className="text-sm text-gray-500">Services</div>
+                <div className="text-3xl font-bold text-blue-600">{serviceCount}</div>
+                <div className="text-sm text-slate-500 font-medium">Services</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{productCount}</div>
-                <div className="text-sm text-gray-500">Products</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">
-                  {categories.reduce((sum, cat) => sum + (cat.subcategories?.length || 0), 0)}
-                </div>
-                <div className="text-sm text-gray-500">Options</div>
+                <div className="text-3xl font-bold text-emerald-600">{productCount}</div>
+                <div className="text-sm text-slate-500 font-medium">Products</div>
               </div>
             </div>
           </motion.div>
 
-          {/* Enhanced Filter Controls */}
+          {/* Filters */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-6"
           >
-            {/* Category Type Tabs */}
             <div className="flex justify-center">
-              <div className="bg-gray-100 p-1 rounded-2xl flex gap-1">
+              <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-slate-200">
                 {[
                   { key: 'all', label: 'All Categories', icon: Users },
                   { key: 'service', label: 'Services', icon: Wrench },
@@ -538,69 +800,36 @@ const CategoryPage = () => {
                     onClick={() => setCategoryType(key)}
                     className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 ${
                       categoryType === key
-                        ? 'bg-white text-gray-900 shadow-lg'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <Icon className="w-4 h-4" />
-                    {label}
+                    <span className="hidden sm:inline">{label}</span>
                   </motion.button>
                 ))}
               </div>
             </div>
 
-            {/* Search and Filter Row */}
-            <div className="flex flex-col sm:flex-row gap-6 max-w-3xl mx-auto">
-              {/* Search Bar with Suggestions */}
-              <div className="relative flex-1">
-                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
-                <input
-                  type="text"
-                  placeholder="Search categories and subcategories..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full pl-14 pr-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-inner"
-                />
-                
-                {/* Enhanced Search Suggestions */}
-                <AnimatePresence>
-                  {showSuggestions && suggestions.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-2xl z-20 overflow-hidden"
-                    >
-                      {suggestions.map((suggestion, index) => (
-                        <motion.button
-                          key={suggestion}
-                          className="w-full text-left px-6 py-3 hover:bg-gray-50 transition-colors text-gray-700 capitalize border-b border-gray-100 last:border-b-0"
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.05)" }}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                        >
-                          <Search className="w-4 h-4 inline mr-3 text-gray-400" />
-                          {suggestion}
-                        </motion.button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                suggestions={suggestions}
+                showSuggestions={showSuggestions}
+                setShowSuggestions={setShowSuggestions}
+                onSuggestionClick={handleSuggestionClick}
+              />
 
-              {/* Badge Filter Dropdown */}
-              <motion.div className="relative">
-                <Filter className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
+              {/* Mobile Filter Select */}
+              <div className="relative lg:hidden">
+                <Filter className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="pl-14 pr-10 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 appearance-none cursor-pointer min-w-[200px] font-medium text-gray-700 shadow-inner transition-all duration-300"
+                  className="pl-14 pr-10 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 appearance-none cursor-pointer min-w-[200px] font-medium text-slate-700 transition-all duration-300"
                 >
                   <option value="all">All Badges</option>
                   <option value="popular">Popular</option>
@@ -608,43 +837,36 @@ const CategoryPage = () => {
                   <option value="new">New</option>
                   <option value="top-rated">Top Rated</option>
                 </select>
-              </motion.div>
+              </div>
+
+              {/* Desktop/Tablet Dropdown */}
+              <FilterDropdown
+                filterType={filterType}
+                setFilterType={setFilterType}
+                className="hidden lg:block"
+              />
             </div>
           </motion.div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Results Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <motion.h2 className="text-3xl font-bold text-gray-900 mb-8">
+        {/* Categories Grid */}
+        <div className="max-w-7xl mx-auto px-4 pb-12">
+          <motion.h2 
+            className="text-3xl font-bold text-slate-900 mb-8 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             {searchTerm || filterType !== 'all' || categoryType !== 'all' ? (
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Filtered Results
+                Filtered Results ({filteredCategories.length})
               </span>
             ) : (
-              'All Categories'
-            )}
-            {!loading && (
-              <motion.span 
-                className="ml-4 text-lg font-normal text-gray-500 bg-gray-100 px-4 py-2 rounded-full"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                {filteredCategories.length} found
-              </motion.span>
+              `All Categories (${filteredCategories.length})`
             )}
           </motion.h2>
 
-          {/* Loading Skeletons */}
           {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }, (_, i) => (
                 <motion.div
                   key={i}
@@ -658,56 +880,39 @@ const CategoryPage = () => {
             </div>
           )}
 
-          {/* Categories Grid with Expandable Cards */}
           {!loading && (
             <AnimatePresence mode="wait">
               {filteredCategories.length > 0 ? (
-                <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <AnimatePresence>
-                    {filteredCategories.map((category, index) => (
-                      <motion.div
-                        key={category.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                        transition={{ 
-                          delay: index * 0.1,
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 25
-                        }}
-                      >
-                        <CategoryCard
-                          category={category}
-                          onClick={handleCategoryClick}
-                          isExpanded={expandedCards.has(category.id)}
-                          onToggleExpand={() => handleToggleExpand(category.id)}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </motion.div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCategories.map((category, index) => (
+                    <motion.div
+                      key={category.id}
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <HoverEffectCard
+                        category={category}
+                        onClick={onCategoryClick}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-20 bg-white rounded-3xl shadow-lg border border-gray-200"
+                  className="text-center py-20 bg-white/60 backdrop-blur-sm rounded-3xl shadow-lg border border-slate-200"
                 >
-                  <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                    <Search className="w-16 h-16 text-gray-400" />
+                  <div className="w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <Search className="w-16 h-16 text-slate-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-4">
                     No categories found
                   </h3>
-                  <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                    Try adjusting your search terms, category type, or filter criteria to find what you're looking for
+                  <p className="text-slate-500 mb-8 max-w-md mx-auto">
+                    Try adjusting your search terms or filter criteria
                   </p>
                   <motion.button
                     onClick={() => {
@@ -725,182 +930,236 @@ const CategoryPage = () => {
               )}
             </AnimatePresence>
           )}
-        </motion.section>
-
-        {/* Quick Actions Section */}
-        {!loading && categories.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8"
-          >
-            {/* Popular Services Card */}
-            <motion.div
-              className="bg-white rounded-3xl p-8 shadow-xl border border-gray-200"
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <Wrench className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">Popular Services</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {categories
-                  .filter(cat => cat.type === 'service' && cat.views > 800)
-                  .slice(0, 3)
-                  .map(service => (
-                    <motion.div
-                      key={service.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl cursor-pointer"
-                      whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.05)", x: 5 }}
-                      onClick={() => handleCategoryClick(service)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <service.icon className="w-5 h-5 text-blue-600" />
-                        <div>
-                          <div className="font-semibold text-gray-900">{service.name}</div>
-                          <div className="text-sm text-gray-500">{service.views.toLocaleString()} views</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-medium text-gray-700">{service.rating}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-              </div>
-            </motion.div>
-
-            {/* Top Products Card */}
-            <motion.div
-              className="bg-white rounded-3xl p-8 shadow-xl border border-gray-200"
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                  <Gift className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">Top Products</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {categories
-                  .filter(cat => cat.type === 'product')
-                  .sort((a, b) => b.views - a.views)
-                  .slice(0, 3)
-                  .map(product => (
-                    <motion.div
-                      key={product.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl cursor-pointer"
-                      whileHover={{ backgroundColor: "rgba(34, 197, 94, 0.05)", x: 5 }}
-                      onClick={() => handleCategoryClick(product)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <product.icon className="w-5 h-5 text-green-600" />
-                        <div>
-                          <div className="font-semibold text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500">
-                            {product.subcategories?.length || 0} options
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-medium text-gray-700">{product.rating}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* Enhanced Progress & Tips Section */}
-        {!loading && categories.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="mt-16 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 shadow-xl border border-gray-200"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Exploration Progress */}
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900">Category Explorer</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Progress</span>
-                    <span className="text-sm font-semibold text-purple-600">
-                      {expandedCards.size}/{categories.length} explored
-                    </span>
-                  </div>
-                  
-                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                    <motion.div
-                      className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 h-3 rounded-full shadow-inner"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(expandedCards.size / categories.length) * 100}%` }}
-                      transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                    />
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Expand category cards to explore subcategories and unlock detailed options! 
-                    <span className="font-semibold text-purple-600"> Click on cards with subcategories to discover more.</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Tips & Instructions */}
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900">How It Works</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                    <div>
-                      <div className="font-semibold text-gray-900 mb-1">Browse Categories</div>
-                      <div className="text-sm text-gray-600">Filter by Services or Products using the tabs above</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                    <div>
-                      <div className="font-semibold text-gray-900 mb-1">Expand Options</div>
-                      <div className="text-sm text-gray-600">Click cards with subcategories to see detailed options</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">3</div>
-                    <div>
-                      <div className="font-semibold text-gray-900 mb-1">Search & Filter</div>
-                      <div className="text-sm text-gray-600">Use real-time search to find specific services or products</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default CategoryPage;
+const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
+  const [sortBy, setSortBy] = useState('distance');
+  const IconComponent = category.icon;
+
+  const sortedSubcategories = useMemo(() => {
+    if (!category.subcategories) return [];
+    
+    const sorted = [...category.subcategories].sort((a, b) => {
+      switch (sortBy) {
+        case 'distance':
+          return a.distance - b.distance;
+        case 'name':
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+    
+    return sorted;
+  }, [category.subcategories, sortBy]);
+
+  return (
+    <div className="min-h-screen w-full relative font-inter">
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%)",
+        }}
+      />
+      
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Header with Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4 mb-8"
+          >
+            <motion.button
+              onClick={onBack}
+              className="flex items-center gap-2 px-4 py-2 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-xl text-slate-700 font-medium hover:bg-white hover:shadow-lg transition-all duration-300"
+              whileHover={{ scale: 1.05, x: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Categories
+            </motion.button>
+          </motion.div>
+
+          {/* Category Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200"
+          >
+            <div className="flex justify-center mb-6">
+              <motion.div
+                className={`w-20 h-20 bg-gradient-to-br ${category.color} rounded-3xl flex items-center justify-center shadow-xl`}
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <IconComponent className="w-10 h-10 text-white" />
+              </motion.div>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              {category.name}
+            </h1>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto mb-6">
+              {category.description}
+            </p>
+            
+            <div className="flex justify-center gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{sortedSubcategories.length}</div>
+                <div className="text-sm text-slate-500 font-medium">Available Options</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-amber-600">{category.rating}</div>
+                <div className="text-sm text-slate-500 font-medium">Rating</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Sort Controls */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-center mb-8"
+          >
+            <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-slate-200">
+              <motion.button
+                onClick={() => setSortBy('distance')}
+                className={`px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 text-sm ${
+                  sortBy === 'distance'
+                    ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <MapPin className="w-4 h-4" />
+                By Distance
+              </motion.button>
+              <motion.button
+                onClick={() => setSortBy('name')}
+                className={`px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 text-sm ${
+                  sortBy === 'name'
+                    ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Tag className="w-4 h-4" />
+                By Name
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Subcategories Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <AnimatePresence mode="wait">
+              {sortedSubcategories.map((subcategory, index) => (
+                <motion.div
+                  key={subcategory.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <SubcategoryCard
+                    subcategory={subcategory}
+                    onClick={onSubcategoryClick}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Distance Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-12 bg-blue-50/70 backdrop-blur-sm rounded-2xl p-6 border border-blue-200"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Clock className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Distance Information</h3>
+            </div>
+            <p className="text-slate-600 leading-relaxed">
+              Distances are calculated from your current location in Vadodara, Gujarat. 
+              The closest options are shown first to help you find the most convenient services.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main App Component
+const CategoryApp = () => {
+  const [currentPage, setCurrentPage] = useState('categories');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage('subcategory');
+  };
+
+  const handleBackToCategories = () => {
+    setCurrentPage('categories');
+    setSelectedCategory(null);
+  };
+
+  const handleSubcategoryClick = (subcategory) => {
+    console.log('Selected subcategory:', subcategory);
+    // Here you would typically navigate to a detail page or perform some action
+    alert(`You selected: ${subcategory.name} at ${subcategory.location}`);
+  };
+
+  return (
+    <div className="font-inter antialiased">
+      <AnimatePresence mode="wait">
+        {currentPage === 'categories' && (
+          <motion.div
+            key="categories"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+          >
+            <CategoriesPage onCategoryClick={handleCategoryClick} />
+          </motion.div>
+        )}
+        
+        {currentPage === 'subcategory' && selectedCategory && (
+          <motion.div
+            key="subcategory"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SubcategoryPage
+              category={selectedCategory}
+              onBack={handleBackToCategories}
+              onSubcategoryClick={handleSubcategoryClick}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default CategoryApp;
