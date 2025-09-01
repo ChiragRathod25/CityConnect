@@ -33,7 +33,7 @@ const Navbar = ({ isAuthenticated = true }) => {
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 250);
     };
 
     window.addEventListener("scroll", handleScroll);

@@ -4,11 +4,11 @@ import Footer from "./components/Footer";
 import SignUpPageUI from "./Pages/Signup";
 import LoginPageUI from "./Pages/Login";
 import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import ModernSellerForm from "./components/BusinessForm";
-import UserProfileDashboard from "./components/UserProfile";
 import CategoryPageUi from "./Pages/Category";
 import CityConnectLanding from "./components/LandingPage";
+import ProfilePageUI from "./Pages/Profile";
 
 const Layout = () => {
   const location = useLocation();
@@ -33,7 +33,7 @@ const Layout = () => {
         <Route path="/start" element={<CityConnectLanding />} />
         <Route path="/abc" element={<ModernSellerForm />} />
         <Route path="/signup" element={<SignUpPageUI />} />
-        <Route path="/user" element={<UserProfileDashboard />} />
+        <Route path="/profile" element={<ProfilePageUI />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
       </Routes>
 
