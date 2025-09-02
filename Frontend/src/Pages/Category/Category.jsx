@@ -1,8 +1,109 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Star, TrendingUp, Zap, Award, ArrowLeft, MapPin, Clock, Users, Tag, Wrench, ShirtIcon, Hammer, BookOpen, Utensils, Sprout, Gift, ChevronDown, X, Heart, Bookmark } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  Filter,
+  Star,
+  TrendingUp,
+  Zap,
+  Award,
+  ArrowLeft,
+  MapPin,
+  Clock,
+  Users,
+  Tag,
+  Wrench,
+  ShirtIcon,
+  Hammer,
+  BookOpen,
+  Utensils,
+  Sprout,
+  Gift,
+  ChevronDown,
+  X,
+  Heart,
+  Bookmark,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react";
 
-// Constants with updated data including images
+// Color palette from the image
+const COLOR_PALETTE = {
+  lightBg: "#f8fafc",
+  darkText: "#1f2937",
+  black: "#000000",
+  gray100: "#f3f4f6",
+  gray200: "#e5e7eb",
+  gray300: "#d1d5db",
+  gray400: "#9ca3af",
+  gray500: "#6b7280",
+  gray600: "#4b5563",
+  gray700: "#374151",
+  gray800: "#1f2937",
+  gray900: "#111827",
+  blue50: "#eff6ff",
+  blue100: "#dbeafe",
+  blue500: "#3b82f6",
+  blue600: "#2563eb",
+  blue700: "#1d4ed8",
+  emerald50: "#ecfdf5",
+  emerald100: "#d1fae5",
+  emerald500: "#10b981",
+  emerald600: "#059669",
+  emerald700: "#047857",
+  amber50: "#fffbeb",
+  amber100: "#fef3c7",
+  amber500: "#f59e0b",
+  amber600: "#d97706",
+  amber700: "#b45309",
+  rose50: "#fff1f2",
+  rose100: "#ffe4e6",
+  rose500: "#f43f5e",
+  rose600: "#e11d48",
+  rose700: "#be123c",
+  slate50: "#f8fafc",
+  slate100: "#f1f5f9",
+  slate500: "#64748b",
+  slate600: "#475569",
+  slate700: "#334155",
+  lime50: "#f7fee7",
+  lime100: "#ecfccb",
+  lime500: "#84cc16",
+  lime600: "#65a30d",
+  lime700: "#4d7c0f",
+  purple50: "#faf5ff",
+  purple100: "#f3e8ff",
+  purple500: "#a855f7",
+  purple600: "#9333ea",
+  purple700: "#7e22ce",
+  teal50: "#f0fdfa",
+  teal100: "#ccfbf1",
+  teal500: "#14b8a6",
+  teal600: "#0d9488",
+  teal700: "#0f766e",
+  cyan50: "#ecfeff",
+  cyan100: "#cffafe",
+  cyan500: "#06b6d4",
+  cyan600: "#0891b2",
+  cyan700: "#0e7490",
+  orange50: "#fff7ed",
+  orange100: "#ffedd5",
+  orange500: "#f97316",
+  orange600: "#ea580c",
+  orange700: "#c2410c",
+  red50: "#fef2f2",
+  red100: "#fee2e2",
+  red500: "#ef4444",
+  red600: "#dc2626",
+  red700: "#b91c1c",
+  indigo50: "#eef2ff",
+  indigo100: "#e0e7ff",
+  indigo500: "#6366f1",
+  indigo600: "#4f46e5",
+  indigo700: "#4338ca",
+  steelBlue: "rgba(70, 130, 180, 0.5)",
+};
+
 const CATEGORIES_DATA = [
   {
     id: 1,
@@ -13,41 +114,61 @@ const CATEGORIES_DATA = [
     badge: "Popular",
     views: 1890,
     rating: 4.8,
-    color: "from-blue-500 to-cyan-500",
+    color: COLOR_PALETTE.gray700,
     subcategories: [
-      { 
-        id: 101, 
-        name: "Emergency Plumbing", 
-        description: "24/7 urgent repairs", 
-        distance: 0.5, 
+      {
+        id: 101,
+        name: "Emergency Plumbing",
+        description: "24/7 urgent repairs",
+        distance: 0.5,
         location: "Sayajigunj",
-        image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&h=300&fit=crop",
+        rating: 4.9,
+        views: 1245,
+        operatingHours: "24/7",
+        serviceType: "Emergency",
       },
-      { 
-        id: 102, 
-        name: "Pipe Installation", 
-        description: "New pipe fitting services", 
-        distance: 1.2, 
+      {
+        id: 102,
+        name: "Pipe Installation",
+        description: "New pipe fitting services",
+        distance: 1.2,
         location: "Alkapuri",
-        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+        rating: 4.7,
+        views: 890,
+        operatingHours: "9:00 AM - 6:00 PM",
+        serviceType: "Installation",
       },
-      { 
-        id: 103, 
-        name: "Drain Cleaning", 
-        description: "Blocked drain solutions", 
-        distance: 0.8, 
+      {
+        id: 103,
+        name: "Drain Cleaning",
+        description: "Blocked drain solutions",
+        distance: 0.8,
         location: "Fatehgunj",
-        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+        rating: 4.6,
+        views: 756,
+        operatingHours: "8:00 AM - 8:00 PM",
+        serviceType: "Cleaning",
       },
-      { 
-        id: 104, 
-        name: "Water Heater Repair", 
-        description: "Geyser maintenance & repair", 
-        distance: 2.1, 
+      {
+        id: 104,
+        name: "Water Heater Repair",
+        description: "Geyser maintenance & repair",
+        distance: 2.1,
         location: "Manjalpur",
-        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+        rating: 4.8,
+        views: 634,
+        operatingHours: "10:00 AM - 7:00 PM",
+        serviceType: "Repair",
+      },
+    ],
   },
   {
     id: 2,
@@ -58,33 +179,48 @@ const CATEGORIES_DATA = [
     badge: null,
     views: 456,
     rating: 4.3,
-    color: "from-amber-500 to-orange-500",
+    color: COLOR_PALETTE.gray800,
     subcategories: [
-      { 
-        id: 201, 
-        name: "Shoe Repair", 
-        description: "Fix worn out shoes", 
-        distance: 0.3, 
+      {
+        id: 201,
+        name: "Shoe Repair",
+        description: "Fix worn out shoes",
+        distance: 0.3,
         location: "RC Dutt Road",
-        image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop",
+        rating: 4.4,
+        views: 234,
+        operatingHours: "9:00 AM - 7:00 PM",
+        serviceType: "Repair",
       },
-      { 
-        id: 202, 
-        name: "Leather Polishing", 
-        description: "Professional shoe shine", 
-        distance: 1.5, 
+      {
+        id: 202,
+        name: "Leather Polishing",
+        description: "Professional shoe shine",
+        distance: 1.5,
         location: "Karelibaug",
-        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop",
+        rating: 4.2,
+        views: 189,
+        operatingHours: "10:00 AM - 6:00 PM",
+        serviceType: "Polishing",
       },
-      { 
-        id: 203, 
-        name: "Sole Replacement", 
-        description: "Replace old soles", 
-        distance: 0.9, 
+      {
+        id: 203,
+        name: "Sole Replacement",
+        description: "Replace old soles",
+        distance: 0.9,
         location: "Gotri",
-        image: "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop",
+        rating: 4.5,
+        views: 167,
+        operatingHours: "8:30 AM - 5:30 PM",
+        serviceType: "Replacement",
+      },
+    ],
   },
   {
     id: 3,
@@ -95,33 +231,48 @@ const CATEGORIES_DATA = [
     badge: "Trending",
     views: 324,
     rating: 4.5,
-    color: "from-slate-600 to-slate-800",
+    color: COLOR_PALETTE.gray900,
     subcategories: [
-      { 
-        id: 301, 
-        name: "Tool Making", 
-        description: "Custom tool forging", 
-        distance: 1.8, 
+      {
+        id: 301,
+        name: "Tool Making",
+        description: "Custom tool forging",
+        distance: 1.8,
         location: "Waghodia Road",
-        image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop",
+        rating: 4.6,
+        views: 198,
+        operatingHours: "8:00 AM - 6:00 PM",
+        serviceType: "Forging",
       },
-      { 
-        id: 302, 
-        name: "Gate Repair", 
-        description: "Metal gate services", 
-        distance: 0.7, 
+      {
+        id: 302,
+        name: "Gate Repair",
+        description: "Metal gate services",
+        distance: 0.7,
         location: "Nizampura",
-        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+        rating: 4.4,
+        views: 145,
+        operatingHours: "9:00 AM - 5:00 PM",
+        serviceType: "Repair",
       },
-      { 
-        id: 303, 
-        name: "Key Making", 
-        description: "Duplicate keys & locks", 
-        distance: 1.1, 
+      {
+        id: 303,
+        name: "Key Making",
+        description: "Duplicate keys & locks",
+        distance: 1.1,
         location: "Subhanpura",
-        image: "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1582897085656-c636d006a246?w=400&h=300&fit=crop",
+        rating: 4.7,
+        views: 210,
+        operatingHours: "10:00 AM - 8:00 PM",
+        serviceType: "Key Making",
+      },
+    ],
   },
   {
     id: 4,
@@ -132,41 +283,61 @@ const CATEGORIES_DATA = [
     badge: "New",
     views: 1245,
     rating: 4.7,
-    color: "from-emerald-500 to-teal-500",
+    color: COLOR_PALETTE.gray600,
     subcategories: [
-      { 
-        id: 401, 
-        name: "Academic Books", 
-        description: "Educational textbooks", 
-        distance: 0.6, 
+      {
+        id: 401,
+        name: "Academic Books",
+        description: "Educational textbooks",
+        distance: 0.6,
         location: "University Road",
-        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop",
+        rating: 4.8,
+        views: 890,
+        operatingHours: "9:00 AM - 9:00 PM",
+        productType: "Academic",
       },
-      { 
-        id: 402, 
-        name: "Fiction & Novels", 
-        description: "Stories and literature", 
-        distance: 2.3, 
+      {
+        id: 402,
+        name: "Fiction & Novels",
+        description: "Stories and literature",
+        distance: 2.3,
         location: "Productivity Road",
-        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop",
+        rating: 4.6,
+        views: 765,
+        operatingHours: "10:00 AM - 8:00 PM",
+        productType: "Fiction",
       },
-      { 
-        id: 403, 
-        name: "Stationery", 
-        description: "Pens, notebooks & supplies", 
-        distance: 0.4, 
+      {
+        id: 403,
+        name: "Stationery",
+        description: "Pens, notebooks & supplies",
+        distance: 0.4,
         location: "Sayajigunj",
-        image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop",
+        rating: 4.5,
+        views: 654,
+        operatingHours: "8:00 AM - 10:00 PM",
+        productType: "Stationery",
       },
-      { 
-        id: 404, 
-        name: "Children's Books", 
-        description: "Books for kids", 
-        distance: 1.6, 
+      {
+        id: 404,
+        name: "Children's Books",
+        description: "Books for kids",
+        distance: 1.6,
         location: "Sama",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+        rating: 4.9,
+        views: 432,
+        operatingHours: "9:30 AM - 7:30 PM",
+        productType: "Children",
+      },
+    ],
   },
   {
     id: 5,
@@ -177,57 +348,93 @@ const CATEGORIES_DATA = [
     badge: "Popular",
     views: 3456,
     rating: 4.6,
-    color: "from-rose-500 to-pink-500",
+    color: COLOR_PALETTE.gray700,
     subcategories: [
-      { 
-        id: 501, 
-        name: "Veg Restaurant", 
-        description: "Pure vegetarian cuisine", 
-        distance: 0.2, 
+      {
+        id: 501,
+        name: "Veg Restaurant",
+        description: "Pure vegetarian cuisine",
+        distance: 0.2,
         location: "Alkapuri",
-        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop",
+        rating: 4.8,
+        views: 2340,
+        operatingHours: "11:00 AM - 11:00 PM",
+        restaurantType: "Vegetarian",
+        cuisine: "Indian",
       },
-      { 
-        id: 502, 
-        name: "Non-Veg Restaurant", 
-        description: "Meat and seafood dishes", 
-        distance: 1.4, 
+      {
+        id: 502,
+        name: "Non-Veg Restaurant",
+        description: "Meat and seafood dishes",
+        distance: 1.4,
         location: "Fatehgunj",
-        image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
+        rating: 4.7,
+        views: 1980,
+        operatingHours: "12:00 PM - 12:00 AM",
+        restaurantType: "Non-Vegetarian",
+        cuisine: "Multi-cuisine",
       },
-      { 
-        id: 503, 
-        name: "Fast Food", 
-        description: "Quick bites and snacks", 
-        distance: 0.8, 
+      {
+        id: 503,
+        name: "Fast Food",
+        description: "Quick bites and snacks",
+        distance: 0.8,
         location: "Sayajigunj",
-        image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop",
+        rating: 4.4,
+        views: 1560,
+        operatingHours: "10:00 AM - 10:00 PM",
+        restaurantType: "Fast Food",
+        cuisine: "International",
       },
-      { 
-        id: 504, 
-        name: "Bakery & Cafe", 
-        description: "Fresh baked goods & coffee", 
-        distance: 1.0, 
+      {
+        id: 504,
+        name: "Bakery & Cafe",
+        description: "Fresh baked goods & coffee",
+        distance: 1.0,
         location: "RC Dutt Road",
-        image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&h=300&fit=crop",
+        rating: 4.6,
+        views: 1230,
+        operatingHours: "8:00 AM - 10:00 PM",
+        restaurantType: "Cafe",
+        cuisine: "Continental",
       },
-      { 
-        id: 505, 
-        name: "Street Food", 
-        description: "Local street delicacies", 
-        distance: 0.5, 
+      {
+        id: 505,
+        name: "Street Food",
+        description: "Local street delicacies",
+        distance: 0.5,
         location: "Mandvi",
-        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop",
+        rating: 4.5,
+        views: 2100,
+        operatingHours: "6:00 PM - 11:00 PM",
+        restaurantType: "Street Food",
+        cuisine: "Local",
       },
-      { 
-        id: 506, 
-        name: "Fine Dining", 
-        description: "Premium restaurant experience", 
-        distance: 2.5, 
+      {
+        id: 506,
+        name: "Fine Dining",
+        description: "Premium restaurant experience",
+        distance: 2.5,
         location: "VIP Road",
-        image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop",
+        rating: 4.9,
+        views: 890,
+        operatingHours: "7:00 PM - 11:30 PM",
+        restaurantType: "Fine Dining",
+        cuisine: "International",
+      },
+    ],
   },
   {
     id: 6,
@@ -238,65 +445,81 @@ const CATEGORIES_DATA = [
     badge: "Top Rated",
     views: 876,
     rating: 4.9,
-    color: "from-lime-500 to-green-500",
+    color: COLOR_PALETTE.gray800,
     subcategories: [
-      { 
-        id: 601, 
-        name: "Garden Maintenance", 
-        description: "Regular garden care", 
-        distance: 1.3, 
+      {
+        id: 601,
+        name: "Garden Maintenance",
+        description: "Regular garden care",
+        distance: 1.3,
         location: "Gotri",
-        image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop",
+        rating: 4.9,
+        views: 540,
+        operatingHours: "7:00 AM - 6:00 PM",
+        serviceType: "Maintenance",
       },
-      { 
-        id: 602, 
-        name: "Plant Installation", 
-        description: "New plant setup", 
-        distance: 0.9, 
+      {
+        id: 602,
+        name: "Plant Installation",
+        description: "New plant setup",
+        distance: 0.9,
         location: "Manjalpur",
-        image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=300&fit=crop",
+        rating: 4.8,
+        views: 390,
+        operatingHours: "8:00 AM - 5:00 PM",
+        serviceType: "Installation",
       },
-      { 
-        id: 603, 
-        name: "Lawn Care", 
-        description: "Grass cutting & maintenance", 
-        distance: 1.7, 
+      {
+        id: 603,
+        name: "Lawn Care",
+        description: "Grass cutting & maintenance",
+        distance: 1.7,
         location: "New VIP Road",
-        image: "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop",
+        rating: 4.7,
+        views: 320,
+        operatingHours: "6:30 AM - 7:00 PM",
+        serviceType: "Lawn Care",
       },
-      { 
-        id: 604, 
-        name: "Landscaping", 
-        description: "Garden design services", 
-        distance: 2.0, 
+      {
+        id: 604,
+        name: "Landscaping",
+        description: "Garden design services",
+        distance: 2.0,
         location: "Vasna",
-        image: "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop"
-      }
-    ]
-  }
+        image:
+          "https://images.unsplash.com/photo-1558904541-efa843a96239?w=400&h=300&fit=crop",
+        rating: 4.8,
+        views: 280,
+        operatingHours: "8:00 AM - 6:00 PM",
+        serviceType: "Landscaping",
+      },
+    ],
+  },
 ];
 
-// Utility Components
 const Badge = ({ type }) => {
   const badgeStyles = {
-    'New': 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white',
-    'Trending': 'bg-gradient-to-r from-orange-500 to-red-500 text-white',
-    'Popular': 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white',
-    'Top Rated': 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+    New: `bg-gradient-to-r from-${COLOR_PALETTE.emerald500} to-${COLOR_PALETTE.teal500} text-white`,
+    Trending: `bg-gradient-to-r from-${COLOR_PALETTE.orange500} to-${COLOR_PALETTE.red500} text-white`,
+    Popular: `bg-gradient-to-r from-${COLOR_PALETTE.blue500} to-${COLOR_PALETTE.cyan500} text-white`,
+    "Top Rated": `bg-gradient-to-r from-${COLOR_PALETTE.purple500} to-${COLOR_PALETTE.pink500} text-white`,
   };
-
   const badgeIcons = {
-    'New': Zap,
-    'Trending': TrendingUp,
-    'Popular': Users,
-    'Top Rated': Award
+    New: Zap,
+    Trending: TrendingUp,
+    Popular: Users,
+    "Top Rated": Award,
   };
-
   const IconComponent = badgeIcons[type];
-
   return (
-    <motion.div 
-      className={`absolute -top-2 -right-2 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeStyles[type]} shadow-xl backdrop-blur-sm z-10`}
+    <motion.div
+      className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${badgeStyles[type]} shadow-xl backdrop-blur-sm z-10`}
       initial={{ scale: 0, rotate: -15 }}
       animate={{ scale: 1, rotate: 0 }}
       transition={{ delay: 0.3, type: "spring", stiffness: 400, damping: 15 }}
@@ -307,62 +530,52 @@ const Badge = ({ type }) => {
   );
 };
 
-const TypeBadge = ({ type }) => (
-  <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-    type === 'service' 
-      ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-  }`}>
-    {type === 'service' ? 'Service' : 'Product'}
-  </div>
-);
 
-// Search Input Component
-const SearchInput = ({ 
-  searchTerm, 
-  setSearchTerm, 
-  suggestions, 
-  showSuggestions, 
-  setShowSuggestions, 
-  onSuggestionClick 
+const SearchInput = ({
+  searchTerm,
+  setSearchTerm,
+  suggestions,
+  showSuggestions,
+  setShowSuggestions,
+  onSuggestionClick,
 }) => (
   <div className="relative flex-1 max-w-2xl">
-    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
     <input
       type="text"
       placeholder="Search services and products..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
       onFocus={() => setShowSuggestions(true)}
-      className="w-full pl-14 pr-12 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 placeholder-slate-400 font-medium transition-all duration-300 shadow-lg"
+      className="w-full pl-14 pr-12 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 placeholder-gray-400 font-medium transition-all duration-300 shadow-lg"
     />
     {searchTerm && (
       <button
         onClick={() => {
-          setSearchTerm('');
+          setSearchTerm("");
           setShowSuggestions(false);
         }}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
       >
         <X className="w-5 h-5" />
       </button>
     )}
-    
+
     {showSuggestions && suggestions.length > 0 && (
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl shadow-xl z-50"
+        className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl shadow-xl z-50"
       >
         {suggestions.map((suggestion, index) => (
           <button
             key={index}
             onClick={() => onSuggestionClick(suggestion)}
-            className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-xl last:rounded-b-xl border-b border-slate-100 last:border-b-0"
+            className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors first:rounded-t-xl last:rounded-b-xl border-b border-gray-100 last:border-b-0"
           >
             <div className="flex items-center gap-3">
-              <Search className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-700 font-medium">{suggestion}</span>
+              <Search className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-700 font-medium">{suggestion}</span>
             </div>
           </button>
         ))}
@@ -371,39 +584,58 @@ const SearchInput = ({
   </div>
 );
 
-// Filter Dropdown Component
+// Filter Dropdown Component with outside click handling
 const FilterDropdown = ({ filterType, setFilterType, className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+  const dropdownRef = useRef(null);
+
   const filterOptions = [
-    { value: 'all', label: 'All Badges', icon: Filter },
-    { value: 'popular', label: 'Popular', icon: Users },
-    { value: 'trending', label: 'Trending', icon: TrendingUp },
-    { value: 'new', label: 'New', icon: Zap },
-    { value: 'top-rated', label: 'Top Rated', icon: Award }
+    { value: "all", label: "All Badges", icon: Filter },
+    { value: "popular", label: "Popular", icon: Users },
+    { value: "trending", label: "Trending", icon: TrendingUp },
+    { value: "new", label: "New", icon: Zap },
+    { value: "top-rated", label: "Top Rated", icon: Award },
   ];
-  
-  const currentFilter = filterOptions.find(opt => opt.value === filterType);
+
+  const currentFilter = filterOptions.find((opt) => opt.value === filterType);
   const CurrentIcon = currentFilter?.icon || Filter;
-  
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 font-medium text-slate-700 transition-all duration-300 shadow-lg min-w-[180px]"
+        className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 font-medium text-gray-700 transition-all duration-300 shadow-lg min-w-[180px]"
       >
         <CurrentIcon className="w-5 h-5" />
         <span>{currentFilter?.label}</span>
-        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ml-auto ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-200 ml-auto ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
       </button>
-      
+
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
           >
             {filterOptions.map((option) => {
               const IconComponent = option.icon;
@@ -414,14 +646,16 @@ const FilterDropdown = ({ filterType, setFilterType, className = "" }) => {
                     setFilterType(option.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0 ${
-                    filterType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                    filterType === option.value
+                      ? "bg-gray-50 text-gray-700"
+                      : "text-gray-700"
                   }`}
                 >
                   <IconComponent className="w-4 h-4" />
                   <span className="font-medium">{option.label}</span>
                   {filterType === option.value && (
-                    <div className="w-2 h-2 bg-blue-500 rounded-full ml-auto"></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full ml-auto"></div>
                   )}
                 </button>
               );
@@ -433,117 +667,250 @@ const FilterDropdown = ({ filterType, setFilterType, className = "" }) => {
   );
 };
 
-// Hover Effect Card Components
+// Pagination Component
+const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      const startPage = Math.max(
+        1,
+        currentPage - Math.floor(maxVisiblePages / 2)
+      );
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+      if (startPage > 1) {
+        pageNumbers.push(1);
+        if (startPage > 2) {
+          pageNumbers.push("...");
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          pageNumbers.push("...");
+        }
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
+  };
+  return (
+    <div className="flex justify-center items-center gap-2 mt-8">
+      <button
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`p-2 rounded-lg ${
+          currentPage === 1
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-gray-100"
+        } transition-colors`}
+      >
+        <ChevronLeftIcon className="w-5 h-5" />
+      </button>
+
+      <div className="flex gap-1">
+        {renderPageNumbers().map((page, index) => (
+          <button
+            key={index}
+            onClick={() => typeof page === "number" && handlePageChange(page)}
+            disabled={page === "..."}
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+              currentPage === page
+                ? "bg-gray-800 text-white"
+                : "hover:bg-gray-100 transition-colors"
+            } ${page === "..." ? "cursor-default" : ""}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`p-2 rounded-lg ${
+          currentPage === totalPages
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-gray-100"
+        } transition-colors`}
+      >
+        <ChevronRightIcon className="w-5 h-5" />
+      </button>
+    </div>
+  );
+};
+
 const HoverEffectCard = ({ category, onClick, className = "" }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const IconComponent = category.icon;
-  
+
   const handleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
   };
-
   const handleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
-  
+
   return (
     <motion.div
-      className={`relative group block p-2 h-full w-full ${className}`}
+      className={`relative group block p-1 h-full w-full ${className}`}
       onMouseEnter={() => setHoveredIndex(0)}
       onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => onClick(category)}
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -8 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <AnimatePresence>
-        {hoveredIndex === 0 && (
-          <motion.span
-            className="absolute inset-0 h-full w-full bg-white/80 backdrop-blur-sm block rounded-3xl shadow-2xl border border-slate-200"
-            layoutId={`hoverBackground-${category.id}`}
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: 1,
-              transition: { duration: 0.15 },
-            }}
-            exit={{
-              opacity: 0,
-              transition: { duration: 0.15, delay: 0.2 },
-            }}
-          />
-        )}
-      </AnimatePresence>
-      
-      <div className="rounded-3xl h-full w-full p-6 overflow-hidden bg-white/60 backdrop-blur-sm border border-slate-200 group-hover:border-slate-300 relative z-20 shadow-lg">
-        {category.badge && <Badge type={category.badge} />}
-        
-        {/* Action buttons */}
-        <div className="absolute top-4 left-4 flex gap-2 z-30">
-          <motion.button
-            onClick={handleFavorite}
-            className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-200 ${
-              isFavorite 
-                ? 'bg-red-500 border-red-500 text-white' 
-                : 'bg-white/80 border-slate-200 text-slate-600 hover:text-red-500'
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-          </motion.button>
-          
-          <motion.button
-            onClick={handleSave}
-            className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-200 ${
-              isSaved 
-                ? 'bg-blue-500 border-blue-500 text-white' 
-                : 'bg-white/80 border-slate-200 text-slate-600 hover:text-blue-500'
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-          </motion.button>
-        </div>
-        
-        <div className="relative z-50 mt-8">
-          <div className="flex items-start justify-between mb-4">
+      <div className="relative h-full w-full overflow-hidden">
+        {/* Modern glassmorphism card */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20"></div>
+
+        {/* Hover overlay */}
+        <AnimatePresence>
+          {hoveredIndex === 0 && (
             <motion.div
-              className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl`}
-              whileHover={{ rotate: [0, -8, 8, -4, 4, 0], scale: 1.1 }}
-              transition={{ duration: 0.6 }}
+              className="absolute inset-0 bg-gradient-to-br from-gray-800/10 to-gray-900/20 backdrop-blur-md rounded-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Card content */}
+        <div className="relative z-10 p-6 h-full flex flex-col">
+          {/* Header section */}
+          <div className="flex items-start justify-between mb-6">
+            {/* Icon with modern styling */}
+            <motion.div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden group"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ duration: 0.3 }}
             >
-              <IconComponent className="w-7 h-7 text-white" />
+              {/* Gradient background for icon */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900"></div>
+              <IconComponent className="w-8 h-8 text-white relative z-10" />
+
+              {/* Shine effect on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0"
+                initial={{ x: -100 }}
+                whileHover={{ x: 100 }}
+                transition={{ duration: 0.6, repeat: Infinity }}
+              />
             </motion.div>
-            <TypeBadge type={category.type} />
-          </div>
-          
-          <h3 className="text-slate-900 font-bold text-xl mb-3 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
-            {category.name}
-          </h3>
-          
-          <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
-            {category.description}
-          </p>
-          
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-slate-500">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="font-medium text-slate-700">{category.rating}</span>
-              <span className="text-slate-400">•</span>
-              <span>{category.views.toLocaleString()} views</span>
+
+            {/* Type badge with modern styling */}
+            <div
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold backdrop-blur-sm border ${
+                category.type === "service"
+                  ? "bg-gray-800/90 text-white border-gray-700/50 shadow-lg"
+                  : "bg-gray-900/90 text-white border-gray-800/50 shadow-lg"
+              }`}
+            >
+              {category.type === "service" ? "Service" : "Product"}
             </div>
-            
+          </div>
+
+          {/* Badge if exists */}
+          {category.badge && (
+            <div className="mb-4">
+              <Badge type={category.badge} />
+            </div>
+          )}
+
+          {/* Title and description */}
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-gray-700 transition-colors">
+              {category.name}
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+              {category.description}
+            </p>
+          </div>
+
+          {/* Stats section */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200/50">
+            <div className="flex items-center gap-3">
+              {/* Rating */}
+              <div className="flex items-center gap-1.5 bg-gray-100/60 px-2.5 py-1 rounded-lg">
+                <Star className="w-4 h-4 text-amber-500 fill-current" />
+                <span className="text-sm font-semibold text-gray-800">
+                  {category.rating}
+                </span>
+              </div>
+
+              {/* Views */}
+              <div className="flex items-center gap-1 text-gray-500">
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {category.views.toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            {/* Options count */}
             {category.subcategories && (
-              <div className="text-blue-600 font-medium text-xs bg-blue-50 px-2 py-1 rounded-full">
+              <div className="bg-gray-800/10 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold border border-gray-200/50">
                 {category.subcategories.length} options
               </div>
             )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-2 mt-4">
+            <motion.button
+              onClick={handleFavorite}
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                isFavorite
+                  ? "bg-red-500 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Heart
+                className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`}
+              />
+              {isFavorite ? "Liked" : "Like"}
+            </motion.button>
+
+            <motion.button
+              onClick={handleSave}
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                isSaved
+                  ? "bg-blue-500 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Bookmark
+                className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
+              />
+              {isSaved ? "Saved" : "Save"}
+            </motion.button>
           </div>
         </div>
       </div>
@@ -551,24 +918,68 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
   );
 };
 
+// Add this helper function outside the SubcategoryPage component
+const parseOperatingHours = (hoursStr) => {
+  if (hoursStr === "24/7") return { open: 0, close: 24 * 60, is24h: true };
+  if (hoursStr === "By Appointment") return { open: null, close: null, is24h: false };
+  
+  try {
+    const [openStr, closeStr] = hoursStr.split(" - ");
+    return {
+      open: parseTimeToMinutes(openStr.trim()),
+      close: parseTimeToMinutes(closeStr.trim()),
+      is24h: false
+    };
+  } catch (e) {
+    console.error("Error parsing hours:", hoursStr, e);
+    return { open: null, close: null, is24h: false };
+  }
+};
+
+const parseTimeToMinutes = (timeStr) => {
+  const match = timeStr.match(/(\d+):?(\d*)\s*(AM|PM)?/i);
+  if (!match) return 0;
+  
+  let hours = parseInt(match[1]);
+  const minutes = match[2] ? parseInt(match[2]) : 0;
+  const period = match[3] ? match[3].toUpperCase() : null;
+  
+  if (period === "PM" && hours !== 12) hours += 12;
+  if (period === "AM" && hours === 12) hours = 0;
+  
+  return hours * 60 + minutes;
+};
+
+const isOpenNow = (hours) => {
+  if (hours.is24h) return true;
+  if (hours.open === null || hours.close === null) return false;
+  
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  
+  // Handle cases where closing time is after midnight
+  if (hours.close < hours.open) {
+    return currentMinutes >= hours.open || currentMinutes <= hours.close;
+  }
+  
+  return currentMinutes >= hours.open && currentMinutes <= hours.close;
+};
+
 // Subcategory Card Component
 const SubcategoryCard = ({ subcategory, onClick }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-
   const handleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
   };
-
   const handleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
-
   return (
     <motion.div
-      className="bg-white/70 backdrop-blur-sm rounded-2xl cursor-pointer group border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
+      className="bg-white/70 backdrop-blur-sm rounded-2xl cursor-pointer group border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
       whileHover={{ scale: 1.02, y: -3 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(subcategory)}
@@ -582,60 +993,84 @@ const SubcategoryCard = ({ subcategory, onClick }) => {
           alt={subcategory.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        
-        {/* Action buttons overlay */}
-        <div className="absolute top-3 right-3 flex gap-2">
-          <motion.button
-            onClick={handleFavorite}
-            className={`p-2 rounded-full backdrop-blur-md border transition-all duration-200 ${
-              isFavorite 
-                ? 'bg-red-500 border-red-500 text-white' 
-                : 'bg-white/90 border-white/50 text-slate-600 hover:text-red-500'
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-          </motion.button>
-          
-          <motion.button
-            onClick={handleSave}
-            className={`p-2 rounded-full backdrop-blur-md border transition-all duration-200 ${
-              isSaved 
-                ? 'bg-blue-500 border-blue-500 text-white' 
-                : 'bg-white/90 border-white/50 text-slate-600 hover:text-blue-500'
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-          </motion.button>
+
+        {/* Type badge */}
+        <div className="absolute top-3 left-3">
+          <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs font-medium">
+            {subcategory.serviceType ||
+              subcategory.productType ||
+              subcategory.restaurantType ||
+              "Service"}
+          </div>
         </div>
 
-        {/* Distance badge */}
-        <div className="absolute bottom-3 left-3">
-          <div className="flex items-center gap-1 text-white text-sm bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
-            <MapPin className="w-3 h-3" />
-            <span className="font-medium">{subcategory.distance}km</span>
+        {/* Rating badge */}
+        <div className="absolute top-3 right-3">
+          <div className="bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium flex items-center gap-1">
+            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+            {subcategory.rating}
           </div>
         </div>
       </div>
-
       {/* Content */}
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
-          <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors leading-tight">
+          <h4 className="font-bold text-gray-900 text-lg group-hover:text-gray-700 transition-colors leading-tight">
             {subcategory.name}
           </h4>
         </div>
-        
-        <p className="text-slate-600 text-sm leading-relaxed mb-4">
+
+        <p className="text-gray-600 text-sm leading-relaxed mb-4">
           {subcategory.description}
         </p>
-        
-        <div className="flex items-center text-sm text-slate-500">
-          <MapPin className="w-4 h-4 mr-2" />
-          <span className="font-medium">{subcategory.location}</span>
+
+        <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            <span className="font-medium">{subcategory.location}</span>
+            <span className="text-gray-400">•</span>
+            <span className="font-medium">{subcategory.distance}km</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-gray-400">
+          <div className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>{subcategory.operatingHours}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            <span>{subcategory.views} views</span>
+          </div>
+        </div>
+
+        {/* Action buttons at bottom */}
+        <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
+          <motion.button
+            onClick={handleFavorite}
+            className={`p-2 rounded-full border transition-all duration-200 ${
+              isFavorite
+                ? `bg-${COLOR_PALETTE.gray800} border-${COLOR_PALETTE.gray800} text-white`
+                : `bg-gray-50 border-gray-200 text-gray-600 hover:text-${COLOR_PALETTE.gray800}`
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
+          </motion.button>
+
+          <motion.button
+            onClick={handleSave}
+            className={`p-2 rounded-full border transition-all duration-200 ${
+              isSaved
+                ? `bg-${COLOR_PALETTE.gray700} border-${COLOR_PALETTE.gray700} text-white`
+                : `bg-gray-50 border-gray-200 text-gray-600 hover:text-${COLOR_PALETTE.gray700}`
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Bookmark className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
+          </motion.button>
         </div>
       </div>
     </motion.div>
@@ -644,17 +1079,17 @@ const SubcategoryCard = ({ subcategory, onClick }) => {
 
 // Loading Skeleton
 const CategorySkeleton = () => (
-  <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg animate-pulse border border-slate-200">
+  <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg animate-pulse border border-gray-200">
     <div className="flex justify-between mb-4">
-      <div className="w-14 h-14 bg-slate-300 rounded-2xl"></div>
-      <div className="w-20 h-6 bg-slate-200 rounded-lg"></div>
+      <div className="w-14 h-14 bg-gray-300 rounded-2xl"></div>
+      <div className="w-20 h-6 bg-gray-200 rounded-lg"></div>
     </div>
-    <div className="h-6 bg-slate-300 rounded-lg mb-3 w-3/4"></div>
-    <div className="h-4 bg-slate-200 rounded-lg w-full mb-2"></div>
-    <div className="h-4 bg-slate-200 rounded-lg w-2/3 mb-4"></div>
+    <div className="h-6 bg-gray-300 rounded-lg mb-3 w-3/4"></div>
+    <div className="h-4 bg-gray-200 rounded-lg w-full mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded-lg w-2/3 mb-4"></div>
     <div className="flex justify-between">
-      <div className="h-4 bg-slate-200 rounded-lg w-24"></div>
-      <div className="h-4 bg-slate-200 rounded-lg w-16"></div>
+      <div className="h-4 bg-gray-200 rounded-lg w-24"></div>
+      <div className="h-4 bg-gray-200 rounded-lg w-16"></div>
     </div>
   </div>
 );
@@ -662,12 +1097,15 @@ const CategorySkeleton = () => (
 // Main Components
 const CategoriesPage = ({ onCategoryClick }) => {
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [categoryType, setCategoryType] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [categoryType, setCategoryType] = useState("all");
   const [categories, setCategories] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const categoriesPerPage = 6;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -681,19 +1119,19 @@ const CategoriesPage = ({ onCategoryClick }) => {
   useEffect(() => {
     if (searchTerm.length > 0) {
       const newSuggestions = new Set();
-      
-      categories.forEach(category => {
+
+      categories.forEach((category) => {
         if (category.name.toLowerCase().includes(searchTerm.toLowerCase())) {
           newSuggestions.add(category.name);
         }
-        
-        category.subcategories?.forEach(sub => {
+
+        category.subcategories?.forEach((sub) => {
           if (sub.name.toLowerCase().includes(searchTerm.toLowerCase())) {
             newSuggestions.add(sub.name);
           }
         });
       });
-      
+
       setSuggestions(Array.from(newSuggestions).slice(0, 5));
       setShowSuggestions(newSuggestions.size > 0);
     } else {
@@ -705,30 +1143,31 @@ const CategoriesPage = ({ onCategoryClick }) => {
   const filteredCategories = useMemo(() => {
     let filtered = categories;
 
-    if (categoryType !== 'all') {
-      filtered = filtered.filter(cat => cat.type === categoryType);
+    if (categoryType !== "all") {
+      filtered = filtered.filter((cat) => cat.type === categoryType);
     }
 
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(category =>
-        category.name.toLowerCase().includes(query) ||
-        category.description.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (category) =>
+          category.name.toLowerCase().includes(query) ||
+          category.description.toLowerCase().includes(query)
       );
     }
 
     switch (filterType) {
-      case 'popular':
-        filtered = filtered.filter(cat => cat.badge === 'Popular');
+      case "popular":
+        filtered = filtered.filter((cat) => cat.badge === "Popular");
         break;
-      case 'trending':
-        filtered = filtered.filter(cat => cat.badge === 'Trending');
+      case "trending":
+        filtered = filtered.filter((cat) => cat.badge === "Trending");
         break;
-      case 'new':
-        filtered = filtered.filter(cat => cat.badge === 'New');
+      case "new":
+        filtered = filtered.filter((cat) => cat.badge === "New");
         break;
-      case 'top-rated':
-        filtered = filtered.filter(cat => cat.badge === 'Top Rated');
+      case "top-rated":
+        filtered = filtered.filter((cat) => cat.badge === "Top Rated");
         break;
       default:
         break;
@@ -737,23 +1176,48 @@ const CategoriesPage = ({ onCategoryClick }) => {
     return filtered.sort((a, b) => b.views - a.views);
   }, [categories, searchTerm, filterType, categoryType]);
 
-  const serviceCount = categories.filter(cat => cat.type === 'service').length;
-  const productCount = categories.filter(cat => cat.type === 'product').length;
+  const serviceCount = categories.filter(
+    (cat) => cat.type === "service"
+  ).length;
+  const productCount = categories.filter(
+    (cat) => cat.type === "product"
+  ).length;
 
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion);
     setShowSuggestions(false);
   };
+  // Calculate categories to display
+  const indexOfLastCategory = currentPage * categoriesPerPage;
+  const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
+  const currentCategories = showAllCategories
+    ? filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory)
+    : filteredCategories.slice(0, 3);
+
+  const totalPages = Math.ceil(filteredCategories.length / categoriesPerPage);
 
   return (
-    <div className="min-h-screen w-full relative font-inter">
+    <div
+      className="min-h-screen w-full relative bg-white"
+      style={{ scrollBehavior: "smooth" }}
+    >
+      {/* Cool Gray Glow Top */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%)",
+          background: "#ffffff",
+          backgroundImage: `
+            radial-gradient(
+              circle at top center,
+              ${COLOR_PALETTE.steelBlue},
+              transparent 70%
+            )
+          `,
+          filter: "blur(80px)",
+          backgroundRepeat: "no-repeat",
         }}
       />
-      
+
       <div className="relative z-10">
         {/* Header */}
         <div className="max-w-7xl mx-auto px-4 py-12">
@@ -762,21 +1226,45 @@ const CategoriesPage = ({ onCategoryClick }) => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent leading-tight">
+            <div className="flex justify-center mb-6">
+              <motion.div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
+                style={{ backgroundColor: COLOR_PALETTE.gray800 }}
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <Search className="w-10 h-10 text-white" />
+              </motion.div>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent leading-tight">
               Discover Services
             </h1>
-            <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               Find the best local services and products in your area
             </p>
-            
+
             <div className="flex justify-center gap-8 mt-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{serviceCount}</div>
-                <div className="text-sm text-slate-500 font-medium">Services</div>
+                <div
+                  className="text-3xl font-bold"
+                  style={{ color: COLOR_PALETTE.gray800 }}
+                >
+                  {serviceCount}
+                </div>
+                <div className="text-sm text-gray-500 font-medium">
+                  Services
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-emerald-600">{productCount}</div>
-                <div className="text-sm text-slate-500 font-medium">Products</div>
+                <div
+                  className="text-3xl font-bold"
+                  style={{ color: COLOR_PALETTE.gray900 }}
+                >
+                  {productCount}
+                </div>
+                <div className="text-sm text-gray-500 font-medium">
+                  Products
+                </div>
               </div>
             </div>
           </motion.div>
@@ -789,19 +1277,19 @@ const CategoriesPage = ({ onCategoryClick }) => {
             className="space-y-6"
           >
             <div className="flex justify-center">
-              <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-slate-200">
+              <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
                 {[
-                  { key: 'all', label: 'All Categories', icon: Users },
-                  { key: 'service', label: 'Services', icon: Wrench },
-                  { key: 'product', label: 'Products', icon: Gift }
+                  { key: "all", label: "All Categories", icon: Users },
+                  { key: "service", label: "Services", icon: Wrench },
+                  { key: "product", label: "Products", icon: Gift },
                 ].map(({ key, label, icon: Icon }) => (
                   <motion.button
                     key={key}
                     onClick={() => setCategoryType(key)}
                     className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 ${
                       categoryType === key
-                        ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? "bg-white text-gray-900 shadow-lg border border-gray-200"
+                        : "text-gray-600 hover:text-gray-900"
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -825,11 +1313,11 @@ const CategoriesPage = ({ onCategoryClick }) => {
 
               {/* Mobile Filter Select */}
               <div className="relative lg:hidden">
-                <Filter className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+                <Filter className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="pl-14 pr-10 py-4 bg-white/70 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 appearance-none cursor-pointer min-w-[200px] font-medium text-slate-700 transition-all duration-300"
+                  className="pl-14 pr-10 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 appearance-none cursor-pointer min-w-[200px] font-medium text-gray-700 transition-all duration-300"
                 >
                   <option value="all">All Badges</option>
                   <option value="popular">Popular</option>
@@ -851,13 +1339,13 @@ const CategoriesPage = ({ onCategoryClick }) => {
 
         {/* Categories Grid */}
         <div className="max-w-7xl mx-auto px-4 pb-12">
-          <motion.h2 
-            className="text-3xl font-bold text-slate-900 mb-8 text-center"
+          <motion.h2
+            className="text-3xl font-bold text-gray-900 mb-8 text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            {searchTerm || filterType !== 'all' || categoryType !== 'all' ? (
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            {searchTerm || filterType !== "all" || categoryType !== "all" ? (
+              <span className="bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                 Filtered Results ({filteredCategories.length})
               </span>
             ) : (
@@ -882,45 +1370,92 @@ const CategoriesPage = ({ onCategoryClick }) => {
 
           {!loading && (
             <AnimatePresence mode="wait">
-              {filteredCategories.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredCategories.map((category, index) => (
+              {currentCategories.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {currentCategories.map((category, index) => (
+                      <motion.div
+                        key={category.id}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <HoverEffectCard
+                          category={category}
+                          onClick={onCategoryClick}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* View All / Show Less Button */}
+                  {!showAllCategories && filteredCategories.length > 3 && (
                     <motion.div
-                      key={category.id}
-                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                      transition={{ delay: index * 0.1 }}
+                      className="flex justify-center mt-8"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
                     >
-                      <HoverEffectCard
-                        category={category}
-                        onClick={onCategoryClick}
-                      />
+                      <button
+                        onClick={() => setShowAllCategories(true)}
+                        className="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        View All Categories
+                      </button>
                     </motion.div>
-                  ))}
-                </div>
+                  )}
+
+                  {showAllCategories && (
+                    <motion.div
+                      className="flex justify-center mt-6"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      <button
+                        onClick={() => setShowAllCategories(false)}
+                        className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Show Less
+                      </button>
+                    </motion.div>
+                  )}
+
+                  {/* Pagination */}
+                  {showAllCategories && totalPages > 1 && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  )}
+                </>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-20 bg-white/60 backdrop-blur-sm rounded-3xl shadow-lg border border-slate-200"
+                  className="text-center py-20 bg-white/60 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200"
                 >
-                  <div className="w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                    <Search className="w-16 h-16 text-slate-400" />
+                  <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <Search className="w-16 h-16 text-gray-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     No categories found
                   </h3>
-                  <p className="text-slate-500 mb-8 max-w-md mx-auto">
+                  <p className="text-gray-500 mb-8 max-w-md mx-auto">
                     Try adjusting your search terms or filter criteria
                   </p>
                   <motion.button
                     onClick={() => {
-                      setSearchTerm('');
-                      setFilterType('all');
-                      setCategoryType('all');
+                      setSearchTerm("");
+                      setFilterType("all");
+                      setCategoryType("all");
                     }}
-                    className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="px-8 py-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -937,35 +1472,224 @@ const CategoriesPage = ({ onCategoryClick }) => {
 };
 
 const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
-  const [sortBy, setSortBy] = useState('distance');
+   const [sortBy, setSortBy] = useState("distance");
+  const [filterType, setFilterType] = useState("all");
+  const [distanceOrder, setDistanceOrder] = useState("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  const subcategoriesPerPage = 6;
   const IconComponent = category.icon;
 
-  const sortedSubcategories = useMemo(() => {
-    if (!category.subcategories) return [];
-    
-    const sorted = [...category.subcategories].sort((a, b) => {
-      switch (sortBy) {
-        case 'distance':
-          return a.distance - b.distance;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
+const sortedSubcategories = useMemo(() => {
+  if (!category.subcategories) return [];
+  let sorted = [...category.subcategories];
+  
+  // Apply type filter
+  if (filterType !== "all") {
+    sorted = sorted.filter((sub) => {
+      if (category.name === "Restaurant") {
+        return sub.restaurantType === filterType;
+      } else if (category.type === "service") {
+        return sub.serviceType === filterType;
+      } else if (category.type === "product") {
+        return sub.productType === filterType;
       }
+      return true;
     });
-    
-    return sorted;
-  }, [category.subcategories, sortBy]);
+  }
+  
+  // Apply search filter
+  if (searchTerm.trim()) {
+    const query = searchTerm.toLowerCase().trim();
+    sorted = sorted.filter(
+      (sub) =>
+        sub.name.toLowerCase().includes(query) ||
+        sub.description.toLowerCase().includes(query) ||
+        sub.location.toLowerCase().includes(query)
+    );
+  }
+  
+  // Apply sorting
+  sorted.sort((a, b) => {
+    switch (sortBy) {
+      case "distance":
+        return distanceOrder === "asc"
+          ? a.distance - b.distance
+          : b.distance - a.distance;
+      case "rating":
+        return b.rating - a.rating;
+      case "views":
+        return b.views - a.views;
+      case "name":
+        return a.name.localeCompare(b.name);
+      case "time": {
+        const aHours = parseOperatingHours(a.operatingHours);
+        const bHours = parseOperatingHours(b.operatingHours);
+        const aOpen = isOpenNow(aHours);
+        const bOpen = isOpenNow(bHours);
+        
+        // Both open or both closed - sort by closing time
+        if (aOpen === bOpen) {
+          // If both open, sort by closing time (soonest first)
+          if (aOpen) {
+            return aHours.close - bHours.close;
+          }
+          // If both closed, sort by opening time (soonest first)
+          return aHours.open - bHours.open;
+        }
+        
+        // One open, one closed - open comes first
+        return aOpen ? -1 : 1;
+      }
+      default:
+        return 0;
+    }
+  });
+  
+  return sorted;
+}, [category.subcategories, sortBy, filterType, distanceOrder, searchTerm]);
+
+
+  // Helper function to parse time like "9:00 AM" to hour number
+  const parseTime = (timeStr) => {
+    try {
+      // Handle "24/7" case
+      if (timeStr === "24/7") return 0;
+
+      // Handle "By Appointment" case
+      if (timeStr === "By Appointment") return 12;
+
+      // Handle different time formats
+      const match = timeStr.match(/(\d+):?(\d*)\s*(AM|PM)?/i);
+      if (!match) {
+        // Try to parse simple hour format like "9 AM"
+        const simpleMatch = timeStr.match(/(\d+)\s*(AM|PM)?/i);
+        if (simpleMatch) {
+          let hour = parseInt(simpleMatch[1]);
+          const period = simpleMatch[2];
+
+          if (period && period.toUpperCase() === "PM" && hour !== 12) {
+            hour += 12;
+          }
+          if (period && period.toUpperCase() === "AM" && hour === 12) {
+            hour = 0;
+          }
+
+          return hour;
+        }
+        return 0;
+      }
+
+      let hour = parseInt(match[1]);
+      const minute = match[2] ? parseInt(match[2]) : 0;
+      const period = match[3];
+
+      if (period && period.toUpperCase() === "PM" && hour !== 12) {
+        hour += 12;
+      }
+      if (period && period.toUpperCase() === "AM" && hour === 12) {
+        hour = 0;
+      }
+
+      return hour + minute / 60;
+    } catch (error) {
+      console.error("Error parsing time:", timeStr, error);
+      return 0;
+    }
+  };
+
+  // Get filter options based on category type
+  const getFilterOptions = () => {
+    if (category.name === "Restaurant") {
+      const types = [
+        ...new Set(category.subcategories.map((sub) => sub.restaurantType)),
+      ];
+      return [
+        { value: "all", label: "All Types" },
+        ...types.map((type) => ({ value: type, label: type })),
+      ];
+    } else if (category.type === "service") {
+      const types = [
+        ...new Set(category.subcategories.map((sub) => sub.serviceType)),
+      ];
+      return [
+        { value: "all", label: "All Services" },
+        ...types.map((type) => ({ value: type, label: type })),
+      ];
+    } else if (category.type === "product") {
+      const types = [
+        ...new Set(category.subcategories.map((sub) => sub.productType)),
+      ];
+      return [
+        { value: "all", label: "All Products" },
+        ...types.map((type) => ({ value: type, label: type })),
+      ];
+    }
+    return [{ value: "all", label: "All" }];
+  };
+
+  const filterOptions = getFilterOptions();
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      const newSuggestions = new Set();
+      category.subcategories?.forEach((sub) => {
+        if (sub.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+          newSuggestions.add(sub.name);
+        }
+        if (sub.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+          newSuggestions.add(sub.description.substring(0, 30) + "...");
+        }
+      });
+      setSuggestions(Array.from(newSuggestions).slice(0, 5));
+      setShowSuggestions(newSuggestions.size > 0);
+    } else {
+      setShowSuggestions(false);
+      setSuggestions([]);
+    }
+  }, [searchTerm, category.subcategories]);
+
+   const handleSuggestionClick = (suggestion) => {
+    setSearchTerm(suggestion);
+    setShowSuggestions(false);
+  };
+
+  // Calculate subcategories to display
+  const indexOfLastSubcategory = currentPage * subcategoriesPerPage;
+  const indexOfFirstSubcategory = indexOfLastSubcategory - subcategoriesPerPage;
+  const currentSubcategories = sortedSubcategories.slice(
+    indexOfFirstSubcategory,
+    indexOfLastSubcategory
+  );
+  const totalPages = Math.ceil(
+    sortedSubcategories.length / subcategoriesPerPage
+  );
 
   return (
-    <div className="min-h-screen w-full relative font-inter">
+    <div
+      className="min-h-screen w-full relative bg-white"
+      style={{ scrollBehavior: "smooth" }}
+    >
+      {/* Cool Gray Glow Left */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: "radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%)",
+          background: "#ffffff",
+          backgroundImage: `
+            radial-gradient(
+              circle at top left,
+              ${COLOR_PALETTE.steelBlue},
+              transparent 70%
+            )
+          `,
+          filter: "blur(80px)",
+          backgroundRepeat: "no-repeat",
         }}
       />
-      
+
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header with Back Button */}
@@ -976,7 +1700,7 @@ const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
           >
             <motion.button
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-xl text-slate-700 font-medium hover:bg-white hover:shadow-lg transition-all duration-300"
+              className="flex items-center gap-2 px-4 py-2 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-lg transition-all duration-300"
               whileHover={{ scale: 1.05, x: -2 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -989,72 +1713,181 @@ const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200"
+            className="text-center mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200"
           >
             <div className="flex justify-center mb-6">
               <motion.div
-                className={`w-20 h-20 bg-gradient-to-br ${category.color} rounded-3xl flex items-center justify-center shadow-xl`}
+                className={`w-20 h-20 rounded-3xl flex items-center justify-center shadow-xl`}
+                style={{ backgroundColor: category.color }}
                 whileHover={{ rotate: 360, scale: 1.1 }}
                 transition={{ duration: 0.8 }}
               >
                 <IconComponent className="w-10 h-10 text-white" />
               </motion.div>
             </div>
-            
-            <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+
+            <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent">
               {category.name}
             </h1>
-            <p className="text-slate-600 text-lg max-w-2xl mx-auto mb-6">
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
               {category.description}
             </p>
-            
+
             <div className="flex justify-center gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{sortedSubcategories.length}</div>
-                <div className="text-sm text-slate-500 font-medium">Available Options</div>
+                <div
+                  className="text-2xl font-bold"
+                  style={{ color: COLOR_PALETTE.gray800 }}
+                >
+                  {sortedSubcategories.length}
+                </div>
+                <div className="text-sm text-gray-500 font-medium">
+                  Available Options
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-amber-600">{category.rating}</div>
-                <div className="text-sm text-slate-500 font-medium">Rating</div>
+                <div
+                  className="text-2xl font-bold"
+                  style={{ color: COLOR_PALETTE.gray900 }}
+                >
+                  {category.rating}
+                </div>
+                <div className="text-sm text-gray-500 font-medium">Rating</div>
               </div>
             </div>
           </motion.div>
-
-          {/* Sort Controls */}
+           <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex justify-center mb-8"
+          >
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              suggestions={suggestions}
+              showSuggestions={showSuggestions}
+              setShowSuggestions={setShowSuggestions}
+              onSuggestionClick={handleSuggestionClick}
+            />
+          </motion.div>
+          {/* Filter and Sort Controls */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex justify-center mb-8"
+            className="flex flex-wrap gap-4 justify-center mb-8"
           >
-            <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-slate-200">
-              <motion.button
-                onClick={() => setSortBy('distance')}
-                className={`px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 text-sm ${
-                  sortBy === 'distance'
-                    ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <MapPin className="w-4 h-4" />
-                By Distance
-              </motion.button>
-              <motion.button
-                onClick={() => setSortBy('name')}
-                className={`px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 text-sm ${
-                  sortBy === 'name'
-                    ? 'bg-white text-slate-900 shadow-lg border border-slate-200'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Tag className="w-4 h-4" />
-                By Name
-              </motion.button>
+
+
+            {/* Type Filter */}
+            {/* <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
+              {filterOptions.map((option) => (
+                <motion.button
+                  key={option.value}
+                  onClick={() => setFilterType(option.value)}
+                  className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 text-sm ${
+                    filterType === option.value
+                      ? 'bg-white text-gray-900 shadow-lg border border-gray-200'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {option.label}
+                </motion.button>
+              ))}
+            </div> */}
+            <div className="bg-white/80  backdrop-blur-md p-2 sm:p-1 rounded-2xl flex overflow-x-auto gap-2 sm:gap-1 border border-gray-200 scrollbar-hide">
+              {filterOptions.map((option) => (
+                <motion.button
+                  key={option.value}
+                  onClick={() => setFilterType(option.value)}
+                  className={`px-5 py-3 sm:px-4 sm:py-2 rounded-xl font-semibold transition-all duration-300 text-base sm:text-sm flex-shrink-0 ${
+                    filterType === option.value
+                      ? "bg-white text-gray-900 shadow-lg border border-gray-200"
+                      : "text-gray-600 hover:text-gray-900 active:bg-gray-100"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {option.label}
+                </motion.button>
+              ))}
             </div>
+            {/* Sort Options */}
+            {/* <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
+              {[
+                { key: 'distance', label: 'Distance', icon: MapPin },
+                { key: 'rating', label: 'Rating', icon: Star },
+                { key: 'views', label: 'Views', icon: Users },
+                { key: 'time', label: 'Time', icon: Clock },
+                { key: 'name', label: 'Name', icon: Tag }
+              ].map(({ key, label, icon: Icon }) => (
+                <motion.button
+                  key={key}
+                  onClick={() => setSortBy(key)}
+                  className={`px-3 py-2 rounded-xl font-semibold flex items-center gap-1 transition-all duration-300 text-sm ${
+                    sortBy === key
+                      ? 'bg-white text-gray-900 shadow-lg border border-gray-200'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Icon className="w-3 h-3" />
+                  {label}
+                </motion.button>
+              ))}
+            </div> */}
+            <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200 overflow-x-auto scrollbar-hide">
+              {[
+                { key: "distance", label: "Distance", icon: MapPin },
+                { key: "rating", label: "Rating", icon: Star },
+                { key: "views", label: "Views", icon: Users },
+                { key: "time", label: "Time", icon: Clock },
+                { key: "name", label: "Name", icon: Tag },
+              ].map(({ key, label, icon: Icon }) => (
+                <motion.button
+                  key={key}
+                  onClick={() => setSortBy(key)}
+                  className={`px-4 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 text-sm flex-shrink-0 ${
+                    sortBy === key
+                      ? "bg-white text-gray-900 shadow-lg border border-gray-200"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Distance Order Toggle (only when sorting by distance) */}
+            {sortBy === "distance" && (
+              <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
+                {[
+                  { key: "asc", label: "Near First" },
+                  { key: "desc", label: "Far First" },
+                ].map((option) => (
+                  <motion.button
+                    key={option.key}
+                    onClick={() => setDistanceOrder(option.key)}
+                    className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 text-sm ${
+                      distanceOrder === option.key
+                        ? "bg-white text-gray-900 shadow-lg border border-gray-200"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {option.label}
+                  </motion.button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Subcategories Grid */}
@@ -1065,7 +1898,7 @@ const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             <AnimatePresence mode="wait">
-              {sortedSubcategories.map((subcategory, index) => (
+              {currentSubcategories.map((subcategory, index) => (
                 <motion.div
                   key={subcategory.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -1082,22 +1915,49 @@ const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
             </AnimatePresence>
           </motion.div>
 
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-8"
+            >
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
+            </motion.div>
+          )}
+
           {/* Distance Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="mt-12 bg-blue-50/70 backdrop-blur-sm rounded-2xl p-6 border border-blue-200"
+            className="mt-12 rounded-2xl p-6 border"
+            style={{
+              backgroundColor: `${COLOR_PALETTE.gray100}70`,
+              borderColor: COLOR_PALETTE.gray300,
+            }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: COLOR_PALETTE.gray700 }}
+              >
                 <Clock className="w-4 h-4 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Distance Information</h3>
+              <h3 className="text-xl font-bold text-gray-900">
+                Distance & Time Information
+              </h3>
             </div>
-            <p className="text-slate-600 leading-relaxed">
-              Distances are calculated from your current location in Vadodara, Gujarat. 
-              The closest options are shown first to help you find the most convenient services.
+            <p className="text-gray-600 leading-relaxed">
+              Distances are calculated from your current location in Vadodara,
+              Gujarat. The closest options are shown first to help you find the
+              most convenient services. Operating hours are displayed to help
+              you choose services that are currently available.
             </p>
           </motion.div>
         </div>
@@ -1108,21 +1968,21 @@ const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
 
 // Main App Component
 const CategoryApp = () => {
-  const [currentPage, setCurrentPage] = useState('categories');
+  const [currentPage, setCurrentPage] = useState("categories");
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    setCurrentPage('subcategory');
+    setCurrentPage("subcategory");
   };
 
   const handleBackToCategories = () => {
-    setCurrentPage('categories');
+    setCurrentPage("categories");
     setSelectedCategory(null);
   };
 
   const handleSubcategoryClick = (subcategory) => {
-    console.log('Selected subcategory:', subcategory);
+    console.log("Selected subcategory:", subcategory);
     // Here you would typically navigate to a detail page or perform some action
     alert(`You selected: ${subcategory.name} at ${subcategory.location}`);
   };
@@ -1130,7 +1990,7 @@ const CategoryApp = () => {
   return (
     <div className="font-inter antialiased">
       <AnimatePresence mode="wait">
-        {currentPage === 'categories' && (
+        {currentPage === "categories" && (
           <motion.div
             key="categories"
             initial={{ opacity: 0, x: -100 }}
@@ -1141,8 +2001,8 @@ const CategoryApp = () => {
             <CategoriesPage onCategoryClick={handleCategoryClick} />
           </motion.div>
         )}
-        
-        {currentPage === 'subcategory' && selectedCategory && (
+
+        {currentPage === "subcategory" && selectedCategory && (
           <motion.div
             key="subcategory"
             initial={{ opacity: 0, x: 100 }}
