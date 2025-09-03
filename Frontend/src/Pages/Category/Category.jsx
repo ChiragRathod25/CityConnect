@@ -25,6 +25,8 @@ import {
   Bookmark,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Navigation,
+  Fullscreen,
 } from "lucide-react";
 
 // Color palette from the image
@@ -760,16 +762,17 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const IconComponent = category.icon;
-
+  
   const handleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
   };
+  
   const handleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
-
+  
   return (
     <motion.div
       className={`relative group block p-1 h-full w-full ${className}`}
@@ -777,19 +780,29 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
       onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => onClick(category)}
       whileHover={{ y: -8 }}
+      whileTap={{ scale: 0.98 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
     >
       <div className="relative h-full w-full overflow-hidden">
-        {/* Modern glassmorphism card */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20"></div>
-
+        {/* Modern glassmorphism card with blue accent */}
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-blue-100/50"></div>
+        
+        {/* Subtle blue accent overlay */}
+        <div 
+          className="absolute inset-0 rounded-2xl opacity-30"
+          style={{
+            background: "radial-gradient(circle at top right, rgba(70, 130, 180, 0.3), transparent 70%)",
+            filter: "blur(40px)",
+          }}
+        />
+        
         {/* Hover overlay */}
         <AnimatePresence>
           {hoveredIndex === 0 && (
             <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-gray-800/10 to-gray-900/20 backdrop-blur-md rounded-2xl"
+              className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-white/90 backdrop-blur-lg rounded-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -797,119 +810,167 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
             />
           )}
         </AnimatePresence>
-
+        
         {/* Card content */}
         <div className="relative z-10 p-6 h-full flex flex-col">
           {/* Header section */}
           <div className="flex items-start justify-between mb-6">
-            {/* Icon with modern styling */}
+            {/* Icon with blue accent styling */}
             <motion.div
               className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden group"
               whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               {/* Gradient background for icon */}
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700"></div>
               <IconComponent className="w-8 h-8 text-white relative z-10" />
-
               {/* Shine effect on hover */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0"
+                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0"
                 initial={{ x: -100 }}
                 whileHover={{ x: 100 }}
                 transition={{ duration: 0.6, repeat: Infinity }}
               />
             </motion.div>
-
-            {/* Type badge with modern styling */}
-            <div
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold backdrop-blur-sm border ${
+            
+            {/* Type badge with consistent styling */}
+            <motion.div
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold backdrop-blur-sm border shadow-sm ${
                 category.type === "service"
-                  ? "bg-gray-800/90 text-white border-gray-700/50 shadow-lg"
-                  : "bg-gray-900/90 text-white border-gray-800/50 shadow-lg"
+                  ? "bg-blue-100/80 text-blue-800 border-blue-200/50"
+                  : "bg-gray-100/80 text-gray-800 border-gray-200/50"
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {category.type === "service" ? "Service" : "Product"}
-            </div>
+              <span className="tracking-wide uppercase">
+                {category.type === "service" ? "Service" : "Product"}
+              </span>
+            </motion.div>
           </div>
-
-          {/* Badge if exists */}
+          
+          {/* Badge if exists - Consistent with product tag */}
           {category.badge && (
-            <div className="mb-4">
-              <Badge type={category.badge} />
-            </div>
+            <motion.div 
+              className="mb-4"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <motion.div 
+                className={`inline-block px-3 py-1 rounded-xl text-xs font-bold backdrop-blur-sm border shadow-sm ${
+                  category.badge === "popular" 
+                    ? "bg-blue-100/80 text-blue-800 border-blue-200/50"
+                    : "bg-gray-100/80 text-gray-800 border-gray-200/50"
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="tracking-wide uppercase">
+                  {category.badge === "popular" ? "Popular" : category.badge}
+                </span>
+              </motion.div>
+            </motion.div>
           )}
-
+          
           {/* Title and description */}
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-gray-700 transition-colors">
+            <motion.h3 
+              className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-blue-900 transition-colors tracking-tight"
+              whileHover={{ x: 4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               {category.name}
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+            </motion.h3>
+            <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-2 font-medium">
               {category.description}
             </p>
           </div>
-
+          
           {/* Stats section */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200/50">
+          <div className="flex items-center justify-between pt-4 border-t border-blue-100/50">
             <div className="flex items-center gap-3">
               {/* Rating */}
-              <div className="flex items-center gap-1.5 bg-gray-100/60 px-2.5 py-1 rounded-lg">
-                <Star className="w-4 h-4 text-amber-500 fill-current" />
+              <motion.div 
+                className="flex items-center gap-1.5 bg-blue-50/60 px-2.5 py-1 rounded-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Star className="w-4 h-4 text-blue-600 fill-current" />
                 <span className="text-sm font-semibold text-gray-800">
                   {category.rating}
                 </span>
-              </div>
-
+              </motion.div>
               {/* Views */}
-              <div className="flex items-center gap-1 text-gray-500">
+              <div className="flex items-center gap-1 text-gray-600">
                 <Users className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   {category.views.toLocaleString()}
                 </span>
               </div>
             </div>
-
             {/* Options count */}
             {category.subcategories && (
-              <div className="bg-gray-800/10 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold border border-gray-200/50">
+              <motion.div 
+                className="bg-blue-50/60 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100/50"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 {category.subcategories.length} options
-              </div>
+              </motion.div>
             )}
           </div>
-
+          
           {/* Action buttons */}
           <div className="flex gap-2 mt-4">
             <motion.button
               onClick={handleFavorite}
               className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isFavorite
-                  ? "bg-red-500 text-white shadow-lg"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
               }`}
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ 
+                scale: 0.95,
+                backgroundColor: isFavorite ? "#1d4ed8" : "#dbeafe"
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <Heart
-                className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`}
-              />
-              {isFavorite ? "Liked" : "Like"}
+              <motion.div
+                animate={{ rotate: isFavorite ? [0, 15, -15, 0] : 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Heart
+                  className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`}
+                />
+              </motion.div>
+              <span className="font-medium">{isFavorite ? "Liked" : "Like"}</span>
             </motion.button>
-
             <motion.button
               onClick={handleSave}
               className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isSaved
-                  ? "bg-blue-500 text-white shadow-lg"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
               }`}
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ 
+                scale: 0.95,
+                backgroundColor: isSaved ? "#1d4ed8" : "#dbeafe"
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <Bookmark
-                className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
-              />
-              {isSaved ? "Saved" : "Save"}
+              <motion.div
+                animate={{ rotate: isSaved ? [0, 15, -15, 0] : 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Bookmark
+                  className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
+                />
+              </motion.div>
+              <span className="font-medium">{isSaved ? "Saved" : "Save"}</span>
             </motion.button>
           </div>
         </div>
@@ -918,7 +979,6 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
   );
 };
 
-// Add this helper function outside the SubcategoryPage component
 const parseOperatingHours = (hoursStr) => {
   if (hoursStr === "24/7") return { open: 0, close: 24 * 60, is24h: true };
   if (hoursStr === "By Appointment") return { open: null, close: null, is24h: false };
@@ -966,105 +1026,131 @@ const isOpenNow = (hours) => {
 };
 
 // Subcategory Card Component
+
 const SubcategoryCard = ({ subcategory, onClick }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  
   const handleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
   };
+  
   const handleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
+
   return (
     <motion.div
-      className="bg-white/70 backdrop-blur-sm rounded-2xl cursor-pointer group border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
-      whileHover={{ scale: 1.02, y: -3 }}
+      className="bg-white rounded-2xl cursor-pointer group border border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 overflow-hidden"
+      whileHover={{ 
+        scale: 1.02, 
+        y: -5,
+        boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 10px 10px -5px rgba(59, 130, 246, 0.1)"
+      }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(subcategory)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      {/* Image */}
+    
       <div className="relative h-48 overflow-hidden">
-        <img
+        <motion.img
           src={subcategory.image}
           alt={subcategory.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.5 }}
         />
-
+        
         {/* Type badge */}
         <div className="absolute top-3 left-3">
-          <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs font-medium">
+          <div className="bg-blue-600/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-white text-xs font-semibold tracking-wide shadow-lg">
             {subcategory.serviceType ||
               subcategory.productType ||
               subcategory.restaurantType ||
               "Service"}
           </div>
         </div>
-
+        
         {/* Rating badge */}
         <div className="absolute top-3 right-3">
-          <div className="bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium flex items-center gap-1">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            {subcategory.rating}
+          <div className="bg-blue-600/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1 shadow-lg">
+            <Star className="w-3 h-3 fill-yellow-300 text-yellow-300" />
+            <span>{subcategory.rating}</span>
           </div>
         </div>
       </div>
+      
       {/* Content */}
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
-          <h4 className="font-bold text-gray-900 text-lg group-hover:text-gray-700 transition-colors leading-tight">
+          <h4 className="font-bold text-gray-900 text-xl group-hover:text-blue-600 transition-colors duration-300 leading-tight tracking-tight">
             {subcategory.name}
           </h4>
         </div>
-
-        <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        
+        <p className="text-gray-600 text-sm leading-relaxed mb-4 font-medium">
           {subcategory.description}
         </p>
-
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" />
-            <span className="font-medium">{subcategory.location}</span>
-            <span className="text-gray-400">•</span>
-            <span className="font-medium">{subcategory.distance}km</span>
+        
+        {/* Location and Distance */}
+        <div className="flex items-center justify-between mb-4 p-3 bg-blue-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <MapPin className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Location</p>
+              <p className="text-sm font-semibold text-gray-800">{subcategory.location}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Navigation className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Distance</p>
+              <p className="text-sm font-semibold text-gray-800">{subcategory.distance} km</p>
+            </div>
           </div>
         </div>
-
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            <span>{subcategory.operatingHours}</span>
+        
+        {/* Timing and Likes */}
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
+            <Clock className="w-4 h-4 text-blue-600" />
+            <span className="text-gray-700 font-medium">{subcategory.operatingHours}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3" />
-            <span>{subcategory.views} views</span>
+          <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
+            <Heart className="w-4 h-4 text-red-500 fill-current" />
+            <span className="text-gray-700 font-medium">{subcategory.likes || 0} likes</span>
           </div>
         </div>
-
+        
         {/* Action buttons at bottom */}
         <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
           <motion.button
             onClick={handleFavorite}
-            className={`p-2 rounded-full border transition-all duration-200 ${
+            className={`p-2 rounded-full border transition-all duration-300 ${
               isFavorite
-                ? `bg-${COLOR_PALETTE.gray800} border-${COLOR_PALETTE.gray800} text-white`
-                : `bg-gray-50 border-gray-200 text-gray-600 hover:text-${COLOR_PALETTE.gray800}`
+                ? "bg-blue-600 border-blue-600 text-white shadow-md"
+                : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100 hover:border-blue-300"
             }`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Heart className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
           </motion.button>
-
+          
           <motion.button
             onClick={handleSave}
-            className={`p-2 rounded-full border transition-all duration-200 ${
+            className={`p-2 rounded-full border transition-all duration-300 ${
               isSaved
-                ? `bg-${COLOR_PALETTE.gray700} border-${COLOR_PALETTE.gray700} text-white`
-                : `bg-gray-50 border-gray-200 text-gray-600 hover:text-${COLOR_PALETTE.gray700}`
+                ? "bg-blue-500 border-blue-500 text-white shadow-md"
+                : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100 hover:border-blue-300"
             }`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -1076,6 +1162,7 @@ const SubcategoryCard = ({ subcategory, onClick }) => {
     </motion.div>
   );
 };
+
 
 // Loading Skeleton
 const CategorySkeleton = () => (
@@ -1471,6 +1558,55 @@ const CategoriesPage = ({ onCategoryClick }) => {
   );
 };
 
+
+import Confetti from 'react-confetti';
+
+const FireworksBackground = () => {
+  const [windowDimension, setWindowDimension] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [confettiKey, setConfettiKey] = useState(0);
+
+  useEffect(() => {
+    // Set window dimensions
+    setWindowDimension({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
+    // Reset confetti every 2 seconds to create continuous effect
+    const interval = setInterval(() => {
+      setConfettiKey(prevKey => prevKey + 1);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden rounded-3xl">
+      <Confetti
+        key={confettiKey}
+        width={windowDimension.width}
+        height={windowDimension.height}
+        recycle={false}
+        numberOfPieces={250}
+        gravity={0.05}
+        colors={['#FF5252', '#FFD740', '#7C4DFF', '#18FFFF', '#69F0AE', '#FF4081']}
+        confettiSource={{
+          x: windowDimension.width / 2,
+          y: windowDimension.height / 3,
+          w: 30,
+          h: 20
+        }}
+      />
+    </div>
+  );
+};
+
+
+
+
 const SubcategoryPage = ({ category, onBack, onSubcategoryClick }) => {
    const [sortBy, setSortBy] = useState("distance");
   const [filterType, setFilterType] = useState("all");
@@ -1552,56 +1688,6 @@ const sortedSubcategories = useMemo(() => {
   return sorted;
 }, [category.subcategories, sortBy, filterType, distanceOrder, searchTerm]);
 
-
-  // Helper function to parse time like "9:00 AM" to hour number
-  const parseTime = (timeStr) => {
-    try {
-      // Handle "24/7" case
-      if (timeStr === "24/7") return 0;
-
-      // Handle "By Appointment" case
-      if (timeStr === "By Appointment") return 12;
-
-      // Handle different time formats
-      const match = timeStr.match(/(\d+):?(\d*)\s*(AM|PM)?/i);
-      if (!match) {
-        // Try to parse simple hour format like "9 AM"
-        const simpleMatch = timeStr.match(/(\d+)\s*(AM|PM)?/i);
-        if (simpleMatch) {
-          let hour = parseInt(simpleMatch[1]);
-          const period = simpleMatch[2];
-
-          if (period && period.toUpperCase() === "PM" && hour !== 12) {
-            hour += 12;
-          }
-          if (period && period.toUpperCase() === "AM" && hour === 12) {
-            hour = 0;
-          }
-
-          return hour;
-        }
-        return 0;
-      }
-
-      let hour = parseInt(match[1]);
-      const minute = match[2] ? parseInt(match[2]) : 0;
-      const period = match[3];
-
-      if (period && period.toUpperCase() === "PM" && hour !== 12) {
-        hour += 12;
-      }
-      if (period && period.toUpperCase() === "AM" && hour === 12) {
-        hour = 0;
-      }
-
-      return hour + minute / 60;
-    } catch (error) {
-      console.error("Error parsing time:", timeStr, error);
-      return 0;
-    }
-  };
-
-  // Get filter options based on category type
   const getFilterOptions = () => {
     if (category.name === "Restaurant") {
       const types = [
@@ -1710,7 +1796,146 @@ const sortedSubcategories = useMemo(() => {
           </motion.div>
 
           {/* Category Header */}
+
+            
+            <motion.div
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, scale: 1.02 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="text-center sm:mx-10 mb-8 bg-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-100/50 relative overflow-hidden"
+    >
+      {/* Fireworks Background */}
+      <FireworksBackground />
+      
+      {/* Content with higher z-index to appear above fireworks */}
+      <div className="relative z-10">
+        <div className="flex justify-center mb-4">
           <motion.div
+            className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden`}
+            style={{ backgroundColor: category.color }}
+            whileHover={{ rotate: 360, scale: 1.3 }}
+            animate={{ 
+              y: [0, -5, 0],
+            }}
+            transition={{ 
+              duration: 2, 
+              repeatType: "reverse"
+            }}
+          >
+            {/* Icon with glow effect */}
+            <div className="absolute inset-0 bg-white opacity-20 blur-md"></div>
+            <IconComponent className="w-8 h-8 text-white relative z-10" />
+          </motion.div>
+        </div>
+        
+        <motion.h1 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent"
+        >
+          {category.name}
+        </motion.h1>
+        
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-gray-600 text-base max-w-xl mx-auto mb-6"
+        >
+          {category.description}
+        </motion.p>
+        
+        <div className="flex justify-center gap-6 mb-6">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-center bg-gradient-to-br from-gray-50 to-white py-2 px-4 rounded-xl shadow-sm border border-gray-100"
+          >
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="p-1 rounded-md bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" style={{ color: COLOR_PALETTE.gray800 }} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold" style={{ color: COLOR_PALETTE.gray800 }}>
+                {sortedSubcategories.length}
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 font-medium">Options</div>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-center bg-gradient-to-br from-gray-50 to-white py-2 px-4 rounded-xl shadow-sm border border-gray-100"
+          >
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="p-1 rounded-md bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" style={{ color: COLOR_PALETTE.gray900 }} viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold" style={{ color: COLOR_PALETTE.gray900 }}>
+                {category.rating}
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 font-medium">Rating</div>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-center bg-gradient-to-br from-gray-50 to-white py-2 px-4 rounded-xl shadow-sm border border-gray-100"
+          >
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="p-1 rounded-md bg-red-50">
+                <motion.svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-4 w-4 text-red-500" 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </motion.svg>
+              </div>
+              <div className="text-xl font-bold text-red-500">
+                {category.likes || 0}
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 font-medium">Likes</div>
+          </motion.div>
+        </div>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="flex justify-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-gray-800 to-black text-white rounded-full font-medium text-sm shadow-lg hover:shadow-xl transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+            </svg>
+            Explore
+          </motion.button>
+        </motion.div>
+      </div>
+    </motion.div>
+
+          
+          
+          {/* <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200"
@@ -1755,7 +1980,10 @@ const sortedSubcategories = useMemo(() => {
                 <div className="text-sm text-gray-500 font-medium">Rating</div>
               </div>
             </div>
-          </motion.div>
+          </motion.div> */}
+
+
+
            <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1779,25 +2007,6 @@ const sortedSubcategories = useMemo(() => {
             className="flex flex-wrap gap-4 justify-center mb-8"
           >
 
-
-            {/* Type Filter */}
-            {/* <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
-              {filterOptions.map((option) => (
-                <motion.button
-                  key={option.value}
-                  onClick={() => setFilterType(option.value)}
-                  className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 text-sm ${
-                    filterType === option.value
-                      ? 'bg-white text-gray-900 shadow-lg border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {option.label}
-                </motion.button>
-              ))}
-            </div> */}
             <div className="bg-white/80  backdrop-blur-md p-2 sm:p-1 rounded-2xl flex overflow-x-auto gap-2 sm:gap-1 border border-gray-200 scrollbar-hide">
               {filterOptions.map((option) => (
                 <motion.button
@@ -1815,31 +2024,7 @@ const sortedSubcategories = useMemo(() => {
                 </motion.button>
               ))}
             </div>
-            {/* Sort Options */}
-            {/* <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200">
-              {[
-                { key: 'distance', label: 'Distance', icon: MapPin },
-                { key: 'rating', label: 'Rating', icon: Star },
-                { key: 'views', label: 'Views', icon: Users },
-                { key: 'time', label: 'Time', icon: Clock },
-                { key: 'name', label: 'Name', icon: Tag }
-              ].map(({ key, label, icon: Icon }) => (
-                <motion.button
-                  key={key}
-                  onClick={() => setSortBy(key)}
-                  className={`px-3 py-2 rounded-xl font-semibold flex items-center gap-1 transition-all duration-300 text-sm ${
-                    sortBy === key
-                      ? 'bg-white text-gray-900 shadow-lg border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Icon className="w-3 h-3" />
-                  {label}
-                </motion.button>
-              ))}
-            </div> */}
+          
             <div className="bg-white/70 backdrop-blur-sm p-1 rounded-2xl flex gap-1 border border-gray-200 overflow-x-auto scrollbar-hide">
               {[
                 { key: "distance", label: "Distance", icon: MapPin },
