@@ -1,4 +1,6 @@
+import { Briefcase, Star, User } from "lucide-react";
 import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 const PasswordRequirements = ({ password }) => {
   const requirements = [
@@ -188,10 +190,10 @@ const InputField = ({
 const StepHeader = ({ icon, title, subtitle, iconBg }) => (
   <div className="text-center mb-8">
     <div
-      className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110"
+      className="w-20 h-20  mx-auto mb-4 rounded-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110"
       style={{ backgroundColor: iconBg }}
     >
-      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-10 hover:transition-transform hover:rotate-360 animate-bounce hover:duration-1000 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         {icon}
       </svg>
     </div>
@@ -338,30 +340,10 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
       : "bg-gradient-to-br from-emerald-100 to-emerald-200";
   };
   
-  // Get icon based on role
-  const getRoleIcon = () => {
-    if (role === "Businessman") {
-      return (
-        <g>
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-          <circle cx="12" cy="8" r="2.5" fill="currentColor"/>
-          <path d="M12 14c-2.76 0-5 2.24-5 5v1h10v-1c0-2.76-2.24-5-5-5z" fill="currentColor"/>
-        </g>
-      );
-    } else {
-      return (
-        <g>
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          <path d="M12 5.5l2.04 4.14 4.57.67-3.31 3.22.78 4.55L12 15.5l-4.08 2.58.78-4.55-3.31-3.22 4.57-.67L12 5.5z" fill="currentColor"/>
-        </g>
-      );
-    }
-  };
-
   return (
     <div
       onClick={onClick}
-      className={`relative cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+      className={`relative cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 transform  hover:scale-105 hover:shadow-lg ${
         selected 
           ? "border-gray-800 bg-gray-50" 
           : "border-gray-200 hover:border-gray-400 bg-white"
@@ -378,18 +360,18 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
         </div>
       )}
       
-      <div className="text-center space-y-4">
+      <div className="text-center  space-y-4">
         <div
-          className={`w-16 h-16 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${getIconBgColor()}`}
+          className={`w-16 hover:scale-110 h-16 hover:transition-transform hover:rotate-360 hover:duration-1000 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${getIconBgColor()}`}
         >
           <svg 
-            className={`w-8 h-8 transition-colors ${getIconColor()}`} 
+            className={`w-8 h-8  transition-colors ${getIconColor()}`} 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
             strokeWidth="1.5"
           >
-            {getRoleIcon()}
+            {icon}
           </svg>
         </div>
         
@@ -639,83 +621,6 @@ const VerificationProgress = ({ currentVerification, emailVerified, phoneVerifie
   );
 };
 
-// Code Input Component
-const CodeInput = ({ method, code, onChange, error, contact }) => {
-  const getIcon = () => {
-    if (method === "email") {
-      return (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-        />
-      );
-    }
-    return (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-      />
-    );
-  };
-
-  return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium" style={{ color: "#6b7280" }}>
-        {method === "email" ? "Email" : "Phone"} Verification Code
-        <span className="text-green-600 ml-2 text-xs">
-          ✓ Sent to {contact}
-        </span>
-      </label>
-      
-      {/* Code sent notification */}
-      <div 
-        className="p-3 rounded-lg border-l-4 bg-blue-50"
-        style={{ borderLeftColor: "#3b82f6" }}
-      >
-        <div className="flex items-center space-x-2">
-          <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <span className="text-sm text-blue-700">
-            Verification code sent successfully!
-          </span>
-        </div>
-      </div>
-
-      <div className="relative">
-        <svg
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          style={{ color: "#9ca3af" }}
-        >
-          {getIcon()}
-        </svg>
-        <input
-          type="text"
-          name={`${method}Code`}
-          value={code}
-          onChange={onChange}
-          className="w-full pl-12 pr-4 py-4 rounded-xl border placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-center text-xl tracking-widest font-mono"
-          style={{
-            backgroundColor: "#f8fafc",
-            borderColor: error ? "#ef4444" : "#d1d5db",
-            color: "#1f2937",
-          }}
-          placeholder="000000"
-          maxLength="6"
-          autoComplete="one-time-code"
-        />
-      </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
-  );
-};
 
 // Main Authentication Component
 export default function SignupPage() {
@@ -908,12 +813,7 @@ export default function SignupPage() {
       case "role-selection":
         return {
           icon: (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-            />
+            <Star className="w-8 h-8" />
           ),
           title: "Choose Your Role",
           subtitle: "Select how you'll be using our platform",
@@ -958,7 +858,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full min-w-md sm:min-w-lg lg:min-w-xl">
         <div
-          className="backdrop-blur-xl border shadow-2xl p-6 sm:p-8 transform hover:scale-105 transition-all duration-300 rounded-3xl"
+          className="backdrop-blur-xl border shadow-2xl p-6 sm:p-8 transform  transition-all duration-300 rounded-3xl"
           style={{
             backgroundColor: "#ffffff",
             borderColor: "#d1d5db",
@@ -969,16 +869,11 @@ export default function SignupPage() {
 
           {currentStep === "role-selection" && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <RoleCard
                   role="businessman"
                   icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
-                    />
+                   <Briefcase className="w-8 h-8" />
                   }
                   title="Businessman"
                   description="Perfect for entrepreneurs, business owners, and professionals"
@@ -989,12 +884,7 @@ export default function SignupPage() {
                 <RoleCard
                   role="user"
                   icon={
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
+                   <User className="w-8 h-8" />
                   }
                   title="User"
                   description="Great for individuals and personal use"
@@ -1215,13 +1105,9 @@ export default function SignupPage() {
                 <div className="mt-8 text-center">
                   <p className="text-sm" style={{ color: "#6b7280" }}>
                     Already have an account?{" "}
-                    <a
-                      href="#"
-                      className="font-semibold hover:underline transition-colors"
-                      style={{ color: "#374151" }}
-                    >
+                    <NavLink to="/login" className="font-semibold hover:underline transition-colors" style={{ color: "#374151" }}>
                       Sign In
-                    </a>
+                    </NavLink>
                   </p>
                 </div>
               )}
