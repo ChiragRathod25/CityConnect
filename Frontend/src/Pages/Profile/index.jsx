@@ -1,9 +1,9 @@
-import UserProfileDashboard from "./UserProfile";
+import ProfilePage from "./Profile";
 
 
 const ProfilePageUI = () => {
   return (
-    <UserProfileDashboard/>
+    <ProfilePage/>
   );
 };
 

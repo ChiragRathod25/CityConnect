@@ -16,17 +16,9 @@ import {
   XCircle,
   Camera,
   Crown,
-  Bell,
-  Store,
-  Package,
-  TrendingUp,
-  Star,
-  Eye,
-  BarChart3,
-  Users,
-  Award,
-  Target
+  Bell
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
@@ -35,6 +27,7 @@ const UserProfileDashboard = () => {
   const headerRef = useRef(null);
   const menuGridRef = useRef(null);
   const logoutSectionRef = useRef(null);
+  const navigate = useNavigate();
 
   const [userProfile] = useState({
     name: 'John Doe',
@@ -46,17 +39,7 @@ const UserProfileDashboard = () => {
     avatar: '/api/placeholder/120/120',
     joinDate: '2023-01-15',
     completedOrders: 47,
-    isSeller: true, // Change this to false to see regular user view
-    sellerStats: {
-      totalProducts: 24,
-      totalServices: 8,
-      totalSales: 156,
-      revenue: 12450,
-      rating: 4.8,
-      reviews: 89,
-      views: 2340,
-      activeListings: 18
-    }
+    wishlistItems: 8
   });
 
   useEffect(() => {
@@ -87,183 +70,102 @@ const UserProfileDashboard = () => {
     }
   };
 
-  const getMenuItems = () => {
-    const baseMenuItems = [
-      { 
-        id: 'profile', 
-        label: 'Profile Info', 
-        icon: User, 
-        description: 'Manage your personal information and preferences',
-        badge: null,
-        priority: 'high'
-      },
-      { 
-        id: 'email-verify', 
-        label: 'Email Verification', 
-        icon: Mail, 
-        description: 'Verify and secure your email address',
-        badge: userProfile.isEmailVerified ? 'Verified' : 'Action Required',
-        priority: userProfile.isEmailVerified ? 'low' : 'high'
-      },
-      { 
-        id: 'phone-verify', 
-        label: 'Phone Verification', 
-        icon: Phone, 
-        description: 'Add an extra layer of security',
-        badge: userProfile.isPhoneVerified ? 'Verified' : 'Pending',
-        priority: userProfile.isPhoneVerified ? 'low' : 'medium'
-      },
-      { 
-        id: 'password', 
-        label: 'Security Settings', 
-        icon: Lock, 
-        description: 'Update password and security preferences',
-        badge: null,
-        priority: 'medium'
-      },
-      { 
-        id: 'status', 
-        label: 'Account Status', 
-        icon: Activity, 
-        description: 'Monitor your account health and activity',
-        badge: userProfile.isSeller ? 'Seller Account' : 'Premium',
-        priority: 'medium'
-      },
-      { 
-        id: 'orders', 
-        label: 'Order History', 
-        icon: ShoppingBag, 
-        description: 'Track and manage your purchases',
-        badge: `${userProfile.completedOrders} Orders`,
-        priority: 'high'
-      },
-      {
-        id: 'notifications',
-        label: 'Notifications',
-        icon: Bell,
-        description: 'Manage your alerts and preferences',
-        badge: '3 New',
-        priority: 'medium'
-      }
-    ];
-
-    const sellerMenuItems = [
-      { 
-        id: 'seller-dashboard', 
-        label: 'Seller Dashboard', 
-        icon: BarChart3, 
-        description: 'View your business performance and analytics',
-        badge: 'Analytics',
-        priority: 'high'
-      },
-      { 
-        id: 'products', 
-        label: 'Your Products', 
-        icon: Package, 
-        description: 'Manage your product listings and inventory',
-        badge: `${userProfile.sellerStats.totalProducts} Items`,
-        priority: 'high'
-      },
-      { 
-        id: 'services', 
-        label: 'Your Services', 
-        icon: Briefcase, 
-        description: 'Showcase your skills and expertise',
-        badge: `${userProfile.sellerStats.totalServices} Services`,
-        priority: 'high'
-      },
-      { 
-        id: 'sales', 
-        label: 'Sales History', 
-        icon: TrendingUp, 
-        description: 'Track your sales and revenue',
-        badge: `$${userProfile.sellerStats.revenue.toLocaleString()}`,
-        priority: 'high'
-      },
-      { 
-        id: 'reviews', 
-        label: 'Reviews & Ratings', 
-        icon: Star, 
-        description: 'Manage customer feedback and ratings',
-        badge: `${userProfile.sellerStats.rating}★ (${userProfile.sellerStats.reviews})`,
-        priority: 'medium'
-      },
-      { 
-        id: 'customers', 
-        label: 'Customer Management', 
-        icon: Users, 
-        description: 'Communicate with your customers',
-        badge: 'Messages',
-        priority: 'medium'
-      },
-      { 
-        id: 'analytics', 
-        label: 'Performance Analytics', 
-        icon: Eye, 
-        description: 'Detailed insights and performance metrics',
-        badge: `${userProfile.sellerStats.views} Views`,
-        priority: 'medium'
-      },
-      { 
-        id: 'promotions', 
-        label: 'Promotions & Deals', 
-        icon: Target, 
-        description: 'Create and manage promotional campaigns',
-        badge: '2 Active',
-        priority: 'medium'
-      }
-    ];
-
-    const commonMenuItems = [
-      { 
-        id: 'support', 
-        label: 'Help & Support', 
-        icon: HelpCircle, 
-        description: '24/7 assistance and troubleshooting',
-        badge: null,
-        priority: 'low'
-      },
-      { 
-        id: 'about', 
-        label: 'Platform Info', 
-        icon: Info, 
-        description: 'Learn about features and updates',
-        badge: null,
-        priority: 'low'
-      }
-    ];
-
-    if (userProfile.isSeller) {
-      return [...baseMenuItems, ...sellerMenuItems, ...commonMenuItems];
-    } else {
-      return [
-        ...baseMenuItems,
-        { 
-          id: 'services', 
-          label: 'Browse Services', 
-          icon: Briefcase, 
-          description: 'Discover amazing services from our sellers',
-          badge: 'Explore',
-          priority: 'medium'
-        },
-        { 
-          id: 'seller', 
-          label: 'Become a Seller', 
-          icon: Crown, 
-          description: 'Start earning with your talents today',
-          badge: 'Hot 🔥',
-          priority: 'high'
-        },
-        ...commonMenuItems
-      ];
+  const menuItems = [
+    { 
+      id: 'profile-info', 
+      label: 'Profile Info', 
+      icon: User, 
+      description: 'Manage your personal information and preferences',
+      badge: null,
+      priority: 'high'
+    },
+    { 
+      id: 'email-verify', 
+      label: 'Email Verification', 
+      icon: Mail, 
+      description: 'Verify and secure your email address',
+      badge: userProfile.isEmailVerified ? 'Verified' : 'Action Required',
+      priority: userProfile.isEmailVerified ? 'low' : 'high'
+    },
+    { 
+      id: 'phone-verify', 
+      label: 'Phone Verification', 
+      icon: Phone, 
+      description: 'Add an extra layer of security',
+      badge: userProfile.isPhoneVerified ? 'Verified' : 'Pending',
+      priority: userProfile.isPhoneVerified ? 'low' : 'medium'
+    },
+    { 
+      id: 'password-update', 
+      label: 'Security Settings', 
+      icon: Lock, 
+      description: 'Update password and security preferences',
+      badge: null,
+      priority: 'medium'
+    },
+    { 
+      id: 'status', 
+      label: 'Account Status', 
+      icon: Activity, 
+      description: 'Monitor your account health and activity',
+      badge: 'Premium',
+      priority: 'medium'
+    },
+    { 
+      id: 'orders', 
+      label: 'Order History', 
+      icon: ShoppingBag, 
+      description: 'Track and manage your purchases',
+      badge: `${userProfile.completedOrders} Orders`,
+      priority: 'high'
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      description: 'Manage your alerts and preferences',
+      badge: '3 New',
+      priority: 'medium'
+    },
+    { 
+      id: 'services', 
+      label: 'Browse Services', 
+      icon: Briefcase, 
+      description: 'Discover amazing services from our sellers',
+      badge: 'Explore',
+      priority: 'medium'
+    },
+    { 
+      id: 'seller', 
+      label: 'Become a Seller', 
+      icon: Crown, 
+      description: 'Start earning with your talents today',
+      badge: 'Hot 🔥',
+      priority: 'high'
+    },
+    { 
+      id: 'support', 
+      label: 'Help & Support', 
+      icon: HelpCircle, 
+      description: '24/7 assistance and troubleshooting',
+      badge: null,
+      priority: 'low'
+    },
+    { 
+      id: 'about', 
+      label: 'Platform Info', 
+      icon: Info, 
+      description: 'Learn about features and updates',
+      badge: null,
+      priority: 'low'
     }
-  };
+  ];
 
   const handleMenuClick = (itemId) => {
     if (itemId === 'seller') {
       setBecomeSellerModal(true);
     } else {
-      console.log(`Navigate to: ${itemId}`);
+      navigate(itemId);
     }
   };
 
@@ -277,22 +179,11 @@ const UserProfileDashboard = () => {
     setBecomeSellerModal(false);
   };
 
-  const getHeaderStats = () => {
-    if (userProfile.isSeller) {
-      return [
-        { label: 'Products', value: userProfile.sellerStats.totalProducts, suffix: '' },
-        { label: 'Services', value: userProfile.sellerStats.totalServices, suffix: '' },
-        { label: 'Revenue', value: `$${(userProfile.sellerStats.revenue / 1000).toFixed(1)}`, suffix: 'k' },
-        { label: 'Rating', value: userProfile.sellerStats.rating, suffix: '★' }
-      ];
-    } else {
-      return [
-        { label: 'Orders', value: userProfile.completedOrders, suffix: '' },
-        { label: 'Wishlist', value: '8', suffix: '' },
-        { label: 'Status', value: 'Active', suffix: '' }
-      ];
-    }
-  };
+  const headerStats = [
+    { label: 'Orders', value: userProfile.completedOrders, suffix: '' },
+    { label: 'Wishlist', value: userProfile.wishlistItems, suffix: '' },
+    { label: 'Status', value: 'Active', suffix: '' }
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
@@ -341,17 +232,10 @@ const UserProfileDashboard = () => {
                   </h1>
                   <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
                     <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
-                      {userProfile.isSeller ? <Store size={12} className="sm:w-4 sm:h-4" /> : <Crown size={12} className="sm:w-4 sm:h-4" />}
-                      <span className="hidden sm:inline">{userProfile.isSeller ? 'Seller' : 'Premium'}</span>
-                      <span className="sm:hidden">{userProfile.isSeller ? 'Seller' : 'Pro'}</span>
+                      <Crown size={12} className="sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Premium</span>
+                      <span className="sm:hidden">Pro</span>
                     </span>
-                    {userProfile.isSeller && (
-                      <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-yellow-600 text-white transform hover:scale-105 transition-transform duration-300">
-                        <Award size={12} className="sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">Top Rated</span>
-                        <span className="sm:hidden">★</span>
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -359,7 +243,7 @@ const UserProfileDashboard = () => {
                   {userProfile.email}
                 </p>
                 <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
-                  {userProfile.isSeller ? 'Seller' : 'Member'} since {new Date(userProfile.joinDate).toLocaleDateString('en-US', { 
+                  Member since {new Date(userProfile.joinDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long',
                     day: 'numeric'
@@ -367,8 +251,8 @@ const UserProfileDashboard = () => {
                 </p>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  {getHeaderStats().map((stat, index) => (
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                  {headerStats.map((stat, index) => (
                     <div 
                       key={index}
                       className="bg-gray-700 bg-opacity-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center border border-gray-600 transition-all duration-300 hover:scale-105 hover:bg-opacity-70"
@@ -407,15 +291,6 @@ const UserProfileDashboard = () => {
                       <span className="sm:hidden">{userProfile.isPhoneVerified ? 'Phone ✓' : 'Phone ✗'}</span>
                     </span>
                   </div>
-                  {userProfile.isSeller && (
-                    <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-blue-600 bg-opacity-20 text-blue-300 border-blue-500 border-opacity-30 shadow-lg">
-                      <Store size={14} className="sm:w-4 sm:h-4" />
-                      <span className="font-semibold text-xs sm:text-sm">
-                        <span className="hidden sm:inline">Business Verified</span>
-                        <span className="sm:hidden">Business ✓</span>
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -424,7 +299,7 @@ const UserProfileDashboard = () => {
 
         {/* Menu Grid */}
         <div ref={menuGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-6 lg:mb-8">
-          {getMenuItems().map((item, index) => {
+          {menuItems.map((item, index) => {
             const IconComponent = item.icon;
             
             return (
@@ -614,7 +489,7 @@ const UserProfileDashboard = () => {
                 onClick={handleBecomeSeller}
                 className="w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 bg-yellow-600 text-white hover:bg-yellow-700 hover:scale-105 shadow-lg text-sm sm:text-base flex items-center justify-center gap-2"
               >
-                <Store size={18} className="sm:w-5 sm:h-5" />
+                <Crown size={18} className="sm:w-5 sm:h-5" />
                 Start Selling Now
               </button>
               <button

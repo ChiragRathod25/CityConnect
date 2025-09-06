@@ -8,7 +8,10 @@ import Navbar from "./components/Navbar";
 import ModernSellerForm from "./components/BusinessForm";
 import CategoryPageUi from "./Pages/Category";
 import CityConnectLanding from "./components/LandingPage";
-import ProfilePageUI from "./Pages/Profile";
+// import ProfilePageUI from "./Pages/Profile";
+import UserProfileDashboard from "./Pages/UserProfile/UserProfile";
+import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanProfile";
+import ProfilePage from "./Pages/Profile/Profile";
 
 const Layout = () => {
   const location = useLocation();
@@ -33,8 +36,13 @@ const Layout = () => {
         <Route path="/start" element={<CityConnectLanding />} />
         <Route path="/abc" element={<ModernSellerForm />} />
         <Route path="/signup" element={<SignUpPageUI />} />
-        <Route path="/profile" element={<ProfilePageUI />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
+
+        <Route path="/user-profile" element={<UserProfileDashboard />} />
+        <Route path="/user-profile/:itemId" element={<ProfilePage />} />
+
+        <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
+        <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
       </Routes>
 
       {!hideNavbarFooter && <Footer />}
