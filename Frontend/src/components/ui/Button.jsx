@@ -8,9 +8,9 @@ export const Button = ({
   className = "",
   size = "normal",
   bgColor = null,
+  iconRight = false,
 }) => {
   const getButtonStyles = () => {
-
     if (bgColor) {
       return {
         backgroundColor: bgColor,
@@ -76,7 +76,7 @@ export const Button = ({
             {typeof children === "string" ? `${children}...` : children}
           </span>
         </>
-      ) : (
+      ) : !iconRight ? (
         <>
           <span className="text-sm sm:text-base">{children}</span>
           {icon && (
@@ -88,6 +88,19 @@ export const Button = ({
               {icon}
             </svg>
           )}
+        </>
+      ) : (
+        <>
+          {icon && (
+            <svg
+              className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {icon}
+            </svg>
+          )}
+          <span className="text-sm sm:text-base">{children}</span>
         </>
       )}
     </button>
