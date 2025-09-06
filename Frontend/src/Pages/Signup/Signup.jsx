@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button";
-import { Briefcase, Eye, EyeOff, Star, User } from "lucide-react";
+import { Briefcase, Eye, EyeOff, SendHorizontal, Star, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -31,7 +31,6 @@ const PasswordRequirements = ({ password }) => {
       icon: "🔣",
     },
   ];
-
   const getStrength = () => {
     if (password.length === 0) return 0;
     const metCount = requirements.filter((req) => req.met).length;
@@ -40,7 +39,6 @@ const PasswordRequirements = ({ password }) => {
     if (metCount <= 3) return 3;
     return 4;
   };
-
   const getStrengthColor = (strength) => {
     switch (strength) {
       case 1:
@@ -55,7 +53,6 @@ const PasswordRequirements = ({ password }) => {
         return "bg-gray-300";
     }
   };
-
   const getStrengthText = (strength) => {
     switch (strength) {
       case 1:
@@ -70,10 +67,8 @@ const PasswordRequirements = ({ password }) => {
         return "";
     }
   };
-
   const strength = getStrength();
   if (!password) return null;
-
   return (
     <div className="mt-3 space-y-3">
       {/* Password Strength Bar */}
@@ -231,14 +226,12 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
     if (selected) return "text-white";
     return role === "Businessman" ? "text-amber-500" : "text-emerald-500";
   };
-
   const getIconBgColor = () => {
     if (selected) return "bg-gradient-to-br from-gray-700 to-gray-900";
     return role === "Businessman"
       ? "bg-gradient-to-br from-amber-100 to-amber-200"
       : "bg-gradient-to-br from-emerald-100 to-emerald-200";
   };
-
   return (
     <div
       onClick={onClick}
@@ -264,7 +257,6 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
           </svg>
         </div>
       )}
-
       <div className="text-center space-y-4">
         <div
           className={`w-16 hover:scale-105 h-16 hover:transition-transform hover:rotate-360 hover:duration-1000 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${getIconBgColor()}`}
@@ -279,7 +271,6 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
             {icon}
           </svg>
         </div>
-
         <div>
           <h3
             className={`text-lg font-semibold mb-2 ${
@@ -305,30 +296,34 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
   );
 };
 
-const ResendTimer = ({ onResend, isLoading, method }) => {
-  const [countdown, setCountdown] = useState(60);
+const ResendTimer = ({ onResend, isLoading, canShowResend }) => {
+  const [countdown, setCountdown] = useState(0);
   const [canResend, setCanResend] = useState(false);
 
-  // Reset timer when method changes (different verification steps)
+  // Start timer only when canShowResend becomes true
   useEffect(() => {
-    setCountdown(60);
-    setCanResend(false);
-  }, [method]);
+    if (canShowResend && countdown === 0) {
+      setCountdown(60);
+      setCanResend(false);
+    }
+  }, [canShowResend]);
 
   useEffect(() => {
     if (countdown > 0 && !canResend) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (countdown === 0) {
+    } else if (countdown === 0 && canShowResend) {
       setCanResend(true);
     }
-  }, [countdown, canResend]);
+  }, [countdown, canResend, canShowResend]);
 
   const handleResend = () => {
     onResend();
     setCountdown(60);
     setCanResend(false);
   };
+
+  if (!canShowResend) return null;
 
   return (
     <div className="text-center">
@@ -349,20 +344,17 @@ const ResendTimer = ({ onResend, isLoading, method }) => {
 
 const OTPInput = ({ value, onChange, error }) => {
   const [otp, setOtp] = useState(Array(6).fill(""));
-
   useEffect(() => {
     const otpString = otp.join("");
     if (otpString !== value) {
       onChange({ target: { value: otpString } });
     }
   }, [otp, onChange, value]);
-
   useEffect(() => {
     if (value.length === 0) {
       setOtp(Array(6).fill(""));
     }
   }, [value]);
-
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
     const newOtp = [...otp];
@@ -375,7 +367,6 @@ const OTPInput = ({ value, onChange, error }) => {
       if (nextInput) nextInput.focus();
     }
   };
-
   const handleKeyDown = (e, index) => {
     // Handle backspace
     if (e.key === "Backspace" && !otp[index] && index > 0) {
@@ -388,13 +379,11 @@ const OTPInput = ({ value, onChange, error }) => {
         setOtp(newOtp);
       }
     }
-
     // Handle paste
     if (e.key === "Enter") {
       e.target.blur();
     }
   };
-
   const handlePaste = (e) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").slice(0, 6);
@@ -406,7 +395,6 @@ const OTPInput = ({ value, onChange, error }) => {
       setOtp(newOtp);
     }
   };
-
   return (
     <div className="space-y-3">
       <div className="text-center mb-4">
@@ -414,7 +402,6 @@ const OTPInput = ({ value, onChange, error }) => {
           Enter 6-digit code
         </h3>
       </div>
-
       <div className="flex justify-center space-x-2 sm:space-x-3">
         {otp.map((digit, index) => (
           <div key={index} className="relative">
@@ -442,7 +429,6 @@ const OTPInput = ({ value, onChange, error }) => {
           </div>
         ))}
       </div>
-
       {error && (
         <p className="text-red-500 text-sm text-center mt-2">{error}</p>
       )}
@@ -475,15 +461,12 @@ const VerificationProgress = ({
       completed: emailVerified && phoneVerified,
     },
   ];
-
   const getCurrentStepIndex = () => {
     if (!emailVerified) return 0;
     if (!phoneVerified) return 1;
     return 2;
   };
-
   const currentStepIndex = getCurrentStepIndex();
-
   return (
     <div className="mb-8 px-2">
       <div className="flex items-center justify-between relative">
@@ -501,7 +484,6 @@ const VerificationProgress = ({
             }}
           />
         </div>
-
         {steps.map((step, index) => (
           <div
             key={step.id}
@@ -561,7 +543,6 @@ export default function SignupPage() {
   const [verificationStage, setVerificationStage] = useState("email");
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -569,15 +550,17 @@ export default function SignupPage() {
     phoneNumber: "",
     role: "",
   });
-
   const [twoFAData, setTwoFAData] = useState({
     emailCode: "",
     phoneCode: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [codeSentStatus, setCodeSentStatus] = useState({
+    email: false,
+    phone: false
+  });
 
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
@@ -653,38 +636,55 @@ export default function SignupPage() {
       setIsLoading(false);
       setCurrentStep("2fa-verify");
       setVerificationStage("email");
+      // Reset code sent status when entering verification
+      setCodeSentStatus({ email: false, phone: false });
     }, 2000);
   };
 
   const sendVerificationCode = async () => {
     setIsLoading(true);
+    
+    // Simulate sending code
     setTimeout(() => {
       setIsLoading(false);
+      // Mark code as sent for current verification stage
+      setCodeSentStatus(prev => ({
+        ...prev,
+        [verificationStage]: true
+      }));
+      
+      // Show success message
+      const method = verificationStage === "email" ? "email" : "phone number";
+      const contact = verificationStage === "email" ? formData.email : formData.phoneNumber;
+      alert(`Verification code sent to your ${method}: ${contact}`);
     }, 1500);
   };
 
   const verifyCode = async () => {
     setIsLoading(true);
     const newErrors = {};
+    
     if (verificationStage === "email" && !twoFAData.emailCode) {
       newErrors.emailCode = "Email verification code is required";
     }
     if (verificationStage === "phone" && !twoFAData.phoneCode) {
       newErrors.phoneCode = "Phone verification code is required";
     }
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setIsLoading(false);
       return;
     }
+    
     setTimeout(() => {
       setIsLoading(false);
-
       if (verificationStage === "email") {
         setEmailVerified(true);
         setVerificationStage("phone");
         setTwoFAData((prev) => ({ ...prev, emailCode: "" }));
         setErrors({});
+        // Don't reset phone code sent status, but email verification is done
       } else if (verificationStage === "phone") {
         setPhoneVerified(true);
         alert(
@@ -710,6 +710,7 @@ export default function SignupPage() {
     });
     setTwoFAData({ emailCode: "", phoneCode: "" });
     setErrors({});
+    setCodeSentStatus({ email: false, phone: false });
   };
 
   const getStepConfig = () => {
@@ -748,7 +749,7 @@ export default function SignupPage() {
           title: `Verify ${verificationStage === "email" ? "Email" : "Phone"}`,
           subtitle: `Step ${
             verificationStage === "email" ? "1" : "2"
-          } of 2: Enter the verification code`,
+          } of 2: ${!codeSentStatus[verificationStage] ? "Send verification code" : "Enter the verification code"}`,
           iconBg: verificationStage === "email" ? "#3b82f6" : "#10b981",
         };
       default:
@@ -770,7 +771,6 @@ export default function SignupPage() {
           }}
         >
           <StepHeader {...stepConfig} />
-
           {currentStep === "role-selection" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -782,7 +782,6 @@ export default function SignupPage() {
                   selected={selectedRole === "Businessman"}
                   onClick={() => handleRoleSelection("Businessman")}
                 />
-
                 <RoleCard
                   role="user"
                   icon={<User className="w-8 h-8" />}
@@ -824,7 +823,6 @@ export default function SignupPage() {
               )}
             </div>
           )}
-
           {currentStep === "signup" && (
             <>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -937,7 +935,6 @@ export default function SignupPage() {
                   Change Role
                 </Button>
               </form>
-
               <div className="mt-8 text-center">
                 <p className="text-sm" style={{ color: "#6b7280" }}>
                   Already have an account?{" "}
@@ -952,7 +949,6 @@ export default function SignupPage() {
               </div>
             </>
           )}
-
           {currentStep === "2fa-verify" && (
             <>
               <VerificationProgress
@@ -963,7 +959,10 @@ export default function SignupPage() {
               <div className="space-y-6">
                 <div className="text-center space-y-2">
                   <p className="text-sm" style={{ color: "#6b7280" }}>
-                    We've sent a 6-digit code to
+                    {!codeSentStatus[verificationStage] 
+                      ? `Click 'Send Code' to receive verification code at`
+                      : `We've sent a 6-digit code to`
+                    }
                   </p>
                   <p
                     className="font-semibold text-lg"
@@ -974,47 +973,63 @@ export default function SignupPage() {
                       : formData.phoneNumber}
                   </p>
                 </div>
-                <OTPInput
-                  value={
-                    verificationStage === "email"
-                      ? twoFAData.emailCode
-                      : twoFAData.phoneCode
-                  }
-                  onChange={(e) =>
-                    handleTwoFAChange({
-                      target: {
-                        name:
-                          verificationStage === "email"
-                            ? "emailCode"
-                            : "phoneCode",
-                        value: e.target.value,
-                      },
-                    })
-                  }
-                  error={
-                    verificationStage === "email"
-                      ? errors.emailCode
-                      : errors.phoneCode
-                  }
-                />
-                <Button
-                  onClick={verifyCode}
-                  loading={isLoading}
-                  icon={
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                  }
-                >
-                  {isLoading
-                    ? "Verifying"
-                    : verificationStage === "email"
-                    ? "Verify Email"
-                    : "Complete Setup"}
-                </Button>
-                <ResendTimer
-                  onResend={sendVerificationCode}
-                  isLoading={isLoading}
-                  method={verificationStage}
-                />
+                
+                {!codeSentStatus[verificationStage] ? (
+                  <Button
+                    onClick={sendVerificationCode}
+                    loading={isLoading}
+                    icon={<SendHorizontal className="w-5 h-5" />}
+                  >
+                    {isLoading ? "Sending Code..." : `Send Code to ${verificationStage === "email" ? "Email" : "Phone"}`}
+                  </Button>
+                ) : (
+                  <>
+                    <OTPInput
+                      value={
+                        verificationStage === "email"
+                          ? twoFAData.emailCode
+                          : twoFAData.phoneCode
+                      }
+                      onChange={(e) =>
+                        handleTwoFAChange({
+                          target: {
+                            name:
+                              verificationStage === "email"
+                                ? "emailCode"
+                                : "phoneCode",
+                            value: e.target.value,
+                          },
+                        })
+                      }
+                      error={
+                        verificationStage === "email"
+                          ? errors.emailCode
+                          : errors.phoneCode
+                      }
+                    />
+                    
+                    <Button
+                      onClick={verifyCode}
+                      loading={isLoading}
+                      icon={
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                      }
+                    >
+                      {isLoading
+                        ? "Verifying..."
+                        : verificationStage === "email"
+                        ? "Verify Email"
+                        : "Complete Setup"}
+                    </Button>
+                    
+                    <ResendTimer
+                      onResend={sendVerificationCode}
+                      isLoading={isLoading}
+                      canShowResend={codeSentStatus[verificationStage]}
+                    />
+                  </>
+                )}
+                
                 <Button
                   onClick={() => {
                     if (verificationStage === "phone" && emailVerified) {
@@ -1042,4 +1057,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
