@@ -12,6 +12,7 @@ import CityConnectLanding from "./components/LandingPage";
 import UserProfileDashboard from "./Pages/UserProfile/UserProfile";
 import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanProfile";
 import ProfilePage from "./Pages/Profile/Profile";
+import EditProfileInfo from "./components/userProfile/EditProfileInfo";
 
 const Layout = () => {
   const location = useLocation();
@@ -40,6 +41,7 @@ const Layout = () => {
 
         <Route path="/user-profile" element={<UserProfileDashboard />} />
         <Route path="/user-profile/:itemId" element={<ProfilePage />} />
+        <Route path="/edit-profile" element={<EditProfileInfo />} />
 
         <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
         <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
