@@ -306,7 +306,7 @@ const DatePicker = ({ value, onChange, disabled }) => {
   );
 };
 
-const EditProfilePage = () => {
+const EditUserProfileInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -692,4 +692,4 @@ const EditProfilePage = () => {
   );
 };
 
-export default EditProfilePage;
+export default EditUserProfileInfo;

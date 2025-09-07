@@ -1,3 +1,5 @@
+import BusinessmanProfileInfo from '@/components/businessmanProfile/ProfileInfo';
+import EditUserProfileInfo from '@/components/userProfile/EditProfileInfo';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 
@@ -12,36 +14,36 @@ const ProfilePage = () => {
   const basePath = `/${profileType}`;
 
   const userComponents = {
-    'profile-info': ProfileInfo,
-    'email-verify': EmailVerification,
-    'phone-verify': PhoneVerification,
-    'password-update': SecuritySettings,
-    'status': AccountStatus,
-    'orders': OrderHistory,
-    'notifications': Notifications,
-    'services': BrowseServices,
-    'support': HelpSupport,
-    'about': PlatformInfo
+    'profile-info': EditUserProfileInfo,
+    // 'email-verify': EmailVerification,
+    // 'phone-verify': PhoneVerification,
+    // 'password-update': SecuritySettings,
+    // 'status': AccountStatus,
+    // 'orders': OrderHistory,
+    // 'notifications': Notifications,
+    // 'services': BrowseServices,
+    // 'support': HelpSupport,
+    // 'about': PlatformInfo
   };
 
   const businessComponents = {
-    'profile-info': ProfileInfo,
-    'email-verify': EmailVerification,
-    'phone-verify': PhoneVerification,
-    'password-update': SecuritySettings,
-    'status': AccountStatus,
-    'orders': OrderHistory,
-    'notifications': Notifications,
-    'seller-dashboard': SellerDashboard,
-    'products': YourProducts,
-    'services': YourServices,
-    'sales': SalesHistory,
-    'reviews': ReviewsRatings,
-    'customers': CustomerManagement,
-    'analytics': PerformanceAnalytics,
-    'promotions': PromotionsDeals,
-    'support': HelpSupport,
-    'about': PlatformInfo
+    'profile-info': BusinessmanProfileInfo,
+    // 'email-verify': EmailVerification,
+    // 'phone-verify': PhoneVerification,
+    // 'password-update': SecuritySettings,
+    // 'status': AccountStatus,
+    // 'orders': OrderHistory,
+    // 'notifications': Notifications,
+    // 'seller-dashboard': SellerDashboard,
+    // 'products': YourProducts,
+    // 'services': YourServices,
+    // 'sales': SalesHistory,
+    // 'reviews': ReviewsRatings,
+    // 'customers': CustomerManagement,
+    // 'analytics': PerformanceAnalytics,
+    // 'promotions': PromotionsDeals,
+    // 'support': HelpSupport,
+    // 'about': PlatformInfo
   };
 
   const componentMap = profileType === 'user-profile' ? userComponents : businessComponents;
