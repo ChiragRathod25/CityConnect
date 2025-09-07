@@ -9,7 +9,9 @@ const businessLocationSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    street: String,
+    street: {
+      type: String,
+    },
     lat: {
       type: Number,
       required: true,

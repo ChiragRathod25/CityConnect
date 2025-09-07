@@ -21,7 +21,11 @@ const businessReviewSchema = new mongoose.Schema(
       type: String,
       maxlength: 1000,
     },
-    images: [String],
+    images: [
+      {
+        type: String,
+      },
+    ]
   },
   { timestamps: true }
 );

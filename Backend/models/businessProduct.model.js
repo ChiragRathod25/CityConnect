@@ -29,7 +29,11 @@ const businessProductSchema = new mongoose.Schema(
     category: {
       type: String, // e.g. Electronics, Food, Clothing
     },
-    images: [String], // multiple product images
+    images: [
+      {
+        type: String, // URL or path to the image
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
