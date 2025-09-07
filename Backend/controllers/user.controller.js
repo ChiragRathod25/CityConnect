@@ -15,7 +15,7 @@ const generateOTP = () => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, phone,role } = req.body;
+  const { username, email, password, phone, role } = req.body;
 
   //check duplicate email or phone
   const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //create user
-  const user = await User.create({ username, email, password, phone,role });
+  const user = await User.create({ username, email, password, phone, role });
 
   if (!user) {
     throw new ApiError(500, "Error creating user");
@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponce(201, user, "User registered successfully"));
+    .json(new ApiResponce(201, "User registered successfully", user));
 });
 
 const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
@@ -53,12 +53,12 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
   }
 
   //generate OTP
-  const otp = generateOTP(); 
+  const otp = generateOTP();
 
   try {
     //save OTP to DB
     await OTP.createOTP(userId, otp, "email_verification", 10 * 60); //expires in 10 minutes
-  
+
     //send OTP via email
     const emailResponse = await sendEmailVerification({
       email: user.email,
@@ -67,7 +67,7 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
     console.log(emailResponse);
     return res
       .status(200)
-      .json(new ApiResponce(200, emailResponse, "Verification email sent"));
+      .json(new ApiResponce(200, "Verification email sent", emailResponse));
   } catch (error) {
     // throw error
     throw new ApiError(500, "Error sending verification email", error);
@@ -91,10 +91,10 @@ const verifyEmail = asyncHandler(async (req, res) => {
     user.isEmailVerified = true;
     user.emailVerifiedAt = new Date();
     await user.save();
-  
+
     return res
       .status(200)
-      .json(new ApiResponce(200, user, "Email verified successfully"));
+      .json(new ApiResponce(200, "Email verified successfully", user));
   } catch (error) {
     throw new ApiError(500, "Error verifying email", error);
   }
@@ -115,17 +115,17 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
     const otp = generateOTP();
     //save OTP to DB
     await OTP.createOTP(userId, otp, "phone_verification", 10 * 60); //expires in 10 minutes
-  
+
     //send OTP via SMS
     const smsResponse = await sendMobileVerification({
       phoneNumber: user.phone,
-      
+
       verificationCode: otp,
     });
-  
+
     return res
       .status(200)
-      .json(new ApiResponce(200, smsResponse, "Verification SMS sent"));
+      .json(new ApiResponce(200, "Verification SMS sent", smsResponse));
   } catch (error) {
     throw new ApiError(500, "Error sending verification SMS", error);
   }
@@ -149,75 +149,63 @@ const verifyPhone = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponce(200, user, "Phone verified successfully"));
+    .json(new ApiResponce(200, "Phone verified successfully", user));
 });
 
-const login=asyncHandler(async (req, res) => {
-    // Login logic here
-    const { email, username,password } = req.body;
+const login = asyncHandler(async (req, res) => {
+  // Login logic here
+  const { email, username, password } = req.body;
 
-    if(!email && !username){
-        throw new ApiError(400,"Email or Username is required");
-    }
-    if(!password){
-        throw new ApiError(400,"Password is required");
-    }
-    const user=await User.findOne({$or:[{email},{username}]});
-    if(!user){
-        throw new ApiError(404,"User not found");
-    }
-    const isPasswordMatch=await user.comparePassword(password);
-    if(!isPasswordMatch){
-        throw new ApiError(401,"Invalid credentials");
-    }
+  if (!email && !username) {
+    throw new ApiError(400, "Email or Username is required");
+  }
+  if (!password) {
+    throw new ApiError(400, "Password is required");
+  }
+  const user = await User.findOne({ $or: [{ email }, { username }] });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  const isPasswordMatch = await user.comparePassword(password);
+  if (!isPasswordMatch) {
+    throw new ApiError(401, "Invalid credentials");
+  }
 
-
-    return res.status(200).json(new ApiResponce(200,user,"Login successful"));
+  return res.status(200).json(new ApiResponce(200, "Login successful", user));
 });
 
 const logout = asyncHandler(async (req, res) => {
-    // Logout logic here (if applicable)
-    return res.status(200).json(new ApiResponce(200, null, "Logout successful"));
+  // Logout logic here (if applicable)
+  return res.status(200).json(new ApiResponce(200, "Logout successful",null));
 });
 
+const updateUserProfile = asyncHandler(async (req, res) => {});
 
-const updateUserProfile = asyncHandler(async (req, res) => {
-});
+const updateAvatar = asyncHandler(async (req, res) => {});
 
-const updateAvatar= asyncHandler(async (req, res) => {
-} );
+const updatePassword = asyncHandler(async (req, res) => {});
 
-const updatePassword = asyncHandler(async (req, res) => {
-});
+const forgotPassword = asyncHandler(async (req, res) => {});
 
-const forgotPassword = asyncHandler(async (req, res) => {
-});
+const resetPassword = asyncHandler(async (req, res) => {});
 
-const resetPassword = asyncHandler(async (req, res) => {
-});
+const getUserById = asyncHandler(async (req, res) => {});
 
-
-const getUserById = asyncHandler(async (req, res) => {
-} );
-
-const getCurrentUser = asyncHandler(async (req, res) => {
-} );
-
-
+const getCurrentUser = asyncHandler(async (req, res) => {});
 
 export {
-    registerUser,
-    sendEmailVerificationOTP,
-    verifyEmail,
-    sendPhoneVerificationOTP,
-    verifyPhone,
-    login,
-    logout,
-    updateUserProfile,
-    updateAvatar,
-    updatePassword,
-    forgotPassword,
-    resetPassword,
-    getUserById,
-    getCurrentUser
+  registerUser,
+  sendEmailVerificationOTP,
+  verifyEmail,
+  sendPhoneVerificationOTP,
+  verifyPhone,
+  login,
+  logout,
+  updateUserProfile,
+  updateAvatar,
+  updatePassword,
+  forgotPassword,
+  resetPassword,
+  getUserById,
+  getCurrentUser,
 };

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const businessContactSchema = new mongoose.Schema(
   {
-    businessid: {
+    businessId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Business",
       required: true,
@@ -14,6 +14,7 @@ const businessContactSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      required: true,
     },
     website: {
       type: String,
