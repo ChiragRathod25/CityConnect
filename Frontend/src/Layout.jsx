@@ -13,6 +13,8 @@ import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanP
 import ProfilePage from "./Pages/Profile/Profile";
 import EditUserProfileInfo from "./components/userProfile/EditProfileInfo";
 import BusinessmanProfileInfo from "./components/businessmanProfile/ProfileInfo";
+import EditProfileNavigation from "./components/businessmanProfile/EditBusinessmanProfileInfo";
+import EmailEditPage from "./components/businessmanProfile/Email";
 
 const Layout = () => {
   const location = useLocation();
@@ -46,6 +48,8 @@ const Layout = () => {
         <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
         <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
         <Route path="/businessman-profileinfo" element={<BusinessmanProfileInfo />} />
+        <Route path="/edit" element={<EditProfileNavigation />} />
+        <Route path="/email" element={<EmailEditPage />} />
       </Routes>
 
       {!hideNavbarFooter && <Footer />}
