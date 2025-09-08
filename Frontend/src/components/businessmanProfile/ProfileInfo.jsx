@@ -202,7 +202,7 @@ const BusinessmanProfileInfo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen ">
       <Confetti trigger={showConfetti} />
       
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
