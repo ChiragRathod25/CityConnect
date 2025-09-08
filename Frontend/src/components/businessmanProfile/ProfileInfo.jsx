@@ -23,6 +23,7 @@ import {
   Settings
 } from 'lucide-react';
 import Confetti from '../SimpleConfettie';
+import { useNavigate } from 'react-router-dom';
 
 
 const ProfileSection = ({ title, icon: Icon, children, className = "" }) => (
@@ -128,8 +129,8 @@ const ServiceBadge = ({ service, available, icon: Icon, className = "" }) => (
 
 const BusinessmanProfileInfo = () => {
   const [activeTab, setActiveTab] = useState('personal');
-  const [isEditing, setIsEditing] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const navigate = useNavigate();
 
   // Trigger confetti on component mount
   useEffect(() => {
@@ -138,6 +139,10 @@ const BusinessmanProfileInfo = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleEditButton = () => {
+      navigate('edit-profile');
+  }
 
   const profileData = {
     personal: {
@@ -239,7 +244,7 @@ const BusinessmanProfileInfo = () => {
                   {/* Edit Profile Button - Mobile */}
                   <div className="block lg:hidden">
                     <button
-                      onClick={() => setIsEditing(!isEditing)}
+                      onClick={handleEditButton}
                       className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white rounded-lg transition-all duration-300 hover:scale-105"
                     >
                       <Edit3 className="w-4 h-4" />
@@ -252,7 +257,7 @@ const BusinessmanProfileInfo = () => {
               {/* Edit Profile Button - Desktop */}
               <div className="hidden lg:block">
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
+                  onClick={handleEditButton}
                   className="inline-flex items-center space-x-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white rounded-xl transition-all duration-300 hover:scale-105"
                 >
                   <Edit3 className="w-5 h-5" />

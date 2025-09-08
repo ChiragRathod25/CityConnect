@@ -48,7 +48,7 @@ const Layout = () => {
         <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
         <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
         <Route path="/businessman-profileinfo" element={<BusinessmanProfileInfo />} />
-        <Route path="/edit" element={<EditBusinessmanProfileNavigation />} />
+        <Route path="/businessman-profile/profile-info/edit-profile" element={<EditBusinessmanProfileNavigation />} />
         <Route path="/email" element={<EmailEditPage />} />
       </Routes>
 
