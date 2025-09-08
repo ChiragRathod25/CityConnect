@@ -10,68 +10,65 @@ import {
   FileText,
   ChevronRight,
   Edit3,
-  ArrowLeft,
   Settings,
-  Home,
   Truck,
   Shield,
-  Briefcase,
-  Calendar,
-  Upload,
   CheckCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import MoveBackButton from '../ui/MoveBackButton';
 
-const EditProfileNavigation = () => {
+const EditBusinessmanProfileNavigation = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
   const editOptions = [
     {
-      id: 'contact-info',
-      title: 'Contact Information',
-      description: 'Update your personal contact details',
+      id: 'personal-info',
+      title: 'Personal Information',
+      description: 'Update your personal details and name',
       icon: User,
-      color: 'bg-blue-500',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      hoverColor: 'hover:bg-blue-100',
-      subItems: [
-        { 
-          id: 'name-edit', 
-          title: 'Edit Name', 
-          icon: User,
-          route: '/edit/name-edit',
-          description: 'Update your full name'
-        },
-        { 
-          id: 'email-edit', 
-          title: 'Edit Email', 
-          icon: Mail,
-          route: '/edit/email-edit',
-          description: 'Change email with verification'
-        },
-        { 
-          id: 'phone-edit', 
-          title: 'Edit Phone', 
-          icon: Phone,
-          route: '/edit/phone-edit',
-          description: 'Update phone with OTP verification'
-        }
-      ]
+      color: 'bg-gray-700',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
+      route: '/edit/personal-info'
+    },
+    {
+      id: 'email-edit',
+      title: 'Edit Email',
+      description: 'Change email Via OTP verification',
+      icon: Mail,
+      color: 'bg-gray-600',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
+      route: '/edit/email-edit'
+    },
+    {
+      id: 'phone-edit',
+      title: 'Edit Phone',
+      description: 'Update phone with OTP verification',
+      icon: Phone,
+      color: 'bg-gray-500',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
+      route: '/edit/phone-edit'
     },
     {
       id: 'location',
       title: 'Location & Address',
       description: 'Update your business location and address',
       icon: MapPin,
-      color: 'bg-green-500',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      hoverColor: 'hover:bg-green-100',
+      color: 'bg-gray-600',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/location-edit'
     },
     {
@@ -79,10 +76,10 @@ const EditProfileNavigation = () => {
       title: 'Business Information',
       description: 'Edit business details and description',
       icon: Building2,
-      color: 'bg-purple-500',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200',
-      hoverColor: 'hover:bg-purple-100',
+      color: 'bg-gray-700',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/business-edit'
     },
     {
@@ -90,10 +87,10 @@ const EditProfileNavigation = () => {
       title: 'Payment Methods',
       description: 'Manage accepted payment options',
       icon: CreditCard,
-      color: 'bg-orange-500',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
-      hoverColor: 'hover:bg-orange-100',
+      color: 'bg-gray-600',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/payment-edit'
     },
     {
@@ -101,10 +98,10 @@ const EditProfileNavigation = () => {
       title: 'Business Hours',
       description: 'Set your operating hours and schedule',
       icon: Clock,
-      color: 'bg-indigo-500',
-      bgColor: 'bg-indigo-50',
-      borderColor: 'border-indigo-200',
-      hoverColor: 'hover:bg-indigo-100',
+      color: 'bg-gray-500',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/hours-edit'
     },
     {
@@ -112,10 +109,10 @@ const EditProfileNavigation = () => {
       title: 'Services Available',
       description: 'Configure delivery and home service options',
       icon: Truck,
-      color: 'bg-teal-500',
-      bgColor: 'bg-teal-50',
-      borderColor: 'border-teal-200',
-      hoverColor: 'hover:bg-teal-100',
+      color: 'bg-gray-600',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/services-edit'
     },
     {
@@ -123,58 +120,84 @@ const EditProfileNavigation = () => {
       title: 'Document Upload',
       description: 'Upload and manage your documents',
       icon: FileText,
-      color: 'bg-red-500',
-      bgColor: 'bg-red-50',
-      borderColor: 'border-red-200',
-      hoverColor: 'hover:bg-red-100',
+      color: 'bg-gray-700',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      hoverColor: 'hover:bg-gray-100',
       route: '/edit/documents-edit'
     }
   ];
 
-  const handleNavigation = (route) => {
-    // In a real app, you would use React Router
-    alert(`Navigating to: ${route}`);
-  };
+  const handleMoveBackTo  = ()  => {
+    navigate('/businessman-profile/profile-info');
+  }
 
-  const handleBack = () => {
-    alert('Going back to profile');
+  const handleNavigation = (editType) => {
+    // Navigate to the current route with query parameter
+    const currentUrl = window.location.pathname;
+    const newUrl = `${currentUrl}?edit=${editType}`;
+    window.history.pushState({}, '', newUrl);
+    
+    // In a real app, you would handle the route change here
+    console.log(`Navigating to: ${newUrl}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+    <div className="min-h-screen bg-gray-100 relative overflow-hidden">
+      {/* Amazing Background Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        <div className="absolute inset-0">
+          {/* Animated circles */}
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full opacity-15 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-32 left-1/4 w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full opacity-25 animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+        </div>
         
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(to right, #6b7280 1px, transparent 1px),
+              linear-gradient(to bottom, #6b7280 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}></div>
+        </div>
+      </div>
+
+      <div className="relative z-10  max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className='my-4 md:my-6'>
+          <MoveBackButton onClick={handleMoveBackTo} />
+        </div>
         {/* Header */}
-        <div className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-6 sm:mb-8 transition-all duration-700 ${
+        <div className={`bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-6 sm:mb-8 transition-all duration-700 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
           <div className="relative bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 p-4 sm:p-6 lg:p-8">
-            <div className="flex items-center justify-between">
-              <button
-                onClick={handleBack}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white rounded-xl transition-all duration-300 hover:scale-105"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="font-medium hidden sm:inline">Back to Profile</span>
-              </button>
-              
+            {/* Animated background elements */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br from-white/5 to-transparent rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute top-1/2 left-1/4 w-20 h-20 bg-gradient-to-br from-white/8 to-transparent rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+            </div>
+            
+            <div className="relative flex items-center justify-center">
               <div className="flex items-center space-x-3">
-                <div className="p-3 bg-white/10 rounded-xl">
+                <div className="p-3 bg-white/10 rounded-xl animate-pulse">
                   <Settings className="w-6 h-6 text-white" />
                 </div>
-                <div className="text-white">
+                <div className="text-white text-center">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Edit Profile</h1>
                   <p className="text-gray-300 text-sm sm:text-base">Update your information</p>
                 </div>
               </div>
-              
-              <div className="w-16 sm:w-24" /> {/* Spacer for alignment */}
             </div>
           </div>
         </div>
 
         {/* Edit Options List */}
-        <div className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {editOptions.map((option, index) => (
             <div
               key={option.id}
@@ -183,93 +206,50 @@ const EditProfileNavigation = () => {
               }`}
               style={{ transitionDelay: `${(index + 1) * 100}ms` }}
             >
-              {option.subItems ? (
-                // Contact Information with Sub-items
-                <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 ${option.bgColor} ${option.borderColor}`}>
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-center space-x-4 mb-4">
-                      <div className={`p-3 ${option.color} text-white rounded-xl shadow-lg`}>
-                        <option.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1">{option.title}</h3>
-                        <p className="text-sm sm:text-base text-gray-600">{option.description}</p>
-                      </div>
+              <button
+                onClick={() => handleNavigation(option.id)}
+                onMouseEnter={() => setHoveredItem(option.id)}
+                onMouseLeave={() => setHoveredItem(null)}
+                className={`group w-full cursor-pointer bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 text-left ${
+                  option.hoverColor
+                } ${hoveredItem === option.id ? 'scale-105 shadow-2xl border-gray-300' : ''}`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className={`p-3 ${option.color} text-white rounded-xl shadow-lg transition-all duration-300 ${
+                      hoveredItem === option.id ? 'animate-bounce' : ''
+                    }`}>
+                      <option.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                      {option.subItems.map((subItem, subIndex) => (
-                        <button
-                          key={subItem.id}
-                          onClick={() => handleNavigation(subItem.route)}
-                          onMouseEnter={() => setHoveredItem(`${option.id}-${subIndex}`)}
-                          onMouseLeave={() => setHoveredItem(null)}
-                          className={`group p-4 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-lg transition-all duration-300 text-left ${
-                            hoveredItem === `${option.id}-${subIndex}` ? 'scale-105 shadow-xl' : ''
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="p-2 bg-gray-100 group-hover:bg-gray-200 rounded-lg transition-all duration-300">
-                              <subItem.icon className="w-4 h-4 text-gray-600" />
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
-                          </div>
-                          <h4 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base">{subItem.title}</h4>
-                          <p className="text-xs sm:text-sm text-gray-600">{subItem.description}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                // Regular Edit Options
-                <button
-                  onClick={() => handleNavigation(option.route)}
-                  onMouseEnter={() => setHoveredItem(option.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className={`group w-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 text-left ${
-                    option.hoverColor
-                  } ${hoveredItem === option.id ? 'scale-102 shadow-2xl' : ''}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-3 ${option.color} text-white rounded-xl shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                        <option.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 group-hover:text-gray-900 transition-colors">
-                          {option.title}
-                        </h3>
-                        <p className="text-sm sm:text-base text-gray-600 group-hover:text-gray-700 transition-colors">
-                          {option.description}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <div className="hidden sm:block">
-                        <div className="p-2 bg-gray-100 group-hover:bg-gray-200 rounded-lg transition-all duration-300">
-                          <Edit3 className="w-4 h-4 text-gray-600" />
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-2 transition-all duration-300" />
+                    <div className="flex-1">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 transition-colors">
+                        {option.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-gray-600 transition-colors">
+                        {option.description}
+                      </p>
                     </div>
                   </div>
                   
-                  {/* Progress indicator */}
-                  <div className="mt-4 pt-3 border-t border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm text-gray-600">Configured</span>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Last updated: 2 days ago
+                  <div className="flex items-center space-x-2">
+                    <div className="hidden sm:block">
+                      <div className="p-2 bg-gray-100 group-hover:bg-gray-200 rounded-lg transition-all duration-300">
+                        <Edit3 className="w-4 h-4 text-gray-600" />
                       </div>
                     </div>
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-2 transition-all duration-300" />
                   </div>
-                </button>
-              )}
+                </div>
+                
+                {/* Progress indicator */}
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-gray-500">
+                      Last updated: 2 days ago
+                    </div>
+                  </div>
+                </div>
+              </button>
             </div>
           ))}
         </div>
@@ -278,8 +258,8 @@ const EditProfileNavigation = () => {
         <div className={`mt-8 sm:mt-12 text-center transition-all duration-700 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`} style={{ transitionDelay: '800ms' }}>
-          <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition-all duration-300">
-            <Shield className="w-4 h-4 text-blue-600 mr-2" />
+          <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition-all duration-300">
+            <Shield className="w-4 h-4 text-gray-600 mr-2" />
             <span className="text-sm text-gray-600 font-medium">
               Your data is secure and encrypted
             </span>
@@ -288,42 +268,45 @@ const EditProfileNavigation = () => {
       </div>
 
       <style jsx>{`
-        .hover\:scale-102:hover {
-          transform: scale(1.02);
-        }
-        
-        @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
+        @keyframes bounce {
+          0%, 20%, 53%, 80%, 100% {
+            transform: translate3d(0, 0, 0);
           }
-          to {
-            opacity: 1;
-            transform: translateX(0);
+          40%, 43% {
+            transform: translate3d(0, -8px, 0);
           }
-        }
-        
-        @keyframes slideInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
+          70% {
+            transform: translate3d(0, -4px, 0);
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          90% {
+            transform: translate3d(0, -2px, 0);
           }
         }
         
-        .animate-slideInRight {
-          animation: slideInRight 0.5s ease-out;
+        .animate-bounce {
+          animation: bounce 0.6s ease-in-out;
         }
         
-        .animate-slideInUp {
-          animation: slideInUp 0.5s ease-out;
+        @media (max-width: 640px) {
+          .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+          }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1023px) {
+          .lg\\:grid-cols-2 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .lg\\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
         }
       `}</style>
     </div>
   );
 };
 
-export default EditProfileNavigation;
+export default EditBusinessmanProfileNavigation;
