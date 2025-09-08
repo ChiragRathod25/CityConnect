@@ -15,11 +15,13 @@ import {
   Shield,
   CheckCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import MoveBackButton from '../ui/MoveBackButton';
 
 const EditBusinessmanProfileNavigation = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -126,6 +128,10 @@ const EditBusinessmanProfileNavigation = () => {
     }
   ];
 
+  const handleMoveBackTo  = ()  => {
+    navigate('/businessman-profile/profile-info');
+  }
+
   const handleNavigation = (editType) => {
     // Navigate to the current route with query parameter
     const currentUrl = window.location.pathname;
@@ -160,8 +166,10 @@ const EditBusinessmanProfileNavigation = () => {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-        
+      <div className="relative z-10  max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className='my-4 md:my-6'>
+          <MoveBackButton onClick={handleMoveBackTo} />
+        </div>
         {/* Header */}
         <div className={`bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-6 sm:mb-8 transition-all duration-700 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
