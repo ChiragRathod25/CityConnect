@@ -126,9 +126,14 @@ const EditBusinessmanProfileNavigation = () => {
     }
   ];
 
-  const handleNavigation = (route) => {
-    // In a real app, you would use React Router
-    alert(`Navigating to: ${route}`);
+  const handleNavigation = (editType) => {
+    // Navigate to the current route with query parameter
+    const currentUrl = window.location.pathname;
+    const newUrl = `${currentUrl}?edit=${editType}`;
+    window.history.pushState({}, '', newUrl);
+    
+    // In a real app, you would handle the route change here
+    console.log(`Navigating to: ${newUrl}`);
   };
 
   return (
@@ -194,10 +199,10 @@ const EditBusinessmanProfileNavigation = () => {
               style={{ transitionDelay: `${(index + 1) * 100}ms` }}
             >
               <button
-                onClick={() => handleNavigation(option.route)}
+                onClick={() => handleNavigation(option.id)}
                 onMouseEnter={() => setHoveredItem(option.id)}
                 onMouseLeave={() => setHoveredItem(null)}
-                className={`group w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 text-left ${
+                className={`group w-full cursor-pointer bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 text-left ${
                   option.hoverColor
                 } ${hoveredItem === option.id ? 'scale-105 shadow-2xl border-gray-300' : ''}`}
               >
@@ -209,10 +214,10 @@ const EditBusinessmanProfileNavigation = () => {
                       <option.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 group-hover:text-gray-900 transition-colors">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 transition-colors">
                         {option.title}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600 group-hover:text-gray-700 transition-colors">
+                      <p className="text-sm sm:text-base text-gray-600 transition-colors">
                         {option.description}
                       </p>
                     </div>
@@ -231,10 +236,6 @@ const EditBusinessmanProfileNavigation = () => {
                 {/* Progress indicator */}
                 <div className="mt-4 pt-3 border-t border-gray-100">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span className="text-sm text-gray-600">Configured</span>
-                    </div>
                     <div className="text-xs text-gray-500">
                       Last updated: 2 days ago
                     </div>
