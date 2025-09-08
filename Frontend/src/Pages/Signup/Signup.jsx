@@ -821,6 +821,18 @@ export default function SignupPage() {
                   </p>
                 </div>
               )}
+              <div className="mt-8 text-center">
+                <p className="text-sm" style={{ color: "#6b7280" }}>
+                  Already have an account?{" "}
+                  <NavLink
+                    to="/login"
+                    className="font-semibold hover:underline transition-colors"
+                    style={{ color: "#374151" }}
+                  >
+                    Sign In
+                  </NavLink>
+                </p>
+              </div>
             </div>
           )}
           {currentStep === "signup" && (

@@ -5,7 +5,8 @@ import { NavLink } from "react-router-dom";
 
 // Mock data and functions for demo
 const mockLogo =
-  "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=100&h=100&fit=crop&crop=center";
+  // "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=100&h=100&fit=crop&crop=center";
+  '/logoFinal.png'
 const mockCities = [
   "New York",
   "Los Angeles",
@@ -20,7 +21,7 @@ const mockCities = [
 ];
 const mockLanguages = ["English", "Hindi", "Gujarati"];
 
-const Navbar = ({ isAuthenticated = true }) => {
+const Navbar = ({ isAuthenticated = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenForLanguage, setIsOpenForLanguage] = useState(false);
   const [cityDropdown, setCityDropdown] = useState(false);
@@ -81,7 +82,7 @@ const Navbar = ({ isAuthenticated = true }) => {
     { name: "Category", path: "/category" },
     { name: "About", path: "/about" },
     { name: "Contact Us", path: "/contact" },
-    ...(user?.role === "seller"
+    ...(user?.role === "business"
       ? [{ name: "My Business", path: "/mybusiness" }]
       : []),
   ];
@@ -110,11 +111,13 @@ const Navbar = ({ isAuthenticated = true }) => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
+            <NavLink to="/">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center space-x-3 cursor-pointer group"
             >
+
               <div className="relative">
                 <img
                   src={mockLogo}
@@ -129,7 +132,8 @@ const Navbar = ({ isAuthenticated = true }) => {
                 </span>
               </div>
             </motion.div>
-
+            </NavLink>
+            
             {/* Desktop Navigation */}
             <div className="hidden xl:flex items-center space-x-1">
               {navItems.map((item, index) => (
@@ -300,13 +304,16 @@ const Navbar = ({ isAuthenticated = true }) => {
                     </motion.button>
                   </NavLink>
                 ) : (
+                   <NavLink to="/login">
+
                   <motion.button
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
+                    >
                     Login
                   </motion.button>
+                    </NavLink>
                 )}
               </div>
 

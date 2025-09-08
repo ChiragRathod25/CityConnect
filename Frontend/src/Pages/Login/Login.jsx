@@ -193,6 +193,18 @@ const RoleSelection = ({ onSelectRole }) => {
           </div>
         ))}
       </div>
+
+      <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <NavLink
+              to="/signup"
+              className="text-gray-800 hover:text-gray-600 font-medium transition-colors"
+            >
+              Sign up
+            </NavLink>
+          </p>
+        </div>
     </div>
   );
 };
@@ -265,6 +277,7 @@ const LoginPage = () => {
       setIsLoading(false);
       // Handle login logic here
     }, 2000);
+    
   };
 
   const handleForgotPassword = async (e) => {
