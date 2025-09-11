@@ -1320,7 +1320,7 @@ const CategoriesPage = ({ onCategoryClick }) => {
                 whileHover={{ rotate: 360, scale: 1.1 }}
                 transition={{ duration: 0.8 }}
               >
-                <Search className="w-10 h-10 text-white" />
+                <Search className="w-10 animate-pulse h-10 text-white" />
               </motion.div>
             </div>
             <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-gray-800 to-black bg-clip-text text-transparent leading-tight">
