@@ -167,7 +167,7 @@ const EditBusinessmanProfileNavigation = () => {
       </div>
 
       <div className="relative z-10  max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <div className='my-4 md:my-6'>
+        <div className='mb-4 mt-2 md:mb-6'>
           <MoveBackButton onClick={handleMoveBackTo} />
         </div>
         {/* Header */}
