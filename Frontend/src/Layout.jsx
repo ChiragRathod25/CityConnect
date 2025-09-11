@@ -8,13 +8,13 @@ import Navbar from "./components/Navbar";
 import ModernSellerForm from "./components/BusinessForm";
 import CategoryPageUi from "./Pages/Category";
 import CityConnectLanding from "./components/LandingPage";
-import UserProfileDashboard from "./Pages/UserProfile/UserProfile";
 import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanProfile";
 import ProfilePage from "./Pages/Profile/Profile";
 import EditUserProfileInfo from "./components/userProfile/EditProfileInfo";
-import BusinessmanProfileInfo from "./components/businessmanProfile/ProfileInfo";
 import EditBusinessmanProfileNavigation from "./components/businessmanProfile/EditBusinessmanProfileInfo";
 import EmailEditPage from "./components/businessmanProfile/Email";
+import AdminProfilePageUI from "./Pages/AdminProfile";
+import UserProfileUI from "./Pages/UserProfile/Index";
 
 const Layout = () => {
   const location = useLocation();
@@ -41,15 +41,14 @@ const Layout = () => {
         <Route path="/signup" element={<SignUpPageUI />} />
         <Route path="/reset-password" element={<PasswordResetPage />} />
 
-        <Route path="/user-profile" element={<UserProfileDashboard />} />
+        <Route path="/user-profile" element={<UserProfileUI />} />
         <Route path="/user-profile/:itemId" element={<ProfilePage />} />
-        <Route path="/edit-profile" element={<EditUserProfileInfo />} />
 
         <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
         <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
-        <Route path="/businessman-profileinfo" element={<BusinessmanProfileInfo />} />
         <Route path="/businessman-profile/profile-info/edit-profile" element={<EditBusinessmanProfileNavigation />} />
         <Route path="/email" element={<EmailEditPage />} />
+        <Route path="/admin" element={<AdminProfilePageUI />} />
       </Routes>
 
       {!hideNavbarFooter && <Footer />}
