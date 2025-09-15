@@ -27,12 +27,35 @@ const sendEmailVerification =async({email,verificationCode})=>{
     return response;
 }
 
+// 3. Fix phone number format for Twilio
+const formatPhoneNumber = (phoneNumber) => {
+  // Remove all non-digit characters
+  let cleaned = phoneNumber.replace(/\D/g, '');
+    
+  if (cleaned.length === 10) {
+    cleaned = '+91' + cleaned;
+  } 
+  else if (cleaned.length === 11 && cleaned.startsWith('1')) {
+    cleaned = '+' + cleaned;
+  }
+  else if (phoneNumber.startsWith('+')) {
+    return phoneNumber;
+  }
+  else if (cleaned.length > 10) {
+    cleaned = '+' + cleaned;
+  } else {
+    cleaned = '+91' + cleaned;
+  }  
+  return cleaned;
+};
+
 const sendMobileVerification =async({phoneNumber,verificationCode})=>{
     try {
+      const formattedPhone = formatPhoneNumber(phoneNumber);
     const message = await twilioClient.messages.create({
       body: `Your verification code is: ${verificationCode}`,
-      from: process.env.TWILIO_PHONE_NUMBER, // Twilio phone number
-      to: phoneNumber,
+      from: process.env.TWILIO_PHONE_NUMBER, 
+      to: formattedPhone,
     });
 
     return message;

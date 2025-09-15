@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@upstash/redis": "^1.35.3",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cloudinary-build-url": "^0.2.4",
@@ -20,6 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "mongo-sanitize": "^1.1.0",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",
     "nodemon": "^3.1.10",
