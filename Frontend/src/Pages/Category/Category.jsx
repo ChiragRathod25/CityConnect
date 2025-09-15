@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Users, Star, Heart, Bookmark } from "lucide-react";
+import { Search, Users,Bookmark,Heart, Star } from "lucide-react";
 import { 
   COLOR_PALETTE, 
   CATEGORIES_DATA, 
@@ -13,78 +14,71 @@ import {
   Pagination, 
   CategorySkeleton 
 } from "./ReusableComponent";
-import { useNavigate } from "react-router-dom";
 
-// Category Card Component
 const HoverEffectCard = ({ category, onClick, className = "" }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const IconComponent = category.icon;
-  
+
   const handleFavorite = (e) => {
     e.stopPropagation();
     setIsFavorite(!isFavorite);
   };
-  
+
   const handleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
-  
+
   return (
     <motion.div
-      className={`relative group block p-1 h-full w-full ${className}`}
+      className={`relative group block p-2 h-full w-full ${className}`}
       onMouseEnter={() => setHoveredIndex(0)}
       onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => typeof onClick === 'function' && onClick(category)}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -10, rotateX: 5, rotateY: 5 }}
       whileTap={{ scale: 0.98 }}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+      transition={{ duration: 0.4, type: "spring", stiffness: 400 }}
+      style={{
+        perspective: 1000,
+        transformStyle: "preserve-3d",
+      }}
     >
-      <div className="relative h-full w-full overflow-hidden">
-        {/* Modern glassmorphism card with blue accent */}
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-blue-100/50"></div>
-        
-        {/* Subtle blue accent overlay */}
-        <div 
-          className="absolute inset-0 rounded-2xl opacity-30"
+      <div className="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-white/90 to-blue-50/80 backdrop-blur-md border border-blue-200/30">
+        {/* Neumorphic background with vibrant gradient */}
+        <div
+          className="absolute inset-0 rounded-2xl"
           style={{
-            background: "radial-gradient(circle at top right, rgba(70, 130, 180, 0.3), transparent 70%)",
-            filter: "blur(40px)",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(147,197,253,0.3))",
+            boxShadow: "6px 6px 12px rgba(0,0,0,0.1), -6px -6px 12px rgba(255,255,255,0.7)",
           }}
         />
-        
-        {/* Hover overlay */}
-        <AnimatePresence>
-          {hoveredIndex === 0 && (
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-white/90 backdrop-blur-lg rounded-2xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-          )}
-        </AnimatePresence>
-        
+        {/* Hover glow effect */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hoveredIndex === 0 ? 0.5 : 0 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            background: "radial-gradient(circle at center, rgba(59,130,246,0.4), transparent 70%)",
+            filter: "blur(20px)",
+          }}
+        />
+
         {/* Card content */}
         <div className="relative z-10 p-6 h-full flex flex-col">
           {/* Header section */}
           <div className="flex items-start justify-between mb-6">
-            {/* Icon with blue accent styling */}
             <motion.div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden group"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden"
+              whileHover={{ scale: 1.1, rotate: 10 }}
+              transition={{ type: "spring", stiffness: 500 }}
             >
-              {/* Gradient background for icon */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700" />
               <IconComponent className="w-8 h-8 text-white relative z-10" />
-              {/* Shine effect on hover */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0"
                 initial={{ x: -100 }}
@@ -92,13 +86,12 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
                 transition={{ duration: 0.6, repeat: Infinity }}
               />
             </motion.div>
-            
-            {/* Type badge with consistent styling */}
+
             <motion.div
               className={`px-3 py-1.5 rounded-xl text-xs font-bold backdrop-blur-sm border shadow-sm ${
                 category.type === "service"
-                  ? "bg-blue-100/80 text-blue-800 border-blue-200/50"
-                  : "bg-gray-100/80 text-gray-800 border-gray-200/50"
+                  ? "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-blue-300/50"
+                  : "bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300/50"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -108,20 +101,20 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
               </span>
             </motion.div>
           </div>
-          
+
           {/* Badge if exists */}
           {category.badge && (
-            <motion.div 
+            <motion.div
               className="mb-4"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <motion.div 
+              <motion.div
                 className={`inline-block px-3 py-1 rounded-xl text-xs font-bold backdrop-blur-sm border shadow-sm ${
-                  category.badge === "Popular" 
-                    ? "bg-blue-100/80 text-blue-800 border-blue-200/50"
-                    : "bg-gray-100/80 text-gray-800 border-gray-200/50"
+                  category.badge === "Popular"
+                    ? "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-blue-300/50"
+                    : "bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300/50"
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -132,70 +125,65 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
               </motion.div>
             </motion.div>
           )}
-          
+
           {/* Title and description */}
           <div className="flex-1">
-            <motion.h3 
-              className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-blue-900 transition-colors tracking-tight"
-              whileHover={{ x: 4 }}
-              transition={{ type: "spring", stiffness: 300 }}
+            <motion.h3
+              className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors tracking-tight"
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
             >
               {category.name}
             </motion.h3>
-            <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-2 font-medium">
+            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2 font-medium">
               {category.description}
             </p>
           </div>
-          
+
           {/* Stats section */}
-          <div className="flex items-center justify-between pt-4 border-t border-blue-100/50">
+          <div className="flex items-center justify-between pt-4 border-t border-blue-100/30">
             <div className="flex items-center gap-3">
-              {/* Rating */}
-              <motion.div 
-                className="flex items-center gap-1.5 bg-blue-50/60 px-2.5 py-1 rounded-lg"
+              <motion.div
+                className="flex items-center gap-1.5 bg-blue-100/50 px-2.5 py-1 rounded-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Star className="w-4 h-4 text-blue-600 fill-current" />
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
                 <span className="text-sm font-semibold text-gray-800">
                   {category.rating}
                 </span>
               </motion.div>
-              {/* Views */}
-              <div className="flex items-center gap-1 text-gray-600">
+              <motion.div
+                className="flex items-center gap-1 text-gray-600"
+                whileHover={{ scale: 1.05 }}
+              >
                 <Users className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   {category.views.toLocaleString()}
                 </span>
-              </div>
+              </motion.div>
             </div>
-            {/* Options count */}
             {category.providers && (
-              <motion.div 
-                className="bg-blue-50/60 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100/50"
+              <motion.div
+                className="text-sm font-medium text-gray-600"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 {category.providers.length} providers
               </motion.div>
             )}
           </div>
-          
+
           {/* Action buttons */}
           <div className="flex gap-2 mt-4">
             <motion.button
               onClick={handleFavorite}
-              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isFavorite
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
+                  : "bg-white/50 text-blue-700 border border-blue-200/50"
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ 
-                scale: 0.95,
-                backgroundColor: isFavorite ? "#1d4ed8" : "#dbeafe"
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(59,130,246,0.3)" }}
+              whileTap={{ scale: 0.95 }}
             >
               <motion.div
                 animate={{ rotate: isFavorite ? [0, 15, -15, 0] : 0 }}
@@ -205,21 +193,17 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
                   className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`}
                 />
               </motion.div>
-              <span className="font-medium">{isFavorite ? "Liked" : "Like"}</span>
+              <span>{isFavorite ? "Liked" : "Like"}</span>
             </motion.button>
             <motion.button
               onClick={handleSave}
-              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isSaved
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
+                  : "bg-white/50 text-blue-700 border border-blue-200/50"
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ 
-                scale: 0.95,
-                backgroundColor: isSaved ? "#1d4ed8" : "#dbeafe"
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(59,130,246,0.3)" }}
+              whileTap={{ scale: 0.95 }}
             >
               <motion.div
                 animate={{ rotate: isSaved ? [0, 15, -15, 0] : 0 }}
@@ -229,7 +213,7 @@ const HoverEffectCard = ({ category, onClick, className = "" }) => {
                   className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
                 />
               </motion.div>
-              <span className="font-medium">{isSaved ? "Saved" : "Save"}</span>
+              <span>{isSaved ? "Saved" : "Save"}</span>
             </motion.button>
           </div>
         </div>
@@ -450,12 +434,10 @@ const CategoryPage = () => {
                 setShowSuggestions={setShowSuggestions}
                 onSuggestionClick={handleSuggestionClick}
               />
-
               <FilterDropdown
                 value={filterType}
                 setValue={setFilterType}
                 options={FILTER_OPTIONS}
-                className="hidden lg:block"
               />
             </div>
           </motion.div>

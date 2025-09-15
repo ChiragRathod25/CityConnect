@@ -24,7 +24,14 @@ import {
   isOpenNow 
 } from "./ReusableComponent";
 
-// Provider Card Component (unchanged)
+// Utility to parse experience string to years
+const parseExperienceToYears = (experience) => {
+  if (!experience || typeof experience !== "string") return 0;
+  const match = experience.match(/(\d+)/); // Extract first number
+  return match ? parseInt(match[1], 10) : 0;
+};
+
+// Provider Card Component (updated for stunning modern look)
 const ProviderCard = ({ provider, onClick, className = "" }) => {
   const [isFavorite, setIsFavorite] = useState(provider.liked);
   const [isSaved, setIsSaved] = useState(provider.saved);
@@ -44,43 +51,54 @@ const ProviderCard = ({ provider, onClick, className = "" }) => {
 
   return (
     <motion.div
-      className={`relative group block p-1 h-full w-full ${className}`}
+      className={`relative group block p-2 h-full w-full ${className}`}
       onClick={() => onClick(provider)}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -10, rotateX: 5, rotateY: 5 }}
       whileTap={{ scale: 0.98 }}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+      transition={{ duration: 0.4, type: "spring", stiffness: 400 }}
+      style={{
+        perspective: 1000,
+        transformStyle: "preserve-3d",
+      }}
     >
-      <div className="relative h-full w-full overflow-hidden">
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-blue-100/50"></div>
-        <div 
-          className="absolute inset-0 rounded-2xl opacity-30"
+      <div className="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-white/90 to-blue-50/80 backdrop-blur-md border border-blue-200/30">
+        {/* Neumorphic background with vibrant gradient */}
+        <div
+          className="absolute inset-0 rounded-2xl"
           style={{
-            background: "radial-gradient(circle at top right, rgba(70, 130, 180, 0.3), transparent 70%)",
-            filter: "blur(40px)",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(147,197,253,0.3))",
+            boxShadow: "6px 6px 12px rgba(0,0,0,0.1), -6px -6px 12px rgba(255,255,255,0.7)",
           }}
         />
-        <AnimatePresence>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-white/90 backdrop-blur-lg rounded-2xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-          />
-        </AnimatePresence>
+        {/* Hover glow effect */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 0.5 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            background: "radial-gradient(circle at center, rgba(59,130,246,0.4), transparent 70%)",
+            filter: "blur(20px)",
+          }}
+        />
 
         <div className="relative z-10 p-6 h-full flex flex-col">
+          {/* Header section */}
           <div className="flex items-start justify-between mb-4">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
+            <motion.div
+              className="w-16 h-16 rounded-xl overflow-hidden shadow-lg"
+              whileHover={{ scale: 1.1, rotate: 10 }}
+              transition={{ type: "spring", stiffness: 500 }}
+            >
               <img src={provider.image} alt={provider.name} className="w-full h-full object-cover" />
-            </div>
+            </motion.div>
             <motion.div
               className={`px-3 py-1.5 rounded-xl text-xs font-bold backdrop-blur-sm border shadow-sm ${
                 isOpen
-                  ? "bg-green-100/80 text-green-800 border-green-200/50"
-                  : "bg-gray-100/80 text-gray-800 border-gray-200/50"
+                  ? "bg-gradient-to-r from-green-400 to-green-600 text-white border-green-300/50"
+                  : "bg-gradient-to-r from-gray-400 to-gray-600 text-white border-gray-300/50"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -89,66 +107,73 @@ const ProviderCard = ({ provider, onClick, className = "" }) => {
             </motion.div>
           </div>
 
+          {/* Title and description */}
           <div className="flex-1">
             <motion.h3 
-              className="text-xl font-bold text-gray-900 mb-2 leading-tight group-hover:text-blue-900 transition-colors"
-              whileHover={{ x: 4 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              className="text-xl font-bold text-gray-900 mb-2 leading-tight tracking-tight group-hover:text-blue-600 transition-colors"
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
             >
               {provider.name}
             </motion.h3>
-            <p className="text-gray-700 text-sm leading-relaxed mb-3 line-clamp-2 font-medium">
+            <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-2 font-medium">
               {provider.description}
             </p>
             <div className="flex flex-wrap gap-2 mb-3">
               {provider.categories.map((cat, index) => (
-                <span
+                <motion.span
                   key={index}
-                  className="text-xs font-medium bg-blue-50/60 text-blue-800 px-2 py-1 rounded-full border border-blue-100/50"
+                  className="text-xs font-semibold bg-blue-100/50 text-blue-700 px-2 py-1 rounded-full border border-blue-200/50"
+                  whileHover={{ scale: 1.05 }}
                 >
                   {cat}
-                </span>
+                </motion.span>
               ))}
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-blue-100/50">
+          {/* Stats section */}
+          <div className="flex items-center justify-between pt-4 border-t border-blue-100/30">
             <div className="flex items-center gap-3">
               <motion.div 
-                className="flex items-center gap-1.5 bg-blue-50/60 px-2.5 py-1 rounded-lg"
+                className="flex items-center gap-1.5 bg-blue-100/50 px-2.5 py-1 rounded-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Star className="w-4 h-4 text-blue-600 fill-current" />
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
                 <span className="text-sm font-semibold text-gray-800">
                   {provider.rating}
                 </span>
               </motion.div>
-              <div className="flex items-center gap-1 text-gray-600">
+              <motion.div 
+                className="flex items-center gap-1 text-gray-600"
+                whileHover={{ scale: 1.05 }}
+              >
                 <Users className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   {provider.views.toLocaleString()}
                 </span>
-              </div>
+              </motion.div>
             </div>
-            <div className="text-sm text-gray-600">
+            <motion.div
+              className="text-sm font-medium text-gray-600"
+              whileHover={{ scale: 1.05 }}
+            >
               {provider.distance} km
-            </div>
+            </motion.div>
           </div>
 
+          {/* Action buttons */}
           <div className="flex gap-2 mt-4">
             <motion.button
               onClick={handleFavorite}
-              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isFavorite
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
+                  : "bg-white/50 text-blue-700 border border-blue-200/50"
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ 
-                scale: 0.95,
-                backgroundColor: isFavorite ? "#1d4ed8" : "#dbeafe"
-              }}
+              whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(59,130,246,0.3)" }}
+              whileTap={{ scale: 0.95 }}
             >
               <motion.div
                 animate={{ rotate: isFavorite ? [0, 15, -15, 0] : 0 }}
@@ -158,20 +183,17 @@ const ProviderCard = ({ provider, onClick, className = "" }) => {
                   className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`}
                 />
               </motion.div>
-              <span className="font-medium">{isFavorite ? "Liked" : "Like"}</span>
+              <span>{isFavorite ? "Liked" : "Like"}</span>
             </motion.button>
             <motion.button
               onClick={handleSave}
-              className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
                 isSaved
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-blue-50/60 text-blue-800 hover:bg-blue-100/60"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
+                  : "bg-white/50 text-blue-700 border border-blue-200/50"
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ 
-                scale: 0.95,
-                backgroundColor: isSaved ? "#1d4ed8" : "#dbeafe"
-              }}
+              whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(59,130,246,0.3)" }}
+              whileTap={{ scale: 0.95 }}
             >
               <motion.div
                 animate={{ rotate: isSaved ? [0, 15, -15, 0] : 0 }}
@@ -181,7 +203,7 @@ const ProviderCard = ({ provider, onClick, className = "" }) => {
                   className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
                 />
               </motion.div>
-              <span className="font-medium">{isSaved ? "Saved" : "Save"}</span>
+              <span>{isSaved ? "Saved" : "Save"}</span>
             </motion.button>
           </div>
         </div>
@@ -197,7 +219,7 @@ const SubcategoryPage = ({ onProviderClick }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [sortType, setSortType] = useState("distance"); // Default to distance
+  const [sortType, setSortType] = useState("distance");
   const [category, setCategory] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -260,7 +282,10 @@ const SubcategoryPage = ({ onProviderClick }) => {
         filtered = filtered.filter((provider) => provider.rating >= 4.5);
         break;
       case "new":
-        filtered = filtered.filter((provider) => provider.experience.includes("5+"));
+        filtered = filtered.filter((provider) => {
+          const years = parseExperienceToYears(provider.experience);
+          return years > 0 && years <= 2; // New providers: 0-2 years
+        });
         break;
       default:
         break;
@@ -388,13 +413,11 @@ const SubcategoryPage = ({ onProviderClick }) => {
                 value={filterType}
                 setValue={setFilterType}
                 options={FILTER_OPTIONS}
-                className="hidden lg:block"
               />
               <FilterDropdown
                 value={sortType}
                 setValue={setSortType}
                 options={SORT_OPTIONS}
-                className="hidden lg:block"
               />
             </div>
           </motion.div>

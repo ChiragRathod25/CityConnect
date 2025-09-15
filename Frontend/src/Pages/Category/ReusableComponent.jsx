@@ -86,54 +86,81 @@ export const FilterDropdown = ({ value, setValue, options, className = "" }) => 
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 font-medium text-gray-700 transition-all duration-300 shadow-lg min-w-[180px]"
-      >
-        <CurrentIcon className="w-5 h-5" />
-        <span>{currentOption?.label}</span>
-        <ChevronDown
-          className={`w-4 h-4 transition-transform duration-200 ml-auto ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+      {/* Dropdown for larger screens */}
+      <div className="hidden sm:block">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 font-medium text-gray-700 transition-all duration-300 shadow-lg min-w-[180px]"
+        >
+          <CurrentIcon className="w-5 h-5" />
+          <span>{currentOption?.label}</span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 ml-auto ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
-          >
-            {options.map((option) => {
-              const IconComponent = option.icon;
-              const optionValue = option.value || option.key;
-              return (
-                <button
-                  key={optionValue}
-                  onClick={() => {
-                    setValue(optionValue);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
-                    value === optionValue
-                      ? "bg-gray-50 text-gray-700"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="font-medium">{option.label}</span>
-                  {value === optionValue && (
-                    <div className="w-2 h-2 bg-gray-500 rounded-full ml-auto"></div>
-                  )}
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
+            >
+              {options.map((option) => {
+                const IconComponent = option.icon;
+                const optionValue = option.value || option.key;
+                return (
+                  <button
+                    key={optionValue}
+                    onClick={() => {
+                      setValue(optionValue);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                      value === optionValue
+                        ? "bg-gray-50 text-gray-700"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    <span className="font-medium">{option.label}</span>
+                    {value === optionValue && (
+                      <div className="w-2 h-2 bg-gray-500 rounded-full ml-auto"></div>
+                    )}
+                  </button>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Buttons for mobile screens */}
+      <div className="sm:hidden flex gap-2 overflow-x-auto pb-2">
+        {options.map((option) => {
+          const IconComponent = option.icon;
+          const optionValue = option.value || option.key;
+          return (
+            <motion.button
+              key={optionValue}
+              onClick={() => setValue(optionValue)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+                value === optionValue
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
+                  : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <IconComponent className="w-4 h-4" />
+              <span className="text-sm">{option.label}</span>
+            </motion.button>
+          );
+        })}
+      </div>
     </div>
   );
 };
