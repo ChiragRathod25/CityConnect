@@ -15,6 +15,7 @@ import EditBusinessmanProfileNavigation from "./components/businessmanProfile/Ed
 import EmailEditPage from "./components/businessmanProfile/Email";
 import AdminProfilePageUI from "./Pages/AdminProfile";
 import UserProfileUI from "./Pages/UserProfile/Index";
+import SubcategoryPage from "./Pages/Category/SubCategory";
 
 const Layout = () => {
   const location = useLocation();
@@ -35,7 +36,10 @@ const Layout = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPageUI />} />
+
         <Route path="/category" element={<CategoryPageUi />} />
+        <Route path="/category/:slug" element={<SubcategoryPage onProviderClick={(provider) => console.log(provider)} />} />
+
         <Route path="/start" element={<CityConnectLanding />} />
         <Route path="/abc" element={<ModernSellerForm />} />
         <Route path="/signup" element={<SignUpPageUI />} />
