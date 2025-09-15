@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-
 const app = express();
 
 app.use(
@@ -42,9 +41,10 @@ app.get("/api", (req, res) => {
 
 import userRoutes from "./routes/user.routes.js";
 import businessRoutes from "./routes/business.routes.js";
+import { errorHandler } from "./utils/errorHandler.js";
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/business", businessRoutes);
 
-
+app.use(errorHandler);
 export { app };

@@ -3,28 +3,15 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
-      type: String,
-      trim: true,
-      minlength: 2,
-      maxlength: 50,
-    },
-
-    lastName: {
-      type: String,
-      trim: true,
-      minlength: 2,
-      maxlength: 50,
-    },
-
     dateOfBirth: {
       type: Date,
     },
     username: {
       type: String,
       required: true,
+      unique : true,
       trim: true,
-      maxLength: 100,
+      maxLength: 30,
     },
     email: {
       type: String,
@@ -34,7 +21,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
-    phone: {
+    phoneNumber: {
       type: String,
       required: true,
       unique: true,
@@ -46,7 +33,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 8,
     },
-    avatar: {
+    image: {
       type: String,
       default: null,
     },
@@ -54,12 +41,12 @@ const userSchema = new mongoose.Schema(
     // Account Status
     status: {
       type: String,
-      enum: ["unverified", "active", "suspended", "blocked"],
-      default: "unverified",
+      enum: ["pending_verification", "active", "suspended", "blocked"],
+      default: "pending_verification",
     },
     role: {
       type: String,
-      enum: ["user", "business", "admin"],
+      enum: ["user", "businessman", "admin"],
       default: "user",
     },
 
@@ -84,15 +71,19 @@ const userSchema = new mongoose.Schema(
     // },
     // twoFactorMethods: [{
     //   type: String,
-    //   enum: ['email', 'phone']
+    //   enum: ['email', 'phoneNumber']
     // }],
 
-    loginAttempts: {
+    failedLoginAttempts: {
       type: Number,
       default: 0,
     },
-    //   lockUntil: Date,
-    //   lastLoginAt: Date,
+    lockUntil: Date,
+    lastLoginAt: Date,
+    isLocked:{
+      type : Boolean,
+      default : false
+    }
     //   lastLoginIP: String,
 
     // Admin Controls
@@ -138,14 +129,14 @@ userSchema.methods.incrementLoginAttempts = function () {
   if (this.lockUntil && this.lockUntil < Date.now()) {
     return this.updateOne({
       $unset: { lockUntil: 1 },
-      $set: { loginAttempts: 1 },
+      $set: { failedLoginAttempts: 1 },
     });
   }
 
-  const updates = { $inc: { loginAttempts: 1 } };
+  const updates = { $inc: { failedLoginAttempts: 1 } };
 
-  // If we have reached max attempts and it's not locked yet, lock the account
-  if (this.loginAttempts + 1 >= 3 && !this.isLocked) {
+  // If we have reached max(3) attempts and it's not locked yet, lock the account
+  if (this.failedLoginAttempts + 1 >= 3 && !this.isLocked) {
     updates.$set = { lockUntil: Date.now() + 2 * 60 * 60 * 1000 }; // 2 hours
   }
 
@@ -154,7 +145,7 @@ userSchema.methods.incrementLoginAttempts = function () {
 
 userSchema.methods.resetLoginAttempts = function () {
   return this.updateOne({
-    $unset: { loginAttempts: 1, lockUntil: 1 },
+    $unset: { failedLoginAttempts: 1, lockUntil: 1 },
   });
 };
 

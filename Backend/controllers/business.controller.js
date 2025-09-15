@@ -1,4 +1,4 @@
-import { ApiResponce } from "../utils/ApiResponce.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Business } from "../models/business.model.js";
@@ -35,7 +35,7 @@ const registerBusiness = asyncHandler(async (req, res, next) => {
   res
     .status(201)
     .json(
-      new ApiResponce(200, "Business profile created successfully", business)
+      new ApiResponse(200, "Business profile created successfully", business)
     );
 });
 
@@ -53,7 +53,7 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(200, "Business profile fetched successfully", business)
+      new ApiResponse(200, "Business profile fetched successfully", business)
     );
 });
 
@@ -94,7 +94,7 @@ const updateBusinessProfileById = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(200, "Business profile updated successfully", business)
+      new ApiResponse(200, "Business profile updated successfully", business)
     );
 });
 
@@ -112,7 +112,7 @@ const deleteBusinessProfileById = asyncHandler(async (req, res, next) => {
   await business.remove();
   res
     .status(200)
-    .json(new ApiResponce(200, "Business profile deleted successfully", null));
+    .json(new ApiResponse(200, "Business profile deleted successfully", null));
 });
 
 const getAllBusinessProfiles = asyncHandler(async (req, res, next) => {
@@ -124,7 +124,7 @@ const getAllBusinessProfiles = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(
+      new ApiResponse(
         200,
         "Active business profiles fetched successfully",
         businesses
@@ -161,7 +161,7 @@ const searchBusinessProfiles = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(200, "Business profiles fetched successfully", businesses)
+      new ApiResponse(200, "Business profiles fetched successfully", businesses)
     );
 });
 
@@ -188,7 +188,7 @@ const verifyBusinessProfile = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(
+      new ApiResponse(
         200,
         "Business profile verification status updated successfully",
         business
@@ -216,7 +216,7 @@ const updateBusinessStatus = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(
+      new ApiResponse(
         200,
         "Business profile status updated successfully",
         business
@@ -254,7 +254,7 @@ const updateBusinessLogo = asyncHandler(async (req, res, next) => {
     res
       .status(200)
       .json(
-        new ApiResponce(200, "Business logo updated successfully", business)
+        new ApiResponse(200, "Business logo updated successfully", business)
       );
   } catch (error) {
     throw new ApiError(500, "Failed to update business logo");
@@ -277,7 +277,7 @@ const removeBusinessLogo = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .json(new ApiResponce(200, "Business logo removed successfully", business));
+    .json(new ApiResponse(200, "Business logo removed successfully", business));
 });
 
 const addBusinessImages = asyncHandler(async (req, res, next) => {
@@ -314,7 +314,7 @@ const addBusinessImages = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .json(new ApiResponce(200, "Business images added successfully", business));
+    .json(new ApiResponse(200, "Business images added successfully", business));
 });
 
 const removeBusinessImage = asyncHandler(async (req, res, next) => {
@@ -355,7 +355,7 @@ const removeBusinessImage = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponce(200, "Business image removed successfully", business)
+      new ApiResponse(200, "Business image removed successfully", business)
     );
 });
 
