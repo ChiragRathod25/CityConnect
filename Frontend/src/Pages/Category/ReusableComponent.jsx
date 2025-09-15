@@ -9,6 +9,66 @@ import {
   ChevronRightIcon,
 } from "lucide-react";
 
+export const AnimatedBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0">
+      {/* Base gradient */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+                    radial-gradient(circle at 20% 50%, rgba(148, 163, 184, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(100, 116, 139, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 80%, rgba(71, 85, 105, 0.2) 0%, transparent 50%),
+                    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)
+                  `,
+        }}
+      />
+
+      {/* Animated floating elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full opacity-20 sm:opacity-30"
+            style={{
+              background: `linear-gradient(45deg, ${
+                i % 3 === 0 ? "#64748b" : i % 3 === 1 ? "#475569" : "#334155"
+              }, transparent)`,
+              width: `${100 + i * 50}px`,
+              height: `${100 + i * 50}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              x: [0, 100, 0],
+              y: [0, -100, 0],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 15 + i * 5,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Grid pattern */}
+      <div
+        className="absolute inset-0 opacity-15 sm:opacity-20"
+        style={{
+          backgroundImage: `
+                    linear-gradient(rgba(100, 116, 139, 0.5) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(100, 116, 139, 0.5) 1px, transparent 1px)
+                  `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+    </div>
+  );
+};
+
 // SearchInput Component (unchanged)
 export const SearchInput = ({
   searchTerm,
@@ -64,11 +124,18 @@ export const SearchInput = ({
 );
 
 // Updated FilterDropdown Component
-export const FilterDropdown = ({ value, setValue, options, className = "" }) => {
+export const FilterDropdown = ({
+  value,
+  setValue,
+  options,
+  className = "",
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const currentOption = options.find((opt) => opt.value === value || opt.key === value) || options[0];
+  const currentOption =
+    options.find((opt) => opt.value === value || opt.key === value) ||
+    options[0];
   const CurrentIcon = currentOption?.icon || Filter;
 
   useEffect(() => {
@@ -86,8 +153,7 @@ export const FilterDropdown = ({ value, setValue, options, className = "" }) => 
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      {/* Dropdown for larger screens */}
-      <div className="hidden sm:block">
+      <div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-sm border-2 border-gray-200 rounded-2xl hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/20 focus:border-gray-500 font-medium text-gray-700 transition-all duration-300 shadow-lg min-w-[180px]"
@@ -137,35 +203,10 @@ export const FilterDropdown = ({ value, setValue, options, className = "" }) => 
           )}
         </AnimatePresence>
       </div>
-
-      {/* Buttons for mobile screens */}
-      <div className="sm:hidden flex gap-2 overflow-x-auto pb-2">
-        {options.map((option) => {
-          const IconComponent = option.icon;
-          const optionValue = option.value || option.key;
-          return (
-            <motion.button
-              key={optionValue}
-              onClick={() => setValue(optionValue)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-200 ${
-                value === optionValue
-                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md"
-                  : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <IconComponent className="w-4 h-4" />
-              <span className="text-sm">{option.label}</span>
-            </motion.button>
-          );
-        })}
-      </div>
     </div>
   );
 };
 
-// Pagination Component (unchanged)
 export const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -210,30 +251,32 @@ export const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
+    <div className="flex justify-center items-center gap-3 mt-10">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`p-2 rounded-lg ${
+        className={`p-3 rounded-full bg-gray-700 text-gray-200 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 hover:bg-gray-600 hover:shadow-xl ${
           currentPage === 1
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-gray-100"
-        } transition-colors`}
+            ? "opacity-50 cursor-not-allowed scale-100"
+            : "hover:-translate-y-1"
+        }`}
       >
-        <ChevronLeftIcon className="w-5 h-5" />
+        <ChevronLeftIcon className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
       </button>
 
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         {renderPageNumbers().map((page, index) => (
           <button
             key={index}
             onClick={() => typeof page === "number" && handlePageChange(page)}
             disabled={page === "..."}
-            className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+            className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-medium transition-all duration-300 ease-in-out transform ${
               currentPage === page
-                ? "bg-gray-800 text-white"
-                : "hover:bg-gray-100 transition-colors"
-            } ${page === "..." ? "cursor-default" : ""}`}
+                ? "bg-gray-800 text-white shadow-lg scale-105"
+                : page === "..."
+                ? "text-gray-500 cursor-default"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-500 hover:text-white hover:shadow-xl hover:scale-110 hover:-translate-y-1"
+            }`}
           >
             {page}
           </button>
@@ -243,13 +286,13 @@ export const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`p-2 rounded-lg ${
+        className={`p-3 rounded-full bg-gray-700 text-gray-200 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 hover:bg-gray-600 hover:shadow-xl ${
           currentPage === totalPages
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-gray-100"
-        } transition-colors`}
+            ? "opacity-50 cursor-not-allowed scale-100"
+            : "hover:-translate-y-1"
+        }`}
       >
-        <ChevronRightIcon className="w-5 h-5" />
+        <ChevronRightIcon className="w-6 h-6 transition-transform duration-300 group-hover:-rotate-12" />
       </button>
     </div>
   );
@@ -275,14 +318,15 @@ export const CategorySkeleton = () => (
 // Utility functions (unchanged)
 export const parseOperatingHours = (hoursStr) => {
   if (hoursStr === "24/7") return { open: 0, close: 24 * 60, is24h: true };
-  if (hoursStr === "By Appointment") return { open: null, close: null, is24h: false };
-  
+  if (hoursStr === "By Appointment")
+    return { open: null, close: null, is24h: false };
+
   try {
     const [openStr, closeStr] = hoursStr.split(" - ");
     return {
       open: parseTimeToMinutes(openStr.trim()),
       close: parseTimeToMinutes(closeStr.trim()),
-      is24h: false
+      is24h: false,
     };
   } catch (e) {
     console.error("Error parsing hours:", hoursStr, e);
@@ -293,27 +337,27 @@ export const parseOperatingHours = (hoursStr) => {
 const parseTimeToMinutes = (timeStr) => {
   const match = timeStr.match(/(\d+):?(\d*)\s*(AM|PM)?/i);
   if (!match) return 0;
-  
+
   let hours = parseInt(match[1]);
   const minutes = match[2] ? parseInt(match[2]) : 0;
   const period = match[3] ? match[3].toUpperCase() : null;
-  
+
   if (period === "PM" && hours !== 12) hours += 12;
   if (period === "AM" && hours === 12) hours = 0;
-  
+
   return hours * 60 + minutes;
 };
 
 export const isOpenNow = (hours) => {
   if (hours.is24h) return true;
   if (hours.open === null || hours.close === null) return false;
-  
+
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  
+
   if (hours.close < hours.open) {
     return currentMinutes >= hours.open || currentMinutes <= hours.close;
   }
-  
+
   return currentMinutes >= hours.open && currentMinutes <= hours.close;
 };

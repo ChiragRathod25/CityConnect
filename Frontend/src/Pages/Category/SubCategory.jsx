@@ -10,7 +10,6 @@ import {
   ArrowLeft 
 } from "lucide-react";
 import { 
-  COLOR_PALETTE, 
   CATEGORIES_DATA, 
   FILTER_OPTIONS, 
   SORT_OPTIONS 
@@ -21,8 +20,10 @@ import {
   Pagination, 
   CategorySkeleton,
   parseOperatingHours,
-  isOpenNow 
+  isOpenNow, 
+  AnimatedBackground
 } from "./ReusableComponent";
+import { Button } from "@/components/ui/Button";
 
 // Utility to parse experience string to years
 const parseExperienceToYears = (experience) => {
@@ -346,21 +347,7 @@ const SubcategoryPage = ({ onProviderClick }) => {
 
   return (
     <div className="min-h-screen w-full relative bg-white" style={{ scrollBehavior: "smooth" }}>
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background: "#ffffff",
-          backgroundImage: `
-            radial-gradient(
-              circle at top center,
-              ${COLOR_PALETTE.steelBlue},
-              transparent 70%
-            )
-          `,
-          filter: "blur(80px)",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+      <AnimatedBackground/>
 
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-12">
@@ -369,13 +356,18 @@ const SubcategoryPage = ({ onProviderClick }) => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <button
+            <Button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+              variant="outline"
+              size="small"
+              iconRight={true}
+              icon={
+                <ArrowLeft className="w-5 h-5" />
+              }
+              className="flex max-w-56 relative sm:left-10  sm:max-w-xs items-center gap-2 text-gray-600 hover:text-gray-900 mb-10 "
             >
-              <ArrowLeft className="w-5 h-5" />
               Back to Categories
-            </button>
+            </Button>
             <div className="flex justify-center mb-6">
               <motion.div
                 className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
