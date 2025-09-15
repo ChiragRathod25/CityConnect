@@ -67,7 +67,7 @@ export const cleanupTempData = async (sessionId) => {
 };
 
 // Store OTP with session ID instead of user ID
-export const storeOTP = async (sessionId, otp, type, ttl = 600) => { // 10 minutes
+export const storeOTP = async (sessionId, otp, type, ttl = 120) => { // 120 seconds
   const key = `otp:${sessionId}:${type}`;
   await redis.set(key, otp, { ex: ttl });
 };
@@ -96,8 +96,8 @@ export const checkRateLimit = async (sessionId, type) => {
     return { limited: true, remainingTime: ttl };
   }
   
-  // Set rate limit (60 seconds)
-  await redis.set(key, '1', { ex: 60 });
+  // Set rate limit (120 seconds)
+  await redis.set(key, '1', { ex: 120 });
   return { limited: false, remainingTime: 0 };
 };
 

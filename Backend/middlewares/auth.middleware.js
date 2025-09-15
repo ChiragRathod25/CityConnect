@@ -1,9 +1,9 @@
 // middleware/auth.js
 
-import { User } from "../models/user.model";
-import { sessionService } from "../services/sessionService";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import { sessionService } from "../services/sessionService.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Verify JWT token and session
 export const verifyToken = asyncHandler(async (req, res, next) => {

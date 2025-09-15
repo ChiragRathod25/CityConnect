@@ -2,7 +2,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-// import { OTP } from "../models/otp.js";
 import {
   sendEmailVerification,
   sendMobileVerification,
@@ -26,7 +25,7 @@ import crypto from "crypto";
 
 const generateOTP = () => {
   const otp = crypto.randomInt(100000, 1000000).toString(); // Generate a 6-digit OTP
-  console.log("Generated OTP:", otp); // Log the generated OTP for debugging
+  console.log("Generated OTP:", otp);
   return otp;
 };
 
@@ -138,10 +137,10 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
   }
 
   const otp = generateOTP();
-  try {
-    // Store OTP in Redis - using 90 seconds as you specified
 
-    await storeOTP(sessionId, otp, "email_verification", 90);
+  try {
+
+    await storeOTP(sessionId, otp, "email_verification", 120);
 
     // Send OTP via email
     const emailResponse = await sendEmailVerification({
@@ -159,7 +158,7 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
         data: {
           codeSent: true,
           method: "email",
-          expiresIn: 90,
+          expiresIn: 120,
           email: tempData.userData.email,
         },
       })
@@ -179,6 +178,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   const tempData = await getTempData(sessionId);
+
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
@@ -188,8 +188,10 @@ const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   try {
+
     // Verify OTP from Redis
     const isValidOTP = await verifyOTP(sessionId, otp, "email_verification");
+    
     if (!isValidOTP) {
       throw new ApiError(400, "Invalid or expired verification code");
     }
@@ -225,6 +227,7 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
   }
 
   const tempData = await getTempData(sessionId);
+
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
@@ -239,6 +242,7 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
 
   // Check rate limiting
   const rateLimit = await checkRateLimit(sessionId, "phoneNumber");
+
   if (rateLimit.limited) {
     throw new ApiError(
       429,
@@ -249,8 +253,9 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
   const otp = generateOTP();
 
   try {
+
     // Store OTP in Redis
-    await storeOTP(sessionId, otp, "phone_verification", 600);
+    await storeOTP(sessionId, otp, "phone_verification", 120);
 
     // Send OTP via SMS
     const smsResponse = await sendMobileVerification({
@@ -274,7 +279,9 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
 
 // Step 5: Verify phoneNumber OTP & Create User Account
 const verifyPhone = asyncHandler(async (req, res) => {
+
   const { sessionId, otp } = req.body;
+
   if (!sessionId || !otp) {
     throw new ApiError(400, "Session ID and OTP are required");
   }
@@ -294,17 +301,17 @@ const verifyPhone = asyncHandler(async (req, res) => {
   }
   
   try {
+
     // Verify OTP from Redis
     const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
+
     if (!isValidOTP) {
       throw new ApiError(400, "Invalid or expired verification code");
     }
-    
-    console.log("5")
-    console.log(tempData)
 
     // Final check for duplicates (in case someone registered while verification was in progress)
     const existingEmail = await User.findOne({ email: tempData.userData.email });
+
     if (existingEmail) {
       await cleanupTempData(sessionId);
       throw new ApiError(400, "Email already in use");
@@ -313,6 +320,7 @@ const verifyPhone = asyncHandler(async (req, res) => {
     const existingPhone = await User.findOne({
       phoneNumber: tempData.userData.phoneNumber,
     });
+
     if (existingPhone) {
       await cleanupTempData(sessionId);
       throw new ApiError(400, "phoneNumber already in use");
@@ -321,12 +329,12 @@ const verifyPhone = asyncHandler(async (req, res) => {
     const existingUsername = await User.findOne({
       username: tempData.userData.username,
     });
+
     if (existingUsername) {
       await cleanupTempData(sessionId);
       throw new ApiError(400, "Username already in use");
     }
     
-    console.log("6")
     // Both verifications complete - NOW create the user account
     const userData = {
       ...tempData.userData,
@@ -406,6 +414,7 @@ const getRegistrationStatus = asyncHandler(async (req, res) => {
   }
 
   const tempData = await getTempData(sessionId);
+  
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
