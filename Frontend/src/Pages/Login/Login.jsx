@@ -199,16 +199,16 @@ const RoleSelection = ({ onSelectRole }) => {
       </div>
 
       <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <NavLink
-              to="/signup"
-              className="text-gray-800 hover:text-gray-600 font-medium transition-colors"
-            >
-              Sign up
-            </NavLink>
-          </p>
-        </div>
+        <p className="text-sm text-gray-600">
+          Don't have an account?{" "}
+          <NavLink
+            to="/signup"
+            className="text-gray-800 hover:text-gray-600 font-medium transition-colors"
+          >
+            Sign up
+          </NavLink>
+        </p>
+      </div>
     </div>
   );
 };
@@ -278,9 +278,9 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      const response=await databaseService.login({
+      const response = await databaseService.login({
         email: formData.email,
         password: formData.password,
       });
@@ -388,6 +388,8 @@ const LoginPage = () => {
     setCurrentStep("role-selection");
     setSelectedRole("");
   };
+
+  const isFormValid = formData.email.trim() && formData.password;
 
   if (showForgotPassword) {
     return (
@@ -605,7 +607,7 @@ const LoginPage = () => {
 
   if (currentStep === "role-selection") {
     return (
-      <div className="min-w-md md:min-w-lg w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-200">
+      <div className="md:min-w-lg w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-200">
         <MovingDots count={500} density={100} />
         <GeometricShapes />
         <RoleSelection onSelectRole={handleRoleSelection} />
@@ -614,7 +616,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-w-md md:min-w-lg w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-200">
+    <div className="md:min-w-lg w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-200">
       <MovingDots count={500} density={100} />
       <GeometricShapes />
 
@@ -703,8 +705,12 @@ const LoginPage = () => {
         {/* Login Button */}
         <Button
           onClick={handleLogin}
-          disabled={isLoading}
-          className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          disabled={isLoading || !isFormValid}
+          className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
+            isFormValid
+              ? "bg-gray-800 text-white hover:bg-gray-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {isLoading ? (
             <div className="flex items-center justify-center">

@@ -305,60 +305,12 @@ const verifyPhone = asyncHandler(async (req, res) => {
   if (tempData.verificationStatus.phoneVerified) {
     throw new ApiError(400, "Phone already verified");
   }
-<<<<<<< HEAD
-  
-  try {
-
-    // Verify OTP from Redis
-    const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
-
-    if (!isValidOTP) {
-      throw new ApiError(400, "Invalid or expired verification code");
-    }
-
-    // Final check for duplicates (in case someone registered while verification was in progress)
-    const existingEmail = await User.findOne({ email: tempData.userData.email });
-
-    if (existingEmail) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "Email already in use");
-    }
-    
-    const existingPhone = await User.findOne({
-      phoneNumber: tempData.userData.phoneNumber,
-    });
-
-    if (existingPhone) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "phoneNumber already in use");
-    }
-    
-    const existingUsername = await User.findOne({
-      username: tempData.userData.username,
-    });
-
-    if (existingUsername) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "Username already in use");
-    }
-    
-    // Both verifications complete - NOW create the user account
-    const userData = {
-      ...tempData.userData,
-      isEmailVerified: true,
-      isPhoneVerified: true,
-      emailVerifiedAt: new Date(),
-      phoneVerifiedAt: new Date(),
-      status: "active",
-    };
-=======
 
   // Verify OTP
   const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
   if (!isValidOTP) {
     throw new ApiError(400, "Invalid or expired verification code");
   }
->>>>>>> 8039540e590814ba45f49519a48a18642db3978e
 
   // Update tempData to mark phone as verified
   tempData.verificationStatus.phoneVerified = true;

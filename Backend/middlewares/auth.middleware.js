@@ -4,10 +4,7 @@ import { User } from "../models/user.model.js";
 import { sessionService } from "../services/sessionService.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-<<<<<<< HEAD
-=======
 import jwt from "jsonwebtoken";
->>>>>>> 8039540e590814ba45f49519a48a18642db3978e
 
 // Verify JWT token and session
 export const verifyToken = asyncHandler(async (req, res, next) => {
