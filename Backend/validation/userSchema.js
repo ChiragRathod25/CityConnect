@@ -13,7 +13,7 @@ const UserZodSchema = z.object({
   email: z.string().email("Invalid email format").toLowerCase(),
   password: z.string().min(8, "Password must be at least 8 characters long"),
 
-  role: z.enum(["user", "businessman", "admin"]).default("user"),
+  role: z.enum(["user", "business", "admin"]).default("user"),
 
   image: z.string().url("Invalid image URL").optional(),
 
