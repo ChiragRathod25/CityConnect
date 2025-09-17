@@ -23,7 +23,7 @@ import EditBusinessmanProfileNavigation from "./components/businessmanProfile/Ed
 import EmailEditPage from "./components/businessmanProfile/Email";
 import AdminProfilePageUI from "./Pages/AdminProfile";
 import UserProfileUI from "./Pages/UserProfile/Index";
-
+import SubcategoryPage from "./Pages/Category/SubCategory";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/category",
         element: <CategoryPageUi />,
+      },
+      {
+        path: "/category/:slug",
+        element: <SubcategoryPage />,
       },
       {
         path: "/start",
@@ -90,7 +94,7 @@ const router = createBrowserRouter([
       {
         path: "/profile/edit-profile",
         element: <EditUserProfileInfo />,
-      },  
+      },
     ],
   },
 ]);

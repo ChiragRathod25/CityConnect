@@ -27,11 +27,11 @@ function Layout({ children }) {
   const isMobilePWA = isPWA && isMobile;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen  flex flex-col">
       {/* HEADER */}
       {!isMobilePWA && (
-        <header className="bg-[#C30E59] text-white shadow-xl sticky top-0 z-50 backdrop-blur-lg">
-          <div className="container flex justify-center items-center px-4">
+        <header className="text-white shadow-xl sticky top-0 z-50 backdrop-blur-lg">
+          <div className="container mb-16 lg:mb-20 flex justify-center items-center px-4">
             <HeaderComponent />
           </div>
         </header>

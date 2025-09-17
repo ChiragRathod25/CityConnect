@@ -839,7 +839,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full min-w-md sm:min-w-lg lg:min-w-xl">
+      <div className="sm:min-w-lg lg:min-w-xl">
         <div
           className="backdrop-blur-xl border shadow-2xl p-6 sm:p-8 transform transition-all duration-300 rounded-3xl"
           style={{

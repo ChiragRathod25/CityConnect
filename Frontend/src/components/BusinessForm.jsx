@@ -138,8 +138,6 @@ const FormInput = ({ label, icon: Icon, error, className = "", ...props }) => (
   </div>
 );
 
-
-
 const FormSelect = ({
   label,
   icon: Icon,
@@ -1152,103 +1150,79 @@ const FileUpload = ({
 
 const ModernSellerForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  // const [formData, setFormData] = useState({
-  //   // Personal Information
-  //   fullName: "",
-  //   contactNumber: "",
-  //   email: "",
-  //   password: "",
-
-  //   // Business Information
-  //   businessName: "",
-  //   businessType: "",
-  //   businessCategory: "",
-  //   businessDescription: "",
-  //   yearsInBusiness: "",
-
-  //   // Location Details
-  //   location: null,
-
-  //   // Business Settings
-  //   deliveryAvailable: false,
-  //   homeServiceAvailable: false,
-  //   paymentMethods: [],
-  //   openingTime: "",
-  //   closingTime: "",
-  //   weeklyOff: "",
-
-  //   // Files
-  //   businessLicense: null,
-  //   idProof: null,
-  //   businessPhoto: null,
-
-  //   // Agreement
-  //   acceptTerms: false,
-  // });
 
   const [formData, setFormData] = useState({
-  // Personal Information
-  fullName: "",
-  contactNumber: "",
-  email: "",
-  password: "",
+    // Personal Information
+    fullName: "",
+    contactNumber: "",
+    email: "",
+    password: "",
 
-  // Business Information
-  businessName: "",
-  businessType: "",
-  businessCategory: "",
-  businessDescription: "",
-  yearsInBusiness: "",
+    // Business Information
+    businessName: "",
+    businessType: "",
+    businessCategory: "",
+    businessDescription: "",
+    yearsInBusiness: "",
 
-  // Location Details
-  location: null,
+    // Location Details
+    location: null,
 
-  // Business Settings
-  deliveryAvailable: false,
-  homeServiceAvailable: false,
-  paymentMethods: [],
-  openingTime: "",
-  closingTime: "",
-  weeklyOff: "",
+    // Business Settings
+    deliveryAvailable: false,
+    homeServiceAvailable: false,
+    paymentMethods: [],
+    openingTime: "",
+    closingTime: "",
+    weeklyOff: "",
 
-  // KYC Verification Files (Required)
-  govtIdProof: null,
-  selfieWithId: null,
+    // KYC Verification Files (Required)
+    govtIdProof: null,
+    selfieWithId: null,
 
-  // Business Documents
-  businessLicense: null, // Optional
-  businessPhoto: null,
+    // Business Documents
+    businessLicense: null, // Optional
+    businessPhoto: null,
 
-  // Professional Profile
-  professionalPhoto: null,
+    // Professional Profile
+    professionalPhoto: null,
 
-  // Agreement
-  acceptTerms: false,
-});
+    // Agreement
+    acceptTerms: false,
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // In your component, add this function
-const getDocumentUploadProgress = () => {
-  const requiredDocs = ['govtIdProof', 'selfieWithId', 'businessPhoto', 'professionalPhoto'];
-  const optionalDocs = ['businessLicense'];
-  
-  const requiredCompleted = requiredDocs.filter(doc => formData[doc]).length;
-  const optionalCompleted = optionalDocs.filter(doc => formData[doc]).length;
-  
-  const totalDocs = requiredDocs.length + optionalDocs.length;
-  const totalCompleted = requiredCompleted + optionalCompleted;
-  
-  return {
-    completed: totalCompleted,
-    total: totalDocs,
-    percentage: Math.round((totalCompleted / totalDocs) * 100),
-    required: { completed: requiredCompleted, total: requiredDocs.length },
-    optional: { completed: optionalCompleted, total: optionalDocs.length }
+  const getDocumentUploadProgress = () => {
+    const requiredDocs = [
+      "govtIdProof",
+      "selfieWithId",
+      "businessPhoto",
+      "professionalPhoto",
+    ];
+    const optionalDocs = ["businessLicense"];
+
+    const requiredCompleted = requiredDocs.filter(
+      (doc) => formData[doc]
+    ).length;
+    const optionalCompleted = optionalDocs.filter(
+      (doc) => formData[doc]
+    ).length;
+
+    const totalDocs = requiredDocs.length + optionalDocs.length;
+    const totalCompleted = requiredCompleted + optionalCompleted;
+
+    return {
+      completed: totalCompleted,
+      total: totalDocs,
+      percentage: Math.round((totalCompleted / totalDocs) * 100),
+      required: { completed: requiredCompleted, total: requiredDocs.length },
+      optional: { completed: optionalCompleted, total: optionalDocs.length },
+    };
   };
-};
 
   const businessTypes = [
     { value: "", label: "Select Business Type" },
@@ -1592,7 +1566,7 @@ const getDocumentUploadProgress = () => {
           >
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <User className="text-white" size={24} />
+                <User className="text-white animate-bounce" size={24} />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">
                 Personal Information
@@ -1685,7 +1659,7 @@ const getDocumentUploadProgress = () => {
           >
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Building2 className="text-white" size={24} />
+                <Building2 className="text-white animate-bounce" size={24} />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">
                 Business Details
@@ -1788,7 +1762,7 @@ const getDocumentUploadProgress = () => {
           >
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <MapPin className="text-white" size={24} />
+                <MapPin className="text-white animate-bounce" size={24} />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">
                 Location & Hours
@@ -1903,72 +1877,6 @@ const getDocumentUploadProgress = () => {
           </motion.div>
         );
 
-      // case 4:
-      //   return (
-      //     <motion.div
-      //       initial={{ opacity: 0, x: 50 }}
-      //       animate={{ opacity: 1, x: 0 }}
-      //       className="space-y-6"
-      //     >
-      //       <div className="text-center mb-8">
-      //         <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
-      //           <Upload className="text-white" size={24} />
-      //         </div>
-      //         <h3 className="text-2xl font-bold text-gray-800">
-      //           Upload Documents
-      //         </h3>
-      //         <p className="text-gray-600 mt-2">
-      //           Upload required documents for verification
-      //         </p>
-      //       </div>
-
-      //       <div className="grid md:grid-cols-3 gap-6">
-      //         <FileUpload
-      //           label="Business License *"
-      //           icon={Award}
-      //           accept=".pdf,.jpg,.jpeg,.png"
-      //           description="Upload business registration/license (PDF, JPG, PNG - Max 5MB)"
-      //           onChange={(e) => handleFileUpload("businessLicense", e)}
-      //           preview={formData.businessLicense}
-      //           error={errors.businessLicense}
-      //         />
-
-      //         <FileUpload
-      //           label="ID Proof *"
-      //           icon={User}
-      //           accept=".pdf,.jpg,.jpeg,.png"
-      //           description="Upload Aadhaar/PAN/Driving License (PDF, JPG, PNG - Max 5MB)"
-      //           onChange={(e) => handleFileUpload("idProof", e)}
-      //           preview={formData.idProof}
-      //           error={errors.idProof}
-      //         />
-
-      //         <FileUpload
-      //           label="Business Photo *"
-      //           icon={Camera}
-      //           accept=".jpg,.jpeg,.png,.webp"
-      //           description="Upload clear photo of your business (JPG, PNG, WebP - Max 5MB)"
-      //           onChange={(e) => handleFileUpload("businessPhoto", e)}
-      //           preview={formData.businessPhoto}
-      //           error={errors.businessPhoto}
-      //         />
-      //       </div>
-
-      //       {Object.values(errors).filter(Boolean).length > 0 && (
-      //         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-      //           <p className="text-red-700 font-medium">
-      //             Please upload all required documents:
-      //           </p>
-      //           <ul className="text-red-600 text-sm mt-2 space-y-1">
-      //             {Object.entries(errors).map(
-      //               ([field, error]) => error && <li key={field}>• {error}</li>
-      //             )}
-      //           </ul>
-      //         </div>
-      //       )}
-      //     </motion.div>
-      //   );
-
       case 4:
         return (
           <motion.div
@@ -1978,7 +1886,7 @@ const getDocumentUploadProgress = () => {
           >
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Shield className="text-white" size={24} />
+                <Shield className="text-white animate-bounce" size={24} />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">
                 Identity Verification & Documents
@@ -2180,7 +2088,7 @@ const getDocumentUploadProgress = () => {
           >
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="text-white" size={24} />
+                <CheckCircle className="text-white animate-bounce" size={24} />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">
                 Review & Submit
@@ -2591,39 +2499,44 @@ const getDocumentUploadProgress = () => {
                 </div> */}
 
                 <div className="mt-6 pt-4 border-t border-gray-200">
-  <div className="flex items-center justify-between">
-    <span className="text-sm font-medium text-gray-700">
-      Document Upload Progress
-    </span>
-    <span className="text-sm text-gray-600">
-      {getDocumentUploadProgress().completed}/{getDocumentUploadProgress().total} completed
-    </span>
-  </div>
-  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-    <div
-      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-      style={{
-        width: `${getDocumentUploadProgress().percentage}%`,
-      }}
-    ></div>
-  </div>
-  
-  {/* Additional Progress Details */}
-  <div className="mt-3 grid grid-cols-2 gap-4 text-xs">
-    <div className="flex items-center gap-2">
-      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-      <span className="text-gray-600">
-        Required: {getDocumentUploadProgress().required.completed}/{getDocumentUploadProgress().required.total}
-      </span>
-    </div>
-    <div className="flex items-center gap-2">
-      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-      <span className="text-gray-600">
-        Optional: {getDocumentUploadProgress().optional.completed}/{getDocumentUploadProgress().optional.total}
-      </span>
-    </div>
-  </div>
-</div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      Document Upload Progress
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      {getDocumentUploadProgress().completed}/
+                      {getDocumentUploadProgress().total} completed
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${getDocumentUploadProgress().percentage}%`,
+                      }}
+                    ></div>
+                  </div>
+
+                  {/* Additional Progress Details */}
+                  <div className="mt-3 grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span className="text-gray-600">
+                        Required:{" "}
+                        {getDocumentUploadProgress().required.completed}/
+                        {getDocumentUploadProgress().required.total}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-600">
+                        Optional:{" "}
+                        {getDocumentUploadProgress().optional.completed}/
+                        {getDocumentUploadProgress().optional.total}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </GlassCard>
 
               {/* Terms & Conditions */}
@@ -2745,7 +2658,7 @@ const getDocumentUploadProgress = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex justify-center mb-12"
         >
-          <div className="flex items-center overflow-x-auto space-x-2 bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
+          <div className="flex items-center  overflow-x-auto space-x-2 bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
             {steps.map((step, index) => {
               const isActive = currentStep === step.number;
               const isCompleted = currentStep > step.number;
@@ -2754,7 +2667,7 @@ const getDocumentUploadProgress = () => {
                 <React.Fragment key={step.number}>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                    className={`flex  items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                       isActive
                         ? "bg-black text-white shadow-lg"
                         : isCompleted
@@ -2803,17 +2716,17 @@ const getDocumentUploadProgress = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto"
         >
-          <GlassCard className="p-8 shadow-xl">
+          <GlassCard className="py-8 px-4 shadow-xl">
             {renderStep()}
 
             {/* Navigation Buttons */}
-            <div className="flex items-center justify-between mt-12 pt-8 border-t border-gray-200">
+            <div className="flex items-center space-x-2 justify-between mt-12 pt-8 border-t border-gray-200">
               <motion.button
                 whileHover={{ scale: 1.02, x: -5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className={`flex items-center gap-2 px-6 py-3  rounded-xl font-semibold transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-200 ${
                   currentStep === 1
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-gray-700 hover:bg-gray-100 border border-gray-400"
@@ -2828,7 +2741,7 @@ const getDocumentUploadProgress = () => {
                   whileHover={{ scale: 1.02, x: 5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={nextStep}
-                  className="flex items-center gap-2 px-8 py-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="flex items-center gap-2 px-8 py-3 border-2 border-black bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   Next
                   <ArrowRight size={20} />
@@ -2839,7 +2752,7 @@ const getDocumentUploadProgress = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex items-center ml-2 justify-center gap-2 px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 bg-green-600 text-white rounded-lg sm:rounded-xl font-medium sm:font-semibold hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto"
+                  className="flex items-center ml-2 justify-center gap-2 px-4 sm:px-6 lg:px-8 py-3 border-2 sm:py-3 bg-green-600 text-white rounded-xl border-green-600 sm:rounded-xl font-medium sm:font-semibold hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto"
                 >
                   {isSubmitting ? (
                     <>
@@ -2849,7 +2762,7 @@ const getDocumentUploadProgress = () => {
                     </>
                   ) : (
                     <>
-                      <Send size={16} className="sm:size-5" />
+                      <Send size={17} className="sm:size-5" />
                       <span>Submit</span>
                     </>
                   )}
