@@ -31,7 +31,7 @@ const generateOTP = () => {
 };
 
 // Step 1: Store registration data temporarily (no user creation yet)
-const registerUser = asyncHandler(async (req, res) => {
+const InitialUserRegister = asyncHandler(async (req, res) => {
   // Sanitized Data
   const sanitizedData = sanitize(req.body);
 
@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const validationResult = SignupSchema.safeParse(sanitizedData);
 
   const errorResponse = handleZodValidationError(validationResult, res);
-  if (errorResponse) return;
+  if (errorResponse) throw new ApiError(400, "Invalid registration data");
 
   const validatedData = validationResult.data;
 
@@ -114,16 +114,16 @@ const registerUser = asyncHandler(async (req, res) => {
 // Step 2: Send Email Verification OTP
 const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
   const { sessionId } = req.body;
-  
+
   if (!sessionId) {
     throw new ApiError(400, "Session ID is required");
   }
-  
+
   const tempData = await getTempData(sessionId);
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
-  
+
   if (tempData.verificationStatus.emailVerified) {
     throw new ApiError(400, "Email already verified");
   }
@@ -150,6 +150,12 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
     });
 
     console.log("Email verification sent:", emailResponse);
+    if (emailResponse?.error?.statusCode) {
+      throw new ApiError(
+        emailResponse?.error?.statusCode,
+        emailResponse?.error?.message
+      );
+    }
 
     return res.status(200).json(
       new ApiResponse(200, "Verification code sent to email", {
@@ -272,112 +278,135 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
   }
 });
 
-// Step 5: Verify phoneNumber OTP & Create User Account
+// Step 5: Verify phoneNumber OTP
+// phoneVerification.controller.js
 const verifyPhone = asyncHandler(async (req, res) => {
   const { sessionId, otp } = req.body;
   if (!sessionId || !otp) {
     throw new ApiError(400, "Session ID and OTP are required");
   }
-  
+
   const tempData = await getTempData(sessionId);
-  
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
-  
+
   if (!tempData.verificationStatus.emailVerified) {
     throw new ApiError(400, "Please verify your email first");
   }
-  
+
   if (tempData.verificationStatus.phoneVerified) {
-    throw new ApiError(400, "phoneNumber already verified");
+    throw new ApiError(400, "Phone already verified");
   }
-  
-  try {
-    // Verify OTP from Redis
-    const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
-    if (!isValidOTP) {
-      throw new ApiError(400, "Invalid or expired verification code");
-    }
-    
-    console.log("5")
-    console.log(tempData)
 
-    // Final check for duplicates (in case someone registered while verification was in progress)
-    const existingEmail = await User.findOne({ email: tempData.userData.email });
-    if (existingEmail) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "Email already in use");
-    }
-    
-    const existingPhone = await User.findOne({
-      phoneNumber: tempData.userData.phoneNumber,
-    });
-    if (existingPhone) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "phoneNumber already in use");
-    }
-    
-    const existingUsername = await User.findOne({
-      username: tempData.userData.username,
-    });
-    if (existingUsername) {
-      await cleanupTempData(sessionId);
-      throw new ApiError(400, "Username already in use");
-    }
-    
-    console.log("6")
-    // Both verifications complete - NOW create the user account
-    const userData = {
-      ...tempData.userData,
-      isEmailVerified: true,
-      isPhoneVerified: true,
-      emailVerifiedAt: new Date(),
-      phoneVerifiedAt: new Date(),
-      status: "active",
-    };
+  // Verify OTP
+  const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
+  if (!isValidOTP) {
+    throw new ApiError(400, "Invalid or expired verification code");
+  }
 
-    // Create the actual user account
-    const user = await User.create(userData);
+  // Update tempData to mark phone as verified
+  tempData.verificationStatus.phoneVerified = true;
+  // save back in Redis or wherever you keep it
+  await storeTempData(sessionId, tempData, 600); // refresh expiry
 
-    if (!user) {
-      throw new ApiError(500, "Error creating user account");
-    }
+  return res.status(200).json(
+    new ApiResponse(200, "Phone number verified successfully", {
+      phoneVerified: true,
+      accountComplete: false, // user not created yet
+    })
+  );
+});
 
-    const sessionData = await sessionService.createSession(user._id, req);
+//step 6: Finalize registration and create user account
+// registration.controller.js
+const registerAccount = asyncHandler(async (req, res) => {
+  const { sessionId } = req.body;
+  if (!sessionId) {
+    throw new ApiError(400, "Session ID is required");
+  }
 
-    // Clean up temporary data
+  const tempData = await getTempData(sessionId);
+  if (!tempData) {
+    throw new ApiError(404, "Registration session not found or expired");
+  }
+
+  if (
+    !tempData.verificationStatus.emailVerified ||
+    !tempData.verificationStatus.phoneVerified
+  ) {
+    throw new ApiError(400, "Please complete email & phone verification first");
+  }
+
+  // Final duplicate checks
+  const existingEmail = await User.findOne({ email: tempData.userData.email });
+  if (existingEmail) {
     await cleanupTempData(sessionId);
-
-    // Remove sensitive data from response
-    const userObj = user.toObject();
-    delete userObj.password;
-
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        "phoneNumber verified successfully. Account setup complete!",
-        {
-          user: userObj,
-          session: {
-            sessionId: sessionData.sessionId,
-            accessToken: sessionData.accessToken,
-            refreshToken: sessionData.refreshToken,
-            expiresAt: sessionData.expiresAt,
-          },
-          deviceInfo: sessionData.deviceInfo,
-          phoneVerified: true,
-          accountComplete: true,
-          message: `${user.role} account created successfully! 🎉`,
-        }
-      )
-    );
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    throw new ApiError(500, "Error verifying phoneNumber and creating account");
+    throw new ApiError(400, "Email already in use");
   }
+
+  const existingPhone = await User.findOne({
+    phoneNumber: tempData.userData.phoneNumber,
+  });
+  if (existingPhone) {
+    await cleanupTempData(sessionId);
+    throw new ApiError(400, "Phone number already in use");
+  }
+
+  const existingUsername = await User.findOne({
+    username: tempData.userData.username,
+  });
+  if (existingUsername) {
+    await cleanupTempData(sessionId);
+    throw new ApiError(400, "Username already in use");
+  }
+
+  // Create user account
+  const userData = {
+    ...tempData.userData,
+    isEmailVerified: true,
+    isPhoneVerified: true,
+    emailVerifiedAt: new Date(),
+    phoneVerifiedAt: new Date(),
+    status: "active",
+  };
+
+  const user = await User.create(userData);
+  if (!user) {
+    throw new ApiError(500, "Error creating user account");
+  }
+
+  const sessionData = await sessionService.createSession(user._id, req);
+
+  await cleanupTempData(sessionId);
+
+  const userObj = user.toObject();
+  delete userObj.password;
+  const isProd = process.env.NODE_ENV === "production";
+
+  const baseCookieOptions = {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+  };
+
+  return res
+    .status(201)
+    .cookie("accessToken", sessionData.accessToken, {
+      ...baseCookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie("refreshToken", sessionData.refreshToken, {
+      ...baseCookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .json(
+      new ApiResponse(201, "Account created successfully!", {
+        user: userObj,
+        session: sessionData,
+        accountComplete: true,
+      })
+    );
 });
 
 // Resend verification code (unified endpoint)
@@ -470,23 +499,40 @@ const login = asyncHandler(async (req, res) => {
   const userSafeData = user.toObject();
   delete userSafeData.password;
 
-  return res.status(200).json(
-    new ApiResponse(200, "Login successful", {
-      user: userSafeData,
-      session: {
-        sessionId: sessionData.sessionId,
-        accessToken: sessionData.accessToken,
-        refreshToken: sessionData.refreshToken,
-        expiresAt: sessionData.expiresAt,
-      },
-      deviceInfo: sessionData.deviceInfo,
-    })
-  );
+  const isProd = process.env.NODE_ENV === "production";
+  const baseCookieOptions = {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+  };
+
+  const accessTokenOptions = { ...baseCookieOptions, maxAge: 15 * 60 * 1000 };
+  const refreshTokenOptions = {
+    ...baseCookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", sessionData.accessToken, accessTokenOptions)
+    .cookie("refreshToken", sessionData.refreshToken, refreshTokenOptions)
+    .json(
+      new ApiResponse(200, "Login successful", {
+        user: userSafeData,
+        session: {
+          sessionId: sessionData.sessionId,
+          accessToken: sessionData.accessToken,
+          refreshToken: sessionData.refreshToken,
+          expiresAt: sessionData.expiresAt,
+        },
+        deviceInfo: sessionData.deviceInfo,
+      })
+    );
 });
 
 // Refresh tokens
-const refreshToken = asyncHandler(async (req, res) => {
-  const { refreshToken } = req.body;
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
     throw new ApiError(400, "Refresh token required");
@@ -498,16 +544,33 @@ const refreshToken = asyncHandler(async (req, res) => {
     const userSafeData = tokenData.user.toObject();
     delete userSafeData.password;
 
-    return res.status(200).json(
-      new ApiResponse(200, "Tokens refreshed successfully", {
-        user: userSafeData,
-        session: {
-          sessionId: tokenData.sessionId,
-          accessToken: tokenData.accessToken,
-          refreshToken: tokenData.refreshToken,
-        },
-      })
-    );
+    const isProd = process.env.NODE_ENV === "production";
+    const baseCookieOptions = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    };
+
+    const accessTokenOptions = { ...baseCookieOptions, maxAge: 15 * 60 * 1000 };
+    const refreshTokenOptions = {
+      ...baseCookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", tokenData.accessToken, accessTokenOptions)
+      .cookie("refreshToken", tokenData.refreshToken, refreshTokenOptions)
+      .json(
+        new ApiResponse(200, "Tokens refreshed successfully", {
+          user: userSafeData,
+          session: {
+            sessionId: tokenData.sessionId,
+            accessToken: tokenData.accessToken,
+            refreshToken: tokenData.refreshToken,
+          },
+        })
+      );
   } catch (error) {
     throw new ApiError(401, error.message || "Invalid refresh token");
   }
@@ -519,6 +582,8 @@ const logout = asyncHandler(async (req, res) => {
     await sessionService.revokeSession(req.sessionId);
 
     return res
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
       .status(200)
       .json(new ApiResponse(200, "Logged out successfully", null));
   } catch (error) {
@@ -558,12 +623,14 @@ const logoutOtherSessions = asyncHandler(async (req, res) => {
 
 // Get current user with session info
 const getCurrentUser = asyncHandler(async (req, res) => {
-  const userSafeData = req.user.toObject();
-  delete userSafeData.password;
+  const user = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
+  if (!user) throw new ApiError(404, `Invalid user request`);
 
   return res.status(200).json(
     new ApiResponse(200, "User data retrieved successfully", {
-      user: userSafeData,
+      user: user.toObject(),
       sessionInfo: {
         sessionId: req.sessionId,
         deviceInfo: req.deviceInfo,
@@ -631,7 +698,7 @@ const revokeSession = asyncHandler(async (req, res) => {
 });
 
 // Validate current session (health check)
-export const validateCurrentSession = asyncHandler(async (req, res) => {
+const validateCurrentSession = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(200, "Session is valid", {
       sessionId: req.sessionId,
@@ -662,18 +729,27 @@ const getUserById = asyncHandler(async (req, res) => {});
 // const getCurrentUser = asyncHandler(async (req, res) => {});
 
 export {
-  registerUser,
+  InitialUserRegister,
   sendEmailVerificationOTP,
   verifyEmail,
   sendPhoneVerificationOTP,
   verifyPhone,
+  registerAccount,
+  resendVerificationCode,
+  getRegistrationStatus,
   login,
+  refreshAccessToken,
   logout,
+  logoutAll,
+  logoutOtherSessions,
+  getCurrentUser,
+  getUserSessions,
+  revokeSession,
+  validateCurrentSession,
   updateUserProfile,
   updateAvatar,
   updatePassword,
   forgotPassword,
   resetPassword,
   getUserById,
-  getCurrentUser,
 };

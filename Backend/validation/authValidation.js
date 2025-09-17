@@ -33,7 +33,7 @@ const registerSchema = z.object({
     .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format")
     .optional(),
   
-  role: z.enum(['user', 'businessman']).default('user'),
+  role: z.enum(['user', 'business']).default('user'),
   
   dateOfBirth: z.string()
     .datetime()

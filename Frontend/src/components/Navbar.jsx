@@ -2,11 +2,15 @@ import { useEffect, useState, useRef } from "react";
 import { Menu, Search, ChevronDown, MapPin, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import databaseService from "@/services/database.services";
+import { logout } from "@/slices/userSlice/authSlices";
+import { useDispatch } from "react-redux";
 
 // Mock data and functions for demo
 const mockLogo =
   // "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=100&h=100&fit=crop&crop=center";
-  '/logoFinal.png'
+  "/logoFinal.png";
 const mockCities = [
   "New York",
   "Los Angeles",
@@ -30,7 +34,9 @@ const Navbar = ({ isAuthenticated = false }) => {
   const [selectLanguage, setSelectLanguage] = useState("English");
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
 
+  const isLoggedIn = useSelector((state) => state.auth.status);
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -77,6 +83,22 @@ const Navbar = ({ isAuthenticated = false }) => {
     city.toLowerCase().includes(citySearch.toLowerCase())
   );
 
+  const handleLogout = async () => {
+    try {
+      const response = await databaseService.logout().catch((error) => {
+        console.error("Logout error:", error);
+      });
+      if (response?.success) {
+        //clear tokens
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        dispatch(logout())
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Category", path: "/category" },
@@ -112,28 +134,27 @@ const Navbar = ({ isAuthenticated = false }) => {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <NavLink to="/">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center space-x-3 cursor-pointer group"
-            >
-
-              <div className="relative">
-                <img
-                  src={mockLogo}
-                  alt="NearbyGo Logo"
-                  className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl object-cover shadow-lg group-hover:shadow-xl transition-all duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <div className="hidden sm:block">
-                <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">
-                  CityConnect
-                </span>
-              </div>
-            </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center space-x-3 cursor-pointer group"
+              >
+                <div className="relative">
+                  <img
+                    src={mockLogo}
+                    alt="NearbyGo Logo"
+                    className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl object-cover shadow-lg group-hover:shadow-xl transition-all duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <div className="hidden sm:block">
+                  <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">
+                    CityConnect
+                  </span>
+                </div>
+              </motion.div>
             </NavLink>
-            
+
             {/* Desktop Navigation */}
             <div className="hidden xl:flex items-center space-x-1">
               {navItems.map((item, index) => (
@@ -304,16 +325,30 @@ const Navbar = ({ isAuthenticated = false }) => {
                     </motion.button>
                   </NavLink>
                 ) : (
-                   <NavLink to="/login">
-
-                  <motion.button
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
-                    Login
-                  </motion.button>
-                    </NavLink>
+                  <>
+                    {!isLoggedIn ? (
+                      <NavLink to="/login">
+                        <motion.button
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
+                          Login
+                        </motion.button>
+                      </NavLink>
+                    ) : (
+                      <motion.button
+                        onClick={
+                          handleLogout
+                        }
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        Logout
+                      </motion.button>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -361,8 +396,10 @@ const Navbar = ({ isAuthenticated = false }) => {
                 transition={{ duration: 0.3 }}
                 className="xl:hidden overflow-hidden"
               >
-                <div className="py-8 space-y-6 bg-white backdrop-blur-xl rounded-2xl mt-2
-                sm:mt-4 mb-6 border border-gray-200  overflow-hidden">
+                <div
+                  className="py-8 space-y-6 bg-white backdrop-blur-xl rounded-2xl mt-2
+                sm:mt-4 mb-6 border border-gray-200  overflow-hidden"
+                >
                   {/* Mobile Navigation Links */}
                   <div className="space-y-3 px-6">
                     {navItems.map((item, index) => (

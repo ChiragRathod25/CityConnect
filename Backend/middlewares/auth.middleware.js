@@ -1,9 +1,10 @@
 // middleware/auth.js
 
-import { User } from "../models/user.model";
-import { sessionService } from "../services/sessionService";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import { sessionService } from "../services/sessionService.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import jwt from "jsonwebtoken";
 
 // Verify JWT token and session
 export const verifyToken = asyncHandler(async (req, res, next) => {
@@ -133,3 +134,31 @@ export const rateLimiter = (maxRequests = 100, windowMs = 15 * 60 * 1000) => {
     next();
   });
 };
+
+export const verifyJWT = asyncHandler(async (req, res, next) => {
+  try {
+    // if admin is already logged in then no need to verify the user
+    if (req.admin) {
+      return next();
+    }
+
+    console.log("Verifying JWT token...",req.cookies);
+    const token =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
+   
+    if (!token) throw new ApiError(401, `Token is required`);
+    const decodeToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    console.log("Decoded Token:", decodeToken);
+    const user = await User.findById(decodeToken?.userId).select(
+      "-password -refreshToken"
+    );
+    if (!user) throw new ApiError(401, `Invalid access token`);
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error(`verifyJWT Error`, error);
+    throw new ApiError(401, `Error while validating user`, error);
+  }
+});

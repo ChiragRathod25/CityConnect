@@ -1,59 +1,69 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import Home from "./Pages/Home";
-import Footer from "./components/Footer";
-import SignUpPageUI from "./Pages/Signup";
-import LoginPageUI from "./Pages/Login";
-import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
-import Navbar from "./components/Navbar";
-import ModernSellerForm from "./components/BusinessForm";
-import CategoryPageUi from "./Pages/Category";
-import CityConnectLanding from "./components/LandingPage";
-import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanProfile";
-import ProfilePage from "./Pages/Profile/Profile";
-import EditUserProfileInfo from "./components/userProfile/EditProfileInfo";
-import EditBusinessmanProfileNavigation from "./components/businessmanProfile/EditBusinessmanProfileInfo";
-import EmailEditPage from "./components/businessmanProfile/Email";
-import AdminProfilePageUI from "./Pages/AdminProfile";
-import UserProfileUI from "./Pages/UserProfile/Index";
+import { useState, useEffect } from "react";
+import { TopBar, SideDrawer, BottomTabBar } from "./components/index.js";
+import FooterComponent from "./components/Footer";
+import HeaderComponent from "./components/Navbar";
 
-const Layout = () => {
-  const location = useLocation();
-  const hideNavbarFooter =
-    location.pathname === "/login" ||
-    location.pathname === "/signup" ||
-    location.pathname === "/start" ||
-    location.pathname === "/reset-password";
+function Layout({ children }) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect if running as PWA
+    const checkPWA =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone;
+    setIsPWA(checkPWA);
+
+    // Detect if mobile device
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const mobileCheck =
+      /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent.toLowerCase()
+      );
+    setIsMobile(mobileCheck);
+  }, []);
+
+  const isMobilePWA = isPWA && isMobile;
 
   return (
-    <>
-      {!hideNavbarFooter && (
-        <div className="md:mb-20 mb-16">
-          <Navbar />
+    <div className="min-h-screen flex flex-col">
+      {/* HEADER */}
+      {!isMobilePWA && (
+        <header className="bg-[#C30E59] text-white shadow-xl sticky top-0 z-50 backdrop-blur-lg">
+          <div className="container flex justify-center items-center px-4">
+            <HeaderComponent />
+          </div>
+        </header>
+      )}
+
+      {/* MOBILE PWA TOPBAR */}
+      {isMobilePWA && (
+        <div className="sm:hidden z-200 sticky top-0">
+          <TopBar
+            onMenuClick={() => setIsDrawerOpen(true)}
+            notificationsCount={3}
+          />
+          <SideDrawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+          />
         </div>
       )}
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPageUI />} />
-        <Route path="/category" element={<CategoryPageUi />} />
-        <Route path="/start" element={<CityConnectLanding />} />
-        <Route path="/abc" element={<ModernSellerForm />} />
-        <Route path="/signup" element={<SignUpPageUI />} />
-        <Route path="/reset-password" element={<PasswordResetPage />} />
+      {/* MAIN */}
+      <div className="min-h-screen flex-grow">{children}</div>
 
-        <Route path="/user-profile" element={<UserProfileUI />} />
-        <Route path="/user-profile/:itemId" element={<ProfilePage />} />
-
-        <Route path="/businessman-profile" element={<BusinessmanProfileDashboard />} />
-        <Route path="/businessman-profile/:itemId" element={<ProfilePage />} />
-        <Route path="/businessman-profile/profile-info/edit-profile" element={<EditBusinessmanProfileNavigation />} />
-        <Route path="/email" element={<EmailEditPage />} />
-        <Route path="/admin" element={<AdminProfilePageUI />} />
-      </Routes>
-
-      {!hideNavbarFooter && <Footer />}
-    </>
+      {/* FOOTER */}
+      {isMobilePWA ? (
+        <div className="sm:hidden z-200 mt-10">1
+          <BottomTabBar />
+        </div>
+      ) : (
+        <FooterComponent />
+      )}
+    </div>
   );
-};
+}
 
 export default Layout;
