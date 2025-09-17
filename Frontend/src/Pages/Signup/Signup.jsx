@@ -1,7 +1,18 @@
 import { Button } from "@/components/ui/Button";
-import { Briefcase, Eye, EyeOff, SendHorizontal, Star, User } from "lucide-react";
+import {
+  Briefcase,
+  Eye,
+  EyeOff,
+  SendHorizontal,
+  Star,
+  User,
+} from "lucide-react";
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import databaseService from "../../services/database.services";
+import { tr } from "date-fns/locale";
+import { login } from "@/slices/userSlice/authSlices";
+import { useDispatch } from "react-redux";
 
 const PasswordRequirements = ({ password }) => {
   const requirements = [
@@ -224,11 +235,11 @@ const StepHeader = ({ icon, title, subtitle, iconBg }) => (
 const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
   const getIconColor = () => {
     if (selected) return "text-white";
-    return role === "Businessman" ? "text-amber-500" : "text-emerald-500";
+    return role === "business" ? "text-amber-500" : "text-emerald-500";
   };
   const getIconBgColor = () => {
     if (selected) return "bg-gradient-to-br from-gray-700 to-gray-900";
-    return role === "Businessman"
+    return role === "business"
       ? "bg-gradient-to-br from-amber-100 to-amber-200"
       : "bg-gradient-to-br from-emerald-100 to-emerald-200";
   };
@@ -276,7 +287,7 @@ const RoleCard = ({ role, icon, title, description, selected, onClick }) => {
             className={`text-lg font-semibold mb-2 ${
               selected
                 ? "text-gray-800"
-                : role === "Businessman"
+                : role === "business"
                 ? "text-amber-700"
                 : "text-emerald-700"
             }`}
@@ -559,8 +570,11 @@ export default function SignupPage() {
   const [errors, setErrors] = useState({});
   const [codeSentStatus, setCodeSentStatus] = useState({
     email: false,
-    phone: false
+    phone: false,
   });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
@@ -632,67 +646,129 @@ export default function SignupPage() {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
-    setTimeout(() => {
+
+    try {
+      const response = await databaseService.InitialUserRegister({
+        ...formData,
+        sessionId: localStorage.getItem("sessionId"),
+      });
+      if (response) {
+        setVerificationStage("email");
+        //  store session Id to local storage
+        const sessionId = response.data.sessionId;
+        localStorage.setItem("sessionId", sessionId);
+        setCurrentStep("2fa-verify");
+      }
+    } catch (error) {
+      setErrors({ form: error.message || "Signup failed. Please try again." });
+    } finally {
       setIsLoading(false);
-      setCurrentStep("2fa-verify");
-      setVerificationStage("email");
-      // Reset code sent status when entering verification
-      setCodeSentStatus({ email: false, phone: false });
-    }, 2000);
+    }
   };
 
   const sendVerificationCode = async () => {
     setIsLoading(true);
-    
-    // Simulate sending code
-    setTimeout(() => {
+
+    const method = verificationStage === "email" ? "email" : "phone number";
+
+    try {
+      if (verificationStage === "email") {
+        await databaseService.sendEmailVerificationOTP({
+          sessionId: localStorage.getItem("sessionId"),
+        });
+      } else {
+        await databaseService.sendPhoneVerificationOTP({
+          sessionId: localStorage.getItem("sessionId"),
+        });
+      }
+      setCodeSentStatus((prev) => ({ ...prev, [verificationStage]: true }));
+      setErrors((prev) => ({ ...prev, [`${verificationStage}Code`]: "" }));
+    } catch (error) {
+      setErrors(error.message || `Failed to send ${method} verification code`);
+    } finally {
       setIsLoading(false);
-      // Mark code as sent for current verification stage
-      setCodeSentStatus(prev => ({
-        ...prev,
-        [verificationStage]: true
-      }));
-      
-      // Show success message
-      const method = verificationStage === "email" ? "email" : "phone number";
-      const contact = verificationStage === "email" ? formData.email : formData.phoneNumber;
-      alert(`Verification code sent to your ${method}: ${contact}`);
-    }, 1500);
+    }
   };
 
   const verifyCode = async () => {
     setIsLoading(true);
-    const newErrors = {};
-    
-    if (verificationStage === "email" && !twoFAData.emailCode) {
-      newErrors.emailCode = "Email verification code is required";
-    }
-    if (verificationStage === "phone" && !twoFAData.phoneCode) {
-      newErrors.phoneCode = "Phone verification code is required";
-    }
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      return;
-    }
-    
-    setTimeout(() => {
-      setIsLoading(false);
+
+    setIsLoading(true);
+
+    try {
       if (verificationStage === "email") {
+        await databaseService.verifyEmail({
+          sessionId: localStorage.getItem("sessionId"),
+          otp: twoFAData.emailCode,
+        });
         setEmailVerified(true);
         setVerificationStage("phone");
         setTwoFAData((prev) => ({ ...prev, emailCode: "" }));
         setErrors({});
-        // Don't reset phone code sent status, but email verification is done
-      } else if (verificationStage === "phone") {
-        setPhoneVerified(true);
-        alert(
-          `${selectedRole} account created successfully! Both email and phone verified! 🎉`
-        );
-        resetForm();
+      } else {
+        try {
+          const response = await databaseService
+            .verifyPhone({
+              sessionId: localStorage.getItem("sessionId"),
+              otp: twoFAData.phoneCode,
+            })
+            .then((res) => {
+              setPhoneVerified(true);
+              return res
+            });
+            console.log("Response after phone verification: ", response);
+
+          if (response.success) {
+            const registration = await databaseService
+              .completeUserRegistration({
+                sessionId: localStorage.getItem("sessionId"),
+              })
+              .then((response) => {
+                localStorage.removeItem("sessionId");
+                setTwoFAData((prev) => ({ ...prev, phoneCode: "" }));
+                setErrors({});
+                return response;
+              });
+
+              if(registration && registration.success){
+                console.log("User registration completed: ", registration);
+                // login user
+                await databaseService.login({
+                  email: formData.email,
+                  password: formData.password,
+                }).then((loginResponse) => {
+                  
+                  console.log("User logged in: ", loginResponse);
+                  dispatch(login(
+                    loginResponse.data
+                  ))
+
+                })
+                .then(()=>{
+                  navigate("/");
+                })
+                .catch ((loginError) => {
+                  console.error("Login failed: ", loginError);
+                });
+            }
+            setCurrentStep("signup-complete");
+            
+          }
+        } catch (error) {
+          setErrors((prev) => ({
+            ...prev,
+            form: error.message || "Verification failed. Please try again.",
+          }));
+        }
       }
-    }, 2000);
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        form: error.message || "Verification failed. Please try again.",
+      }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const resetForm = () => {
@@ -734,7 +810,7 @@ export default function SignupPage() {
           ),
           title: `Create ${selectedRole} Account`,
           subtitle: "Join our community today",
-          iconBg: selectedRole === "User" ? "#10b981" : "#f59e0b",
+          iconBg: selectedRole === "user" ? "#10b981" : "#f59e0b",
         };
       case "2fa-verify":
         return {
@@ -747,9 +823,11 @@ export default function SignupPage() {
             />
           ),
           title: `Verify ${verificationStage === "email" ? "Email" : "Phone"}`,
-          subtitle: `Step ${
-            verificationStage === "email" ? "1" : "2"
-          } of 2: ${!codeSentStatus[verificationStage] ? "Send verification code" : "Enter the verification code"}`,
+          subtitle: `Step ${verificationStage === "email" ? "1" : "2"} of 2: ${
+            !codeSentStatus[verificationStage]
+              ? "Send verification code"
+              : "Enter the verification code"
+          }`,
           iconBg: verificationStage === "email" ? "#3b82f6" : "#10b981",
         };
       default:
@@ -775,20 +853,20 @@ export default function SignupPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <RoleCard
-                  role="businessman"
+                  role="business"
                   icon={<Briefcase className="w-8 h-8" />}
-                  title="Businessman"
+                  title="business"
                   description="Perfect for entrepreneurs, business owners, and professionals"
-                  selected={selectedRole === "Businessman"}
-                  onClick={() => handleRoleSelection("Businessman")}
+                  selected={selectedRole === "business"}
+                  onClick={() => handleRoleSelection("business")}
                 />
                 <RoleCard
                   role="user"
                   icon={<User className="w-8 h-8" />}
-                  title="User"
+                  title="user"
                   description="Great for individuals and personal use"
-                  selected={selectedRole === "User"}
-                  onClick={() => handleRoleSelection("User")}
+                  selected={selectedRole === "user"}
+                  onClick={() => handleRoleSelection("user")}
                 />
               </div>
               <Button
@@ -815,7 +893,7 @@ export default function SignupPage() {
                     </span>
                   </div>
                   <p className="text-xs text-gray-500">
-                    {selectedRole === "Businessman"
+                    {selectedRole === "business"
                       ? "You'll get access to business tools and features"
                       : "You'll get access to personal user features"}
                   </p>
@@ -971,10 +1049,9 @@ export default function SignupPage() {
               <div className="space-y-6">
                 <div className="text-center space-y-2">
                   <p className="text-sm" style={{ color: "#6b7280" }}>
-                    {!codeSentStatus[verificationStage] 
+                    {!codeSentStatus[verificationStage]
                       ? `Click 'Send Code' to receive verification code at`
-                      : `We've sent a 6-digit code to`
-                    }
+                      : `We've sent a 6-digit code to`}
                   </p>
                   <p
                     className="font-semibold text-lg"
@@ -985,14 +1062,18 @@ export default function SignupPage() {
                       : formData.phoneNumber}
                   </p>
                 </div>
-                
+
                 {!codeSentStatus[verificationStage] ? (
                   <Button
                     onClick={sendVerificationCode}
                     loading={isLoading}
                     icon={<SendHorizontal className="w-5 h-5" />}
                   >
-                    {isLoading ? "Sending Code..." : `Send Code to ${verificationStage === "email" ? "Email" : "Phone"}`}
+                    {isLoading
+                      ? "Sending Code..."
+                      : `Send Code to ${
+                          verificationStage === "email" ? "Email" : "Phone"
+                        }`}
                   </Button>
                 ) : (
                   <>
@@ -1019,7 +1100,7 @@ export default function SignupPage() {
                           : errors.phoneCode
                       }
                     />
-                    
+
                     <Button
                       onClick={verifyCode}
                       loading={isLoading}
@@ -1033,7 +1114,7 @@ export default function SignupPage() {
                         ? "Verify Email"
                         : "Complete Setup"}
                     </Button>
-                    
+
                     <ResendTimer
                       onResend={sendVerificationCode}
                       isLoading={isLoading}
@@ -1041,7 +1122,7 @@ export default function SignupPage() {
                     />
                   </>
                 )}
-                
+
                 <Button
                   onClick={() => {
                     if (verificationStage === "phone" && emailVerified) {

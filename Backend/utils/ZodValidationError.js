@@ -1,3 +1,5 @@
+import { ApiResponse } from "./ApiResponse.js";
+
 export const handleZodValidationError = (validationResult, res) => {
   if (!validationResult.success) {
     console.error("Zod Validation failed!");
@@ -13,7 +15,9 @@ export const handleZodValidationError = (validationResult, res) => {
       errors: errorMessages,
     };
 
-    return res.status(400).json(response);
+    return res.status(400).json(
+      new ApiResponse(400,"Validation Error",response)
+    );
   }
   return null; // No error, continue with normal flow
 };

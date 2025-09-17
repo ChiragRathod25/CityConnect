@@ -13,6 +13,10 @@ import {
 import { GeometricShapes, MovingDots } from "../../components/CustomAnimation";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
+import databaseService from "@/services/database.services";
+import { useDispatch } from "react-redux";
+import { login } from "@/slices/userSlice/authSlices";
+import { useNavigate } from "react-router-dom";
 
 const OTPInput = ({ value, onChange, error }) => {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -234,6 +238,8 @@ const LoginPage = () => {
     resetEmail: "",
     resetPhone: "",
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -272,12 +278,19 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // Handle login logic here
-    }, 2000);
     
+    try {
+      const response=await databaseService.login({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (response.statusCode === 200) {
+        dispatch(login(response.data));
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed: ", error);
+    }
   };
 
   const handleForgotPassword = async (e) => {
