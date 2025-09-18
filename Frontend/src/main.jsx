@@ -24,6 +24,7 @@ import EmailEditPage from "./components/businessmanProfile/Email";
 import AdminProfilePageUI from "./Pages/AdminProfile";
 import UserProfileUI from "./Pages/UserProfile/Index";
 import SubcategoryPage from "./Pages/Category/SubCategory";
+import NotFoundPageUI from "./Pages/NotFound/Index";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
       {
         path: "/profile/edit-profile",
         element: <EditUserProfileInfo />,
+      },
+      {
+        path: "*",
+        element: <NotFoundPageUI />,
       },
     ],
   },

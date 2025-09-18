@@ -30,7 +30,7 @@ function Layout({ children }) {
     <div className="min-h-screen  flex flex-col">
       {/* HEADER */}
       {!isMobilePWA && (
-        <header className="text-white shadow-xl sticky top-0 z-50 backdrop-blur-lg">
+        <header className="text-white sticky top-0 z-50 backdrop-blur-lg">
           <div className="container mb-16 lg:mb-20 flex justify-center items-center px-4">
             <HeaderComponent />
           </div>
