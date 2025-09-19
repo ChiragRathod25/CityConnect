@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from '../conf/config.js';
+import config from '../config/config.js';
 import databaseService from "../services/database.services.js";
 
 const axiosInstance = axios.create({
