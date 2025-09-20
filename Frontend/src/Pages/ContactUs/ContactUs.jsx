@@ -325,7 +325,7 @@ const ContactUsPage = () => {
             </motion.h2>
             
             <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <motion.div
                   whileFocus={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
@@ -357,7 +357,7 @@ const ContactUsPage = () => {
                 </motion.div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <motion.div
                   whileFocus={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
