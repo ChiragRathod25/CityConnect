@@ -1,0 +1,336 @@
+/* MapAnimations.css - Advanced Animations and Effects */
+
+/* Route drawing animation - Google Maps style */
+@keyframes drawRoute {
+  0% {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+}
+
+.route-line-animated {
+  animation: drawRoute 2.5s ease-in-out forwards;
+}
+
+/* Enhanced route line effects */
+.route-highlight {
+  stroke: #667eea !important;
+  stroke-width: 8 !important;
+  stroke-opacity: 0.8 !important;
+  fill: none !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.4));
+}
+
+/* Route border effect for better visibility */
+.route-border {
+  stroke: #ffffff !important;
+  stroke-width: 12 !important;
+  stroke-opacity: 0.6 !important;
+  fill: none !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Animated route pulse */
+@keyframes routePulse {
+  0%, 100% {
+    stroke-width: 6;
+    stroke-opacity: 0.8;
+  }
+  50% {
+    stroke-width: 10;
+    stroke-opacity: 0.6;
+  }
+}
+
+.route-pulse {
+  animation: routePulse 3s ease-in-out infinite;
+}
+
+/* Marker drop animation */
+@keyframes markerDrop {
+  0% {
+    transform: translateY(-100px) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px) scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.marker-drop {
+  animation: markerDrop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Pulsing effect for user location */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.33);
+    opacity: 1;
+  }
+  80%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.user-location-pulse::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-ring 2s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  pointer-events: none;
+}
+
+/* Floating action button effect */
+.floating-controls {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fab:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.fab:active {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Loading skeleton for directions */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Smooth transitions for panel states */
+.panel-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.panel-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.3s ease-out;
+}
+
+.panel-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.panel-exit-active {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease-in;
+}
+
+/* Glowing effect for active elements */
+.glow {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+  }
+}
+
+/* Shake animation for errors */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Slide in animations for steps */
+.step-slide-in {
+  animation: stepSlideIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes stepSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation delays */
+.step-slide-in:nth-child(1) { animation-delay: 0.1s; }
+.step-slide-in:nth-child(2) { animation-delay: 0.2s; }
+.step-slide-in:nth-child(3) { animation-delay: 0.3s; }
+.step-slide-in:nth-child(4) { animation-delay: 0.4s; }
+.step-slide-in:nth-child(5) { animation-delay: 0.5s; }
+.step-slide-in:nth-child(n+6) { animation-delay: 0.6s; }
+
+/* Progress bar for route calculation */
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+  animation: progressFill 2s ease-in-out;
+}
+
+@keyframes progressFill {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Hover effects for interactive elements */
+.interactive-hover {
+  transition: all 0.2s ease;
+}
+
+.interactive-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth focus states */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+/* Mobile-specific animations */
+@media (max-width: 768px) {
+  .mobile-slide-up {
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+  }
+  
+  .mobile-slide-up.active {
+    transform: translateY(0);
+  }
+  
+  .fab {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+  
+  .floating-controls {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .control-btn {
+    border: 2px solid #000;
+  }
+  
+  .directions-panel {
+    border: 2px solid #000;
+  }
+  
+  .step-number {
+    border: 2px solid #fff;
+  }
+}

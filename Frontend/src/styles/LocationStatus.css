@@ -1,0 +1,169 @@
+/* LocationStatus.css */
+
+/* Base Card */
+.location-status {
+  display: flex;
+  justify-content: space-between; /* left + right */
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem ;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  animation: slideInFromTop 0.5s ease-out;
+  flex-wrap: wrap; /* allow stacking on small screens */
+}
+
+/* Slide in animation */
+@keyframes slideInFromTop {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* State-specific */
+.location-status.loading {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(147, 197, 253, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #1e40af;
+}
+.location-status.error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(252, 165, 165, 0.15));
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+}
+.location-status.success {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(134, 239, 172, 0.15));
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #059669;
+}
+
+/* Left Section (icon + text) */
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1; /* take remaining space */
+  min-width: 220px;
+}
+
+.status-icon {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.location-status:hover .status-icon {
+  transform: scale(1.1);
+}
+.loading .status-icon { background: rgba(59, 130, 246, 0.12); }
+.error .status-icon { background: rgba(239, 68, 68, 0.12); }
+.success .status-icon { background: rgba(34, 197, 94, 0.12); }
+
+/* Spinner */
+.location-spinner {
+  width: 1.3rem;
+  height: 1.3rem;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status Text */
+.status-content h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.status-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(0,0,0,0.65);
+}
+
+/* Retry Button */
+.retry-btn {
+  margin-top: 0.6rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f87171, #dc2626);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.retry-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 3px 8px rgba(220,38,38,0.3);
+}
+
+/* Right Section (instruction) */
+.instruction-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 6px 18px rgba(60,80,140,0.12);
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  text-align: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.6s ease-in-out;
+  max-width: 300px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.instruction-icon {
+  font-size: 1.5rem;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ---------- Responsive ---------- */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .location-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .instruction-overlay {
+    margin-top: 0.8rem;
+    width: 100%;
+    max-width: none;
+    justify-content: flex-start;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .status-left {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .instruction-overlay {
+    text-align: left;
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+}

@@ -37,6 +37,7 @@ import {
   Briefcase,
   AlertTriangle,
 } from "lucide-react";
+import Modal from "./Modal.jsx"
 
 // Enhanced color palette
 const colors = {
@@ -408,6 +409,7 @@ const ToggleSwitch = ({ label, description, checked, onChange, error }) => (
 );
 
 import { Map } from "lucide-react";
+import DeliveryMap from "./map/DeliveryMap.jsx";
 const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
   const [mapError, setMapError] = useState("");
   const [manualLocation, setManualLocation] = useState({
@@ -692,7 +694,40 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
     }
   };
 
+  
+  // set Modal Functionality
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [modalContent, setModalContent] = React.useState(null);
+  const [modalTitle, setModalTitle] = React.useState('');
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.style.overflow = 'auto';
+  };
+
+  const handleView = () => {
+
+    setModalTitle('Location');
+    setModalContent(
+      <div className="flex flex-col items-center justify-center">
+        <DeliveryMap  mode="business"  />
+      </div>
+    );
+    openModal();
+  };
+  
   return (
+    <>
+     <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        // className="w-full max-w-3xl h-full overflow-y-auto"
+      >
+        <div className="flex flex-col items-center justify-center">{modalContent}</div>
+      </Modal>
+
     <div className="space-y-4">
       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
         <MapPin size={16} className="text-gray-500" />
@@ -717,7 +752,8 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowMap(true)}
+            onClick={() => handleView()
+            }
             className="flex items-center justify-center gap-3 bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200"
           >
             <Map size={20} />
@@ -1079,6 +1115,8 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
         )}
       </div>
     </div>
+  
+    </>
   );
 };
 const FileUpload = ({

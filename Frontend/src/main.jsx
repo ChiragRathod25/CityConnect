@@ -64,7 +64,7 @@ const router = createBrowserRouter([
         element: <CityConnectLanding />,
       },
       {
-        path: "/abc",
+        path: "/become-a-seller",
         element: <ModernSellerForm />,
       },
       {

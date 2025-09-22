@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import databaseService from "@/services/database.services";
 import { logout } from "@/slices/userSlice/authSlices";
 import { useDispatch } from "react-redux";
+import { GoogleTranslate } from ".";
 
 // Mock data and functions for demo
 const mockLogo =
@@ -309,6 +310,9 @@ const Navbar = ({ isAuthenticated = false }) => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              </div>  
+              <div>
+                  <GoogleTranslate/>
               </div>
 
               {/* Profile or Login */}
@@ -350,6 +354,7 @@ const Navbar = ({ isAuthenticated = false }) => {
                     )}
                   </>
                 )}
+              
               </div>
 
               {/* Mobile Menu Button */}

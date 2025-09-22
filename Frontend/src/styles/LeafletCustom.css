@@ -1,0 +1,58 @@
+/* Hide default routing control panel */
+.leaflet-routing-container,
+.leaflet-routing-container-hide {
+  display: none !important;
+}
+
+/* Interactive map details */
+.leaflet-map-pane {
+  filter: none;
+}
+
+/* Attribution style */
+.leaflet-control-attribution {
+  background: rgba(255,255,255,0.89)!important;
+  border-radius: 5px;
+  font-size: 11px;
+  color: #7c7c91 !important;
+}
+
+.leaflet-control-attribution a {
+  color: #726fec!important;
+  text-decoration: none;
+}
+.leaflet-control-attribution a:hover {
+  color: #453fc1;
+  text-decoration: underline;
+}
+
+/* Leaflet UI buttons */
+.leaflet-control-zoom {
+  border-radius: 9px!important;
+  box-shadow: 0 2px 8px rgba(0,12,43,0.15)!important;
+  overflow: hidden!important;
+}
+.leaflet-control-zoom a {
+  font-weight: 700;
+  background: rgba(255,255,255,0.95)!important;
+  border: none!important;
+  color: #36366e!important;
+  font-size: 1.1rem;
+}
+.leaflet-control-zoom a:hover {
+  background: #e0e7ff!important;
+  color: #4f46e5!important;
+  transform: scale(1.04)!important;
+}
+
+.leaflet-container {
+  background: #f6f8fd !important;
+  cursor: crosshair !important;
+}
+
+/* Enhance route line */
+.leaflet-overlay-pane svg path {
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 2px 9px #667eeaaa);
+}
