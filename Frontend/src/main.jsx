@@ -30,6 +30,7 @@ import ManageCategoryUI from "./Pages/ManageCategory";
 import ManageUserUI from "./Pages/ManageUser";
 import AddBusinessCard from "./components/FormPage/AddBusinessCard";
 import AddProductCard from "./components/FormPage/AddProductCard";
+import ServiceProviderCardUI from "./Pages/ServiceProvider";
 
 const router = createBrowserRouter([
   {
@@ -124,6 +125,11 @@ const router = createBrowserRouter([
         // path: "/add-productcard",
         path: '/product',
         element: <AddProductCard />,
+      },
+       {
+        // path: "/add-productcard",
+        path: '/service',
+        element: <ServiceProviderCardUI />,
       },
       {
         path: "*",
