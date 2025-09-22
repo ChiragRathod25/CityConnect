@@ -25,6 +25,8 @@ import AdminProfilePageUI from "./Pages/AdminProfile";
 import UserProfileUI from "./Pages/UserProfile/Index";
 import SubcategoryPage from "./Pages/Category/SubCategory";
 import NotFoundPageUI from "./Pages/NotFound/Index";
+import ContactUsPageUI from "./Pages/ContactUs";
+import ManageCategoryUI from "./Pages/ManageCategory";
 import Install from "./Pages/InstallApp.jsx";
 
 const router = createBrowserRouter([
@@ -100,6 +102,15 @@ const router = createBrowserRouter([
       {
         path: "/profile/edit-profile",
         element: <EditUserProfileInfo />,
+      },
+      {
+        path: "/contactus",
+        element: <ContactUsPageUI />,
+      },
+      {
+        // path: "/admin/manage-category",
+        path: '/neel',
+        element: <ManageCategoryUI />,
       },
       {
         path: "*",

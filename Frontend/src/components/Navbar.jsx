@@ -103,7 +103,7 @@ const Navbar = ({ isAuthenticated = false }) => {
     { name: "Home", path: "/" },
     { name: "Category", path: "/category" },
     { name: "About", path: "/about" },
-    { name: "Contact Us", path: "/contact" },
+    { name: "Contact Us", path: "/contactus" },
     ...(user?.role === "business"
       ? [{ name: "My Business", path: "/mybusiness" }]
       : []),
