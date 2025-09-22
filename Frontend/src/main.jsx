@@ -27,6 +27,10 @@ import SubcategoryPage from "./Pages/Category/SubCategory";
 import NotFoundPageUI from "./Pages/NotFound/Index";
 import ContactUsPageUI from "./Pages/ContactUs";
 import ManageCategoryUI from "./Pages/ManageCategory";
+import ManageUserUI from "./Pages/ManageUser";
+import AddBusinessCard from "./components/FormPage/AddBusinessCard";
+import AddProductCard from "./components/FormPage/AddProductCard";
+import ServiceProviderCardUI from "./Pages/ServiceProvider";
 import Install from "./Pages/InstallApp.jsx";
 
 const router = createBrowserRouter([
@@ -111,6 +115,26 @@ const router = createBrowserRouter([
         // path: "/admin/manage-category",
         path: '/neel',
         element: <ManageCategoryUI />,
+      },
+      {
+        // path: "/admin/manage-user",
+        path: '/user',
+        element: <ManageUserUI />,
+      },
+      {
+        // path: "/add-businesscard",
+        path: '/add',
+        element: <AddBusinessCard />,
+      },
+      {
+        // path: "/add-productcard",
+        path: '/product',
+        element: <AddProductCard />,
+      },
+       {
+        // path: "/add-productcard",
+        path: '/service',
+        element: <ServiceProviderCardUI />,
       },
       {
         path: "*",
