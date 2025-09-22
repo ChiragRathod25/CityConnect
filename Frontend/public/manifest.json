@@ -1,0 +1,21 @@
+{
+  "name": "CityConnect",
+  "short_name": "CityConnect",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#317EFB",
+  "description": "A MERN stack Progressive Web App",
+  "icons": [
+    {
+      "src": "/logoFinal.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logoFinal.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

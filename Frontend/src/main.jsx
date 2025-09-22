@@ -25,6 +25,7 @@ import AdminProfilePageUI from "./Pages/AdminProfile";
 import UserProfileUI from "./Pages/UserProfile/Index";
 import SubcategoryPage from "./Pages/Category/SubCategory";
 import NotFoundPageUI from "./Pages/NotFound/Index";
+import Install from "./Pages/InstallApp.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/install",
+        element: <Install />,
       },
       {
         path: "/signup",
