@@ -31,6 +31,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state) => state.auth.status);
+  const user = useSelector((state) => state.auth.userData);
 
   // Handle scroll effect
   useEffect(() => {
@@ -41,9 +42,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Mock user data
-  const user = { name: "John Doe", role: "seller" };
 
   const handleLanguageChange = async (lang) => {
     setSelectLanguage(lang);
@@ -161,7 +159,7 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.2 }}
-                  className="relative px-4 py-2 text-gray-800 font-semibold rounded-lg hover:text-black hover:shadow-lg transition-all duration-200 group overflow-hidden hover:shadow-gray-300 hover:bg-gray-200"
+                  className="relative px-4 py-2 text-gray-800 font-semibold rounded-lg hover:text-black hover:shadow-lg transition-all duration-200 group overflow-hidden hover:shadow-gray-300 hover:bg-[#e9ecef]"
                   style={{ caretColor: "transparent" }}
                 >
                   <span className="relative z-10">{item.name}</span>

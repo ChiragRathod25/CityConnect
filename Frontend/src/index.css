@@ -110,13 +110,6 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 
 @layer base {
   * {
@@ -125,4 +118,62 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+
+/* for custom scrollbar */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto; /* Enable scrolling */
+  scrollbar-width: thin; /* Firefox: slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Firefox: thumb and track colors */
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 10px; /* Scrollbar width */
+  height: 10px; /* For horizontal scrollbars */
+}
+
+html::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Track background */
+  border-radius: 10px; /* Rounded track */
+}
+
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+  background: #888; /* Thumb color */
+  border-radius: 10px; /* Rounded thumb */
+  border: 2px solid #f1f1f1; /* Adds padding effect */
+  transition: 0.2s ease; /* Smooth hover transition */
+}
+
+html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker thumb on hover */
+}
+
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 #f1f1f1; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
