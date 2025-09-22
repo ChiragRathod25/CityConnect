@@ -32,6 +32,7 @@ import AddBusinessCard from "./components/FormPage/AddBusinessCard";
 import AddProductCard from "./components/FormPage/AddProductCard";
 import ServiceProviderCardUI from "./Pages/ServiceProvider";
 import Install from "./Pages/InstallApp.jsx";
+import { SideDrawer } from "./components";
 
 const router = createBrowserRouter([
   {
@@ -135,6 +136,10 @@ const router = createBrowserRouter([
         // path: "/add-productcard",
         path: '/service',
         element: <ServiceProviderCardUI />,
+      },
+      {
+        path: "/asd",
+        element: <SideDrawer />,
       },
       {
         path: "*",

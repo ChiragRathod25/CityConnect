@@ -53,8 +53,7 @@
     "tailwindcss": "^4.1.12",
     "three": "^0.179.1",
     "leaflet": "^1.9.4",
-    "leaflet-routing-machine": "^3.2.12",
-    "react-leaflet": "^5.0.0"
+    "leaflet-routing-machine": "^3.2.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
