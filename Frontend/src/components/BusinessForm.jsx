@@ -250,7 +250,7 @@ const FormSelect = ({
   );
 };
 
-const TimeSelect = ({ label, icon: Icon, error, ...props }) => {
+export const TimeSelect = ({ label, icon: Icon, error, ...props }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState(props.value || "");
   const dropdownRef = useRef(null);
@@ -1081,7 +1081,8 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
     </div>
   );
 };
-const FileUpload = ({
+
+export const FileUpload = ({
   label,
   accept,
   onChange,
