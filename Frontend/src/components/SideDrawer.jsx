@@ -13,16 +13,8 @@ const SideDrawer = ({ isOpen, onClose }) => {
         to: '/',
       },
       {
-        name: 'Parent',
-        to: '/parent',
-      },
-      {
-        name: 'Achievement',
-        to: '/achievement',
-      },
-      {
-        name: 'Talent',
-        to: '/talent',
+        name: 'Category',
+        to: '/category',
       },
     ],
 
