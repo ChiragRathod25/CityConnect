@@ -158,7 +158,7 @@ const GradientButton = React.memo(
 
     const variants = {
       primary:
-        "bg-black text-white hover:bg-gray-800 hover:shadow-xl transform hover:scale-105",
+        "bg-black text-white hover:text-black hover:bg-white hover:shadow-xl transform hover:scale-105",
       secondary:
         "bg-white text-black border-2 border-black hover:bg-black hover:text-white transform hover:scale-105",
       outline:
@@ -468,8 +468,10 @@ const StunningLandingPage = () => {
           <DotGrid
             dotSize={12}
             gap={28}
-            baseColor="#d1d5db"
-            activeColor="#374151"
+            // baseColor="#d1d5db"
+            baseColor="#E9ECEF"
+            // activeColor="#374151"
+            activeColor="#495057"
             proximity={120}
             speedTrigger={80}
             shockRadius={200}
@@ -489,7 +491,7 @@ const StunningLandingPage = () => {
 
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <div className="text-center text-black px-4 max-w-4xl mx-auto">
+          <div className="text-center text-[#153243] px-4 max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold mb-6  bg-clip-text">
               Welcome to CityConnect
             </h1>

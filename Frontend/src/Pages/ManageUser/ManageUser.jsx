@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  X, 
-  Filter, 
-  ChevronDown, 
-  ChevronLeft as ChevronLeftIcon, 
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  X,
+  Filter,
+  ChevronDown,
+  ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Eye,
   Ban,
@@ -16,8 +16,8 @@ import {
   User,
   MapPin,
   Shield,
-  AlertTriangle
-} from 'lucide-react';
+  AlertTriangle,
+} from "lucide-react";
 
 // Mock user data
 const mockUsers = [
@@ -32,7 +32,7 @@ const mockUsers = [
     isEmailVerified: true,
     isPhoneVerified: true,
     dob: "1990-05-15",
-    joinDate: "2023-01-15"
+    joinDate: "2023-01-15",
   },
   {
     id: 2,
@@ -45,7 +45,7 @@ const mockUsers = [
     isEmailVerified: true,
     isPhoneVerified: false,
     dob: "1988-08-22",
-    joinDate: "2023-02-20"
+    joinDate: "2023-02-20",
   },
   {
     id: 3,
@@ -58,9 +58,9 @@ const mockUsers = [
     isEmailVerified: false,
     isPhoneVerified: true,
     dob: "1985-12-10",
-    joinDate: "2023-03-10"
+    joinDate: "2023-03-10",
   },
-  ...Array.from({length: 47}, (_, i) => ({
+  ...Array.from({ length: 47 }, (_, i) => ({
     id: i + 4,
     name: `User ${i + 4}`,
     email: `user${i + 4}@email.com`,
@@ -71,8 +71,8 @@ const mockUsers = [
     isEmailVerified: Math.random() > 0.5,
     isPhoneVerified: Math.random() > 0.5,
     dob: `198${5 + (i % 5)}-0${1 + (i % 9)}-${10 + (i % 20)}`,
-    joinDate: "2023-04-01"
-  }))
+    joinDate: "2023-04-01",
+  })),
 ];
 
 // SearchInput Component
@@ -130,16 +130,12 @@ const SearchInput = ({
 );
 
 // FilterDropdown Component
-const FilterDropdown = ({
-  value,
-  setValue,
-  options,
-  className = "",
-}) => {
+const FilterDropdown = ({ value, setValue, options, className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const currentOption = options.find((opt) => opt.value === value) || options[0];
+  const currentOption =
+    options.find((opt) => opt.value === value) || options[0];
   const CurrentIcon = currentOption?.icon || Filter;
 
   useEffect(() => {
@@ -221,7 +217,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputPage(value);
-    
+
     const pageNum = parseInt(value);
     if (pageNum >= 1 && pageNum <= totalPages) {
       setCurrentPage(pageNum);
@@ -229,7 +225,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   };
 
   const handleInputKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const pageNum = parseInt(inputPage);
       if (pageNum >= 1 && pageNum <= totalPages) {
         handlePageChange(pageNum);
@@ -261,9 +257,11 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
 
       {/* Page Input */}
       <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl w-full sm:w-auto justify-center">
-        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">Page</span>
+        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">
+          Page
+        </span>
         <input
-          type="number"
+          type="text"
           min="1"
           max={totalPages}
           value={inputPage}
@@ -277,7 +275,9 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
           }}
           className="w-16 sm:w-20 text-center border-2 border-gray-300 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-2 text-base sm:text-lg font-semibold sm:font-bold text-gray-800 focus:outline-none focus:border-gray-500 focus:ring-4 focus:ring-gray-500/20 shadow-inner"
         />
-        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">of {totalPages}</span>
+        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">
+          of {totalPages}
+        </span>
       </div>
 
       {/* Next Button */}
@@ -308,27 +308,29 @@ const StatusBadge = ({ status }) => {
       color: "text-green-700",
       bg: "bg-green-100",
       icon: CheckCircle,
-      text: "Active"
+      text: "Active",
     },
     suspended: {
       color: "text-yellow-700",
       bg: "bg-yellow-100",
       icon: AlertTriangle,
-      text: "Suspended"
+      text: "Suspended",
     },
     blocked: {
       color: "text-red-700",
       bg: "bg-red-100",
       icon: Ban,
-      text: "Blocked"
-    }
+      text: "Blocked",
+    },
   };
 
   const config = statusConfig[status];
   const Icon = config.icon;
 
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.color}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.color}`}
+    >
       <Icon className="w-4 h-4" />
       {config.text}
     </span>
@@ -341,12 +343,29 @@ const StatusActionDropdown = ({ user, onStatusChange, isMobile = false }) => {
   const dropdownRef = useRef(null);
 
   const statusOptions = [
-    { value: 'active', label: 'Activate', icon: CheckCircle, color: 'text-green-600 hover:bg-green-50' },
-    { value: 'suspended', label: 'Suspend', icon: AlertTriangle, color: 'text-yellow-600 hover:bg-yellow-50' },
-    { value: 'blocked', label: 'Block', icon: Ban, color: 'text-red-600 hover:bg-red-50' }
+    {
+      value: "active",
+      label: "Activate",
+      icon: CheckCircle,
+      color: "text-green-600 hover:bg-green-50",
+    },
+    {
+      value: "suspended",
+      label: "Suspend",
+      icon: AlertTriangle,
+      color: "text-yellow-600 hover:bg-yellow-50",
+    },
+    {
+      value: "blocked",
+      label: "Block",
+      icon: Ban,
+      color: "text-red-600 hover:bg-red-50",
+    },
   ];
 
-  const availableOptions = statusOptions.filter(option => option.value !== user.status);
+  const availableOptions = statusOptions.filter(
+    (option) => option.value !== user.status
+  );
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -362,64 +381,122 @@ const StatusActionDropdown = ({ user, onStatusChange, isMobile = false }) => {
   }, [dropdownRef]);
 
   const getCurrentStatusConfig = () => {
-    return statusOptions.find(option => option.value === user.status);
+    return statusOptions.find((option) => option.value === user.status);
   };
 
   const currentConfig = getCurrentStatusConfig();
 
-  return (
-    <div className="relative z-50" ref={dropdownRef}>
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-md justify-center relative z-[9999] ${
-          isMobile ? 'w-full' : 'min-w-[140px]'
-        }`}
-      >
-        <currentConfig.icon className="w-4 h-4" />
-        <span className="hidden lg:inline">Manage</span>
-        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-      </motion.button>
+  // Animation variants for different screen sizes
+  const getAnimationProps = () => {
+    if (isMobile) {
+      return {
+        initial: { opacity: 0, y: 10, scale: 0.95 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: 10, scale: 0.95 },
+      };
+    } else {
+      return {
+        initial: { opacity: 0, y: -10, scale: 1 },
+        animate: { opacity: 1, y: -150, x: -10, scale: 1 },
+        exit: { opacity: 0, y: -10, scale: 0.95 },
+      };
+    }
+  };
 
+  return (
+    <>
+      {/* Mobile Backdrop */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && isMobile && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className={`absolute bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden min-w-[160px] z-50 ${
-              isMobile ? 'bottom-full left-0 right-0 mb-2' : 'top-full right-0 mt-2'
-            }`}
-            style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)'
-            }}
-          >
-            {availableOptions.map((option) => {
-              const IconComponent = option.icon;
-              return (
-                <motion.button
-                  key={option.value}
-                  whileHover={{ 
-                    backgroundColor: option.value === 'active' ? '#f0f9ff' : 
-                                   option.value === 'suspended' ? '#fffbeb' : '#fef2f2' 
-                  }}
-                  onClick={() => {
-                    onStatusChange(user.id, option.value);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0 ${option.color}`}
-                >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="font-medium">{option.label}</span>
-                </motion.button>
-              );
-            })}
-          </motion.div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setIsOpen(false)}
+          />
         )}
       </AnimatePresence>
-    </div>
+
+      <div className="relative z-50" ref={dropdownRef}>
+        <motion.button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-md justify-center relative z-30 ${
+            isMobile ? "w-full" : "min-w-[140px]"
+          }`}
+        >
+          <currentConfig.icon className="w-4 h-4" />
+          <span className="hidden lg:inline">Manage</span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </motion.button>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              {...getAnimationProps()}
+              transition={{ duration: 0.15 }}
+              className={`absolute bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50 ${
+                isMobile
+                  ? "fixed bottom-4 left-4 right-4 mx-auto max-w-sm"
+                  : "top-full right-0 mt-2 min-w-[160px]"
+              }`}
+              style={{
+                boxShadow:
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              {/* Options */}
+              <div className={isMobile ? "p-2" : ""}>
+                {availableOptions.map((option) => {
+                  const IconComponent = option.icon;
+                  return (
+                    <motion.button
+                      key={option.value}
+                      whileHover={{
+                        backgroundColor:
+                          option.value === "active"
+                            ? "#f0f9ff"
+                            : option.value === "suspended"
+                            ? "#fffbeb"
+                            : "#fef2f2",
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        onStatusChange(user.id, option.value);
+                        setIsOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 transition-colors ${
+                        isMobile
+                          ? "px-4 py-4 rounded-xl mb-1 last:mb-0"
+                          : "px-4 py-3 border-b border-gray-100 last:border-b-0"
+                      } ${option.color}`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      <div className="text-left">
+                        <span className="font-medium block">
+                          {option.label}
+                        </span>
+                        {isMobile && (
+                          <span className="text-xs text-gray-500">
+                            {option.value === "active"}
+                            {option.value === "suspended"}
+                            {option.value === "blocked"}
+                          </span>
+                        )}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
 
@@ -427,13 +504,13 @@ const StatusActionDropdown = ({ user, onStatusChange, isMobile = false }) => {
 const UserDetailsModal = ({ user, isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -441,13 +518,16 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose}></div>
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-md"
+        onClick={onClose}
+      ></div>
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden border border-gray-200"
+        className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh]  overflow-hidden border border-gray-200"
       >
         <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white flex items-center gap-2">
@@ -462,11 +542,13 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[calc(95vh-80px)] sm:max-h-[calc(90vh-100px)]">
+        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[calc(95vh-250px)] sm:max-h-[calc(90vh-100px)]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-4">
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Full Name</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Full Name
+                </label>
                 <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2">
                   <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                   {user.name}
@@ -474,31 +556,43 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
               </div>
 
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Email</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Email
+                </label>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2 flex-1 min-w-0">
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" />
                     <span className="truncate">{user.email}</span>
                   </p>
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                    user.isEmailVerified ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {user.isEmailVerified ? '✓ Verified' : '✗ Not Verified'}
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                      user.isEmailVerified
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {user.isEmailVerified ? "✓ Verified" : "✗ Not Verified"}
                   </span>
                 </div>
               </div>
 
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Phone</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Phone
+                </label>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2 flex-1 min-w-0">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" />
                     <span>{user.phone}</span>
                   </p>
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                    user.isPhoneVerified ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {user.isPhoneVerified ? '✓ Verified' : '✗ Not Verified'}
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                      user.isPhoneVerified
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {user.isPhoneVerified ? "✓ Verified" : "✗ Not Verified"}
                   </span>
                 </div>
               </div>
@@ -506,12 +600,18 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
 
             <div className="space-y-4">
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Username</label>
-                <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">@{user.username}</p>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Username
+                </label>
+                <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">
+                  @{user.username}
+                </p>
               </div>
 
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">City</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  City
+                </label>
                 <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2">
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                   {user.city}
@@ -519,7 +619,9 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
               </div>
 
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Date of Birth</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Date of Birth
+                </label>
                 <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2">
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                   {new Date(user.dob).toLocaleDateString()}
@@ -527,7 +629,9 @@ const UserDetailsModal = ({ user, isOpen, onClose }) => {
               </div>
 
               <div className="p-3 sm:p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
-                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">Status</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-600 mb-2 block">
+                  Status
+                </label>
                 <div className="mt-2">
                   <StatusBadge status={user.status} />
                 </div>
@@ -570,12 +674,13 @@ export default function AdminUserManagement() {
 
   // Filter and sort users
   const filteredUsers = mockUsers
-    .filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter(user => {
+    .filter((user) => {
       if (sortBy === "blocked") return user.status === "blocked";
       return true;
     })
@@ -588,19 +693,27 @@ export default function AdminUserManagement() {
   // Pagination
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const startIndex = (currentPage - 1) * usersPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, startIndex + usersPerPage);
+  const currentUsers = filteredUsers.slice(
+    startIndex,
+    startIndex + usersPerPage
+  );
 
   // Search suggestions
-  const suggestions = searchTerm.length > 0 
-    ? [...new Set(mockUsers
-        .filter(user => 
-          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .slice(0, 5)
-        .map(user => user.name)
-      )]
-    : [];
+  const suggestions =
+    searchTerm.length > 0
+      ? [
+          ...new Set(
+            mockUsers
+              .filter(
+                (user) =>
+                  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .slice(0, 5)
+              .map((user) => user.name)
+          ),
+        ]
+      : [];
 
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion);
@@ -608,7 +721,7 @@ export default function AdminUserManagement() {
   };
 
   const handleEmailClick = (email) => {
-    window.open(`https://mail.google.com/mail/?view=cm&to=${email}`, '_blank');
+    window.open(`https://mail.google.com/mail/?view=cm&to=${email}`, "_blank");
   };
 
   const handleViewDetails = (user) => {
@@ -621,10 +734,10 @@ export default function AdminUserManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-10 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200  px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 sm:mb-10 text-center"
@@ -643,7 +756,7 @@ export default function AdminUserManagement() {
         </motion.div>
 
         {/* Search and Filter Bar */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -657,7 +770,7 @@ export default function AdminUserManagement() {
             setShowSuggestions={setShowSuggestions}
             onSuggestionClick={handleSuggestionClick}
           />
-          
+
           <FilterDropdown
             value={sortBy}
             setValue={setSortBy}
@@ -667,7 +780,7 @@ export default function AdminUserManagement() {
         </motion.div>
 
         {/* User Stats */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -679,8 +792,12 @@ export default function AdminUserManagement() {
                 <User className="w-4 h-4 sm:w-6 sm:h-6 text-gray-400" />
               </div>
               <div>
-                <p className="text-lg sm:text-2xl font-bold text-gray-800">{mockUsers.length}</p>
-                <p className="text-gray-600 text-xs sm:text-sm font-medium">Total Users</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-800">
+                  {mockUsers.length}
+                </p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                  Total Users
+                </p>
               </div>
             </div>
           </div>
@@ -692,9 +809,11 @@ export default function AdminUserManagement() {
               </div>
               <div>
                 <p className="text-lg sm:text-2xl font-bold text-gray-800">
-                  {mockUsers.filter(u => u.status === 'active').length}
+                  {mockUsers.filter((u) => u.status === "active").length}
                 </p>
-                <p className="text-gray-600 text-xs sm:text-sm font-medium">Active Users</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                  Active Users
+                </p>
               </div>
             </div>
           </div>
@@ -706,9 +825,11 @@ export default function AdminUserManagement() {
               </div>
               <div>
                 <p className="text-lg sm:text-2xl font-bold text-gray-800">
-                  {mockUsers.filter(u => u.status === 'suspended').length}
+                  {mockUsers.filter((u) => u.status === "suspended").length}
                 </p>
-                <p className="text-gray-600 text-xs sm:text-sm font-medium">Suspended</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                  Suspended
+                </p>
               </div>
             </div>
           </div>
@@ -720,36 +841,48 @@ export default function AdminUserManagement() {
               </div>
               <div>
                 <p className="text-lg sm:text-2xl font-bold text-gray-800">
-                  {mockUsers.filter(u => u.status === 'blocked').length}
+                  {mockUsers.filter((u) => u.status === "blocked").length}
                 </p>
-                <p className="text-gray-600 text-xs sm:text-sm font-medium">Blocked Users</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                  Blocked Users
+                </p>
               </div>
             </div>
           </div>
         </motion.div>
 
         {/* Users Table */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20 relative"
         >
           {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto overflow-hidden">
             <table className="w-full border-collapse">
               <thead className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 text-white">
                 <tr>
-                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">Name</th>
-                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">Email</th>
-                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">City</th>
-                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">Status</th>
-                  <th className="px-6 py-5 text-center font-semibold text-lg">Actions</th>
+                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">
+                    Name
+                  </th>
+                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">
+                    Email
+                  </th>
+                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">
+                    City
+                  </th>
+                  <th className="px-6 py-5 text-left font-semibold text-lg border-r border-gray-600">
+                    Status
+                  </th>
+                  <th className="px-6 py-5 text-center font-semibold text-lg">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentUsers.map((user, index) => (
-                  <motion.tr 
+                  <motion.tr
                     key={user.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -764,13 +897,21 @@ export default function AdminUserManagement() {
                           </span>
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-800 text-lg">{user.name}</div>
-                          <div className="text-sm text-gray-500 font-medium">@{user.username}</div>
+                          <div className="font-semibold text-gray-800 text-lg">
+                            {user.name}
+                          </div>
+                          <div className="text-sm text-gray-500 font-medium">
+                            @{user.username}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-gray-700 font-medium border-r border-gray-100">{user.email}</td>
-                    <td className="px-6 py-5 text-gray-700 font-medium border-r border-gray-100">{user.city}</td>
+                    <td className="px-6 py-5 text-gray-700 font-medium border-r border-gray-100">
+                      {user.email}
+                    </td>
+                    <td className="px-6 py-5 text-gray-700 font-medium border-r border-gray-100">
+                      {user.city}
+                    </td>
                     <td className="px-6 py-5 border-r border-gray-100">
                       <StatusBadge status={user.status} />
                     </td>
@@ -786,7 +927,7 @@ export default function AdminUserManagement() {
                           <Eye className="w-4 h-4" />
                           <span className="hidden lg:inline">View</span>
                         </motion.button>
-                        
+
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -797,7 +938,7 @@ export default function AdminUserManagement() {
                           <Mail className="w-4 h-4" />
                           <span className="hidden lg:inline">Email</span>
                         </motion.button>
-                        
+
                         <StatusActionDropdown
                           user={user}
                           onStatusChange={handleUserAction}
@@ -827,16 +968,24 @@ export default function AdminUserManagement() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-800 text-base sm:text-lg truncate">{user.name}</h3>
-                    <p className="text-xs sm:text-sm text-gray-500 mb-1">@{user.username}</p>
-                    <p className="text-xs sm:text-sm text-gray-600 truncate mb-1">{user.email}</p>
-                    <p className="text-xs sm:text-sm text-gray-600">{user.city}</p>
+                    <h3 className="font-semibold text-gray-800 text-base sm:text-lg truncate">
+                      {user.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                      @{user.username}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate mb-1">
+                      {user.email}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      {user.city}
+                    </p>
                   </div>
                   <div className="flex-shrink-0">
                     <StatusBadge status={user.status} />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2 pt-3 border-t border-gray-200 relative z-10">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -847,7 +996,7 @@ export default function AdminUserManagement() {
                     <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span>View</span>
                   </motion.button>
-                  
+
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -857,7 +1006,7 @@ export default function AdminUserManagement() {
                     <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span>Email</span>
                   </motion.button>
-                  
+
                   <StatusActionDropdown
                     user={user}
                     onStatusChange={handleUserAction}
@@ -874,8 +1023,13 @@ export default function AdminUserManagement() {
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
                 <User className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">No users found</h3>
-              <p className="text-gray-500 max-w-md mx-auto">Try adjusting your search or filter criteria to find the users you're looking for.</p>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">
+                No users found
+              </h3>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Try adjusting your search or filter criteria to find the users
+                you're looking for.
+              </p>
             </div>
           )}
         </motion.div>
