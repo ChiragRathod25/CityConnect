@@ -33,6 +33,8 @@ import AddProductCard from "./components/FormPage/AddProductCard";
 import ServiceProviderCardUI from "./Pages/ServiceProvider";
 import Install from "./Pages/InstallApp.jsx";
 import { SideDrawer } from "./components";
+import ProductCardUI from "./Pages/ProductCard";
+import EditOperatingHours from "./components/businessmanProfile/EditOperatingHours";
 
 const router = createBrowserRouter([
   {
@@ -137,9 +139,13 @@ const router = createBrowserRouter([
         path: '/service',
         element: <ServiceProviderCardUI />,
       },
-      {
-        path: "/asd",
-        element: <SideDrawer />,
+       {
+        path: "/card",
+        element: <ProductCardUI />,
+      },
+       {
+        path: "/zxc",
+        element: <EditOperatingHours />,
       },
       {
         path: "*",
