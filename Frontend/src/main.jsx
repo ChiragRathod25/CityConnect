@@ -35,6 +35,7 @@ import Install from "./Pages/InstallApp.jsx";
 import { SideDrawer } from "./components";
 import ProductCardUI from "./Pages/ProductCard";
 import EditOperatingHours from "./components/businessmanProfile/EditOperatingHours";
+import CartPageUI from "./Pages/CartForProduct";
 
 const router = createBrowserRouter([
   {
@@ -146,6 +147,10 @@ const router = createBrowserRouter([
        {
         path: "/zxc",
         element: <EditOperatingHours />,
+      },
+      {
+        path: "/cart",
+        element: <CartPageUI />,
       },
       {
         path: "*",
