@@ -36,6 +36,10 @@ import { SideDrawer } from "./components";
 import ProductCardUI from "./Pages/ProductCard";
 import EditOperatingHours from "./components/businessmanProfile/EditOperatingHours";
 import CartPageUI from "./Pages/CartForProduct";
+import PaymentPage from "./Pages/Checkout/PaymentPage";
+import PaymentSuccess from "./Pages/Checkout/PaymentSuccess";
+import PaymentFailed from "./Pages/Checkout/PaymentFailed";
+import AiImageGeneratorUI from "./Pages/ImageGenerator";
 
 const router = createBrowserRouter([
   {
@@ -151,6 +155,22 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPageUI />,
+      },
+      {
+        path: "/payment",
+        element: <PaymentPage />,
+      },
+      {
+        path: "/payment-success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "/payment-failed",
+        element: <PaymentFailed />,
+      },
+      {
+        path: "/ai",
+        element: <AiImageGeneratorUI />,
       },
       {
         path: "*",
