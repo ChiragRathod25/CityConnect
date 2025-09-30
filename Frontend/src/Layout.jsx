@@ -25,11 +25,12 @@ function Layout({ children }) {
   }, []);
 
   const isMobilePWA = isPWA && isMobile;
-
+  const location = window.location.pathname == "/start";
+  
   return (
     <div className="min-h-screen  flex flex-col">
       {/* HEADER */}
-      {!isMobilePWA && (
+      {!isMobilePWA && !location && (
         <header className="text-white sticky top-0 z-50 backdrop-blur-lg">
           <div className="container mb-16 lg:mb-20 flex justify-center items-center px-4">
             <HeaderComponent />
@@ -59,8 +60,8 @@ function Layout({ children }) {
         <div className="sm:hidden z-200 mt-10">1
           <BottomTabBar />
         </div>
-      ) : (
-        <FooterComponent />
+      ) : ( 
+        !location && <FooterComponent />
       )}
     </div>
   );

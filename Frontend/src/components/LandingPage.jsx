@@ -1,1013 +1,3 @@
-// import React, { useState, useEffect, useRef } from 'react';
-// import { 
-//   Search, 
-//   MapPin, 
-//   Star, 
-//   CheckCircle, 
-//   ArrowRight, 
-//   Menu, 
-//   X, 
-//   Wrench, 
-//   Utensils, 
-//   Book, 
-//   Scissors, 
-//   Hammer, 
-//   Shield,
-//   Clock,
-//   CreditCard,
-//   Users,
-//   Facebook,
-//   Twitter,
-//   Instagram,
-//   Linkedin,
-//   Play,
-//   ChevronLeft,
-//   ChevronRight,
-//   Navigation,
-//   Zap,
-//   HardHat,
-//   Car,
-//   Stethoscope,
-//   PenTool,
-//   Sparkles
-// } from 'lucide-react';
-// import Ballpit from '../components/BallPit';
-// import CityConnectDemo from './Iphone';
-
-// // Animated List Component
-// const AnimatedList = ({ children, delay = 2000, className = "" }) => {
-//   const [index, setIndex] = useState(0);
-//   const childrenArray = React.Children.toArray(children);
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setIndex((prevIndex) => (prevIndex + 1) % childrenArray.length);
-//     }, delay);
-
-//     return () => clearInterval(interval);
-//   }, [childrenArray.length, delay]);
-
-//   const itemsToShow = childrenArray.slice(0, index + 1).slice(-3);
-
-//   return (
-//     <div className={`flex flex-col items-center gap-4 ${className}`}>
-//       {itemsToShow.map((item, idx) => (
-//         <div
-//           key={idx}
-//           className="w-full animate-slide-up opacity-0"
-//           style={{
-//             animation: `slideUp 0.5s ease-out ${idx * 0.1}s forwards`,
-//           }}
-//         >
-//           {item}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// // Marquee component
-// const Marquee = ({ children, speed = 50 }) => {
-//   return (
-//     <div className="overflow-hidden whitespace-nowrap">
-//       <div 
-//         className="inline-block animate-marquee"
-//         style={{
-//           animation: `marquee ${speed}s linear infinite`
-//         }}
-//       >
-//         {children}
-//       </div>
-//     </div>
-//   );
-// };
-
-
-// // Animated gradient text
-// const AnimatedGradientText = ({ children, className = "" }) => {
-//   return (
-//     <span className={`bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient ${className}`}>
-//       {children}
-//     </span>
-//   );
-// };
-
-// // Tilted card component
-// const TiltedCard = ({ children, className = "" }) => {
-//   const [transform, setTransform] = useState('');
-  
-//   const handleMouseMove = (e) => {
-//     const card = e.currentTarget;
-//     const rect = card.getBoundingClientRect();
-//     const x = e.clientX - rect.left;
-//     const y = e.clientY - rect.top;
-//     const centerX = rect.width / 2;
-//     const centerY = rect.height / 2;
-//     const rotateX = (y - centerY) / 4;
-//     const rotateY = (centerX - x) / 4;
-    
-//     setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`);
-//   };
-  
-//   const handleMouseLeave = () => {
-//     setTransform('');
-//   };
-  
-//   return (
-//     <div
-//       className={`transition-transform duration-200 ease-out ${className}`}
-//       style={{ transform }}
-//       onMouseMove={handleMouseMove}
-//       onMouseLeave={handleMouseLeave}
-//     >
-//       {children}
-//     </div>
-//   );
-// };
-
-// // Stepper component
-// const Stepper = ({ steps, currentStep = 0 }) => {
-//   return (
-//     <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
-//       {steps.map((step, index) => (
-//         <div key={index} className="flex items-center">
-//           <div className="flex flex-col items-center">
-//             <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold transition-all duration-300 ${
-//               index <= currentStep ? 'bg-green-500 shadow-lg shadow-green-500/50' : 'bg-gray-600'
-//             }`}>
-//               {index + 1}
-//             </div>
-//             <div className="mt-2 text-center">
-//               <div className={`font-medium ${index <= currentStep ? 'text-green-500' : 'text-gray-400'}`}>
-//                 {step.title}
-//               </div>
-//               <div className="text-sm text-gray-400 max-w-[120px]">
-//                 {step.description}
-//               </div>
-//             </div>
-//           </div>
-//           {index < steps.length - 1 && (
-//             <div className={`flex-1 h-1 mx-4 rounded transition-all duration-300 ${
-//               index < currentStep ? 'bg-green-500' : 'bg-gray-600'
-//             }`}></div>
-//           )}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// const CityConnectLanding = () => {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-//   const [currentStep, setCurrentStep] = useState(0);
-//   const [email, setEmail] = useState('');
-//   const videoRef = useRef(null);
-
-//   const categories = [
-//     { name: "Tailor", icon: Scissors, color: "from-blue-500 to-blue-600", count: "350+ shops" },
-//     { name: "Cobbler", icon: HardHat, color: "from-amber-500 to-orange-500", count: "180+ craftsmen" },
-//     { name: "Rickshaw", icon: Car, color: "from-green-500 to-green-600", count: "500+ drivers" },
-//     { name: "Restaurant", icon: Utensils, color: "from-red-500 to-pink-500", count: "800+ places" },
-//     { name: "Medical", icon: Stethoscope, color: "from-pink-500 to-rose-500", count: "120+ centers" },
-//     { name: "Stationery", icon: PenTool, color: "from-purple-500 to-indigo-500", count: "200+ stores" },
-//     { name: "Electronics", icon: Zap, color: "from-yellow-500 to-orange-500", count: "150+ shops" },
-//     { name: "Beauty", icon: Sparkles, color: "from-indigo-500 to-purple-500", count: "220+ salons" },
-//   ];
-
-//   const services = [
-//     {
-//       title: "Real-time Location",
-//       description: "Track services and shops near your area in real-time.",
-//       icon: MapPin
-//     },
-//     {
-//       title: "Verified Sellers",
-//       description: "All businesses are verified to ensure trust and authenticity.",
-//       icon: Shield
-//     },
-//     {
-//       title: "Easy Booking",
-//       description: "Book appointments or services with one click.",
-//       icon: Clock
-//     },
-//     {
-//       title: "Secure Payments",
-//       description: "Multiple payment options with complete security.",
-//       icon: CreditCard
-//     }
-//   ];
-
-//   const liveUpdates = [
-//     {
-//       type: "review",
-//       title: "New review",
-//       subtitle: "5-star rating for Kumar Electronics",
-//       time: "2m ago",
-//       location: "Sayajigunj",
-//       icon: "⭐",
-//       color: "from-yellow-500 to-orange-500"
-//     },
-//     {
-//       type: "service",
-//       title: "Service request",
-//       subtitle: "Cobbler service needed in Area 12",
-//       time: "12m ago",
-//       location: "Area 12",
-//       icon: "🔧",
-//       color: "from-blue-500 to-cyan-500"
-//     },
-//     {
-//       type: "delivery",
-//       title: "Quick delivery",
-//       subtitle: "Food delivery completed in Alkapuri",
-//       time: "5m ago",
-//       location: "Alkapuri",
-//       icon: "🚚",
-//       color: "from-green-500 to-emerald-500"
-//     },
-//     {
-//       type: "booking",
-//       title: "New booking",
-//       subtitle: "Rickshaw booked for VIP Road",
-//       time: "8m ago", 
-//       location: "VIP Road",
-//       icon: "🛺",
-//       color: "from-purple-500 to-pink-500"
-//     },
-//     {
-//       type: "shop",
-//       title: "Shop opened",
-//       subtitle: "Patel Medical Store is now open",
-//       time: "15m ago",
-//       location: "Fatehgunj",
-//       icon: "🏪",
-//       color: "from-teal-500 to-cyan-500"
-//     }
-//   ];
-
-//   const testimonials = [
-//     {
-//       name: "Ravi Patel",
-//       role: "Local Shop Owner",
-//       feedback: "CityConnect helped me grow my shop's visibility. Customers can now easily find me.",
-//       rating: 5
-//     },
-//     {
-//       name: "Anjali Sharma",
-//       role: "Customer", 
-//       feedback: "I found the best local services in just a few clicks. Smooth experience!",
-//       rating: 5
-//     }
-//   ];
-
-//   const steps = [
-//     { title: "Sign Up", description: "Create your account in seconds" },
-//     { title: "Explore", description: "Browse local businesses near you" },
-//     { title: "Connect", description: "Book services with one click" },
-//     { title: "Enjoy", description: "Experience seamless local commerce" }
-//   ];
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-//     }, 5000);
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setCurrentStep((prev) => (prev + 1) % steps.length);
-//     }, 3000);
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   // Auto-play video when it comes into view
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       (entries) => {
-//         entries.forEach((entry) => {
-//           if (entry.isIntersecting && videoRef.current) {
-//             videoRef.current.play();
-//           }
-//         });
-//       },
-//       { threshold: 0.5 }
-//     );
-
-//     if (videoRef.current) {
-//       observer.observe(videoRef.current);
-//     }
-
-//     return () => observer.disconnect();
-//   }, []);
-
-//   const handleSubscribe = (e) => {
-//     e.preventDefault();
-//     alert('Thank you for subscribing!');
-//     setEmail('');
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-black text-white relative">
-//       {/* Full Screen Ballpit Background */}
-//       {/* <div className="fixed inset-0 z-0 opacity-30">
-//         <Ballpit
-//           count={200}
-//           gravity={0.7}
-//           friction={0.8}
-//           wallBounce={0.95}
-//           followCursor={true}
-//         />
-//       </div> */}
-
-//       {/* Content overlay */}
-//       <div className="relative z-10">
-//         {/* Navigation */}
-//         <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="flex justify-between items-center h-16">
-//               <div className="flex items-center">
-//                 <div className="text-2xl font-bold">
-//                   <AnimatedGradientText>CityConnect</AnimatedGradientText>
-//                 </div>
-//               </div>
-              
-//               <div className="hidden md:block">
-//                 <div className="flex items-center space-x-8">
-//                   <a href="#features" className="text-gray-300 hover:text-green-400 transition-colors">Features</a>
-//                   <a href="#services" className="text-gray-300 hover:text-green-400 transition-colors">Services</a>
-//                   <a href="#about" className="text-gray-300 hover:text-green-400 transition-colors">About</a>
-//                   <button className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors">
-//                     Login
-//                   </button>
-//                   <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition-colors">
-//                     Sign Up
-//                   </button>
-//                 </div>
-//               </div>
-
-//               <div className="md:hidden">
-//                 <button
-//                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-//                   className="text-gray-300 hover:text-white"
-//                 >
-//                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Mobile menu */}
-//           {isMenuOpen && (
-//             <div className="md:hidden bg-black/95 backdrop-blur-md">
-//               <div className="px-2 pt-2 pb-3 space-y-1">
-//                 <a href="#features" className="block px-3 py-2 text-gray-300 hover:text-green-400">Features</a>
-//                 <a href="#services" className="block px-3 py-2 text-gray-300 hover:text-green-400">Services</a>
-//                 <a href="#about" className="block px-3 py-2 text-gray-300 hover:text-green-400">About</a>
-//                 <button className="block w-full text-left px-3 py-2 text-gray-300 hover:text-green-400">Login</button>
-//                 <button className="block w-full text-left px-3 py-2 bg-green-500 hover:bg-green-600 rounded-lg mt-2">Sign Up</button>
-//               </div>
-//             </div>
-//           )}
-//         </nav>
-
-//         {/* Hero Section */}
-//         {/* <section className="min-h-screen flex items-center justify-center pt-16">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
-//             <div className="text-center lg:text-left">
-//               <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-//                 <AnimatedGradientText>Connecting</AnimatedGradientText>
-//                 <br />
-//                 <span className="text-white">Local Businesses</span>
-//                 <br />
-//                 <span className="text-green-400">with Customers</span>
-//               </h1>
-              
-//               <p className="text-xl text-gray-300 mb-8 max-w-lg">
-//                 Discover services and shops around you with CityConnect. Find local businesses, book services, and support your community.
-//               </p>
-
-//               <div className="relative mb-8">
-//                 <div className="flex items-center bg-gray-800/50 backdrop-blur-md rounded-2xl border border-gray-700 p-4 hover:border-green-500/50 transition-colors">
-//                   <Search className="text-gray-400 mr-3" size={24} />
-//                   <input
-//                     type="text"
-//                     placeholder="Search for shops, services, rickshaw booking..."
-//                     className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
-//                   />
-//                   <button className="bg-green-500 hover:bg-green-600 px-6 py-2 rounded-xl transition-colors ml-4">
-//                     Explore
-//                   </button>
-//                 </div>
-//               </div>
-
-//               <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/25">
-//                 Get Started <ArrowRight className="inline ml-2" size={20} />
-//               </button>
-//             </div>
-
-//             <div className="flex justify-center">
-//               <OrbitingCircles>
-//                 <iPhone15Mockup>
-//                   <div className="bg-gradient-to-br from-green-500/20 to-blue-500/20 h-full rounded-[30px] p-4 flex flex-col">
-//                     <div className="text-white text-lg font-bold mb-4">CityConnect</div>
-                    
-//                     <div className="flex-1">
-//                       <div className="text-green-400 text-sm font-medium mb-3 flex items-center">
-//                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
-//                         Live Updates
-//                       </div>
-                      
-//                       <AnimatedList delay={3000} className="space-y-2">
-//                         {liveUpdates.map((update, index) => (
-//                           <div key={index} className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20">
-//                             <div className="flex items-start space-x-3">
-//                               <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${update.color} flex items-center justify-center text-sm`}>
-//                                 {update.icon}
-//                               </div>
-//                               <div className="flex-1 min-w-0">
-//                                 <div className="text-white text-xs font-medium">{update.title}</div>
-//                                 <div className="text-gray-300 text-xs mt-1">{update.subtitle}</div>
-//                                 <div className="flex items-center justify-between mt-2">
-//                                   <span className="text-blue-400 text-xs">{update.location}</span>
-//                                   <span className="text-gray-400 text-xs">{update.time}</span>
-//                                 </div>
-//                               </div>
-//                             </div>
-//                           </div>
-//                         ))}
-//                       </AnimatedList>
-//                     </div>
-//                   </div>
-//                 </iPhone15Mockup>
-//               </OrbitingCircles>
-//             </div>
-
-
-//           </div>
-
-//         </section> */}
-
-
-//         <section className="min-h-screen flex items-center justify-center pt-16">
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
-//           {/* Left Content */}
-//           <div className="text-center lg:text-left order-2 lg:order-1">
-//             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-//               <AnimatedGradientText>Connecting</AnimatedGradientText>
-//               <br />
-//               <span className="text-white">Local Businesses</span>
-//               <br />
-//               <span className="text-green-400">with Customers</span>
-//             </h1>
-            
-//             <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
-//               Discover services and shops around you with CityConnect. Find local businesses, book services, and support your community.
-//             </p>
-
-//             {/* Search Bar */}
-//             <div className="relative mb-8">
-//               <div className="flex items-center bg-gray-800/50 backdrop-blur-md rounded-2xl border border-gray-700 p-4 hover:border-green-500/50 transition-colors">
-//                 <Search className="text-gray-400 mr-3" size={24} />
-//                 <input
-//                   type="text"
-//                   placeholder="Search for shops, services, rickshaw booking..."
-//                   className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none text-sm md:text-base"
-//                 />
-//                 <button className="bg-green-500 hover:bg-green-600 px-4 md:px-6 py-2 rounded-xl transition-colors ml-4 text-sm md:text-base">
-//                   Explore
-//                 </button>
-//               </div>
-//             </div>
-
-//             <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-2xl text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/25">
-//               Get Started <ArrowRight className="inline ml-2" size={20} />
-//             </button>
-//           </div>
-
-//           {/* Right Content - iPhone Demo */}
-//           <div className="flex justify-center order-1 lg:order-2">
-//             <div className="scale-75 md:scale-90 lg:scale-100">
-//               <CityConnectDemo />
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//         {/* Marquee Section */}
-//         <section className="py-12 border-y border-gray-800 bg-black/50 backdrop-blur-md">
-//           <Marquee speed={60}>
-//             <div className="flex items-center space-x-12 text-gray-400">
-//               <span className="text-2xl font-bold">🏪 Local Shops</span>
-//               <span className="text-2xl font-bold">🔧 Quick Services</span>
-//               <span className="text-2xl font-bold">🚗 Instant Booking</span>
-//               <span className="text-2xl font-bold">⭐ Trusted Reviews</span>
-//               <span className="text-2xl font-bold">💳 Secure Payments</span>
-//               <span className="text-2xl font-bold">📍 Real-time Tracking</span>
-//             </div>
-//           </Marquee>
-//         </section>
-
-//         {/* Interactive Categories */}
-//         <section className="py-20 bg-black/30 backdrop-blur-md" id="features">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="text-center mb-16">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-//                 <AnimatedGradientText>Explore Categories</AnimatedGradientText>
-//               </h2>
-//               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-//                 Find exactly what you need from our wide range of local business categories
-//               </p>
-//             </div>
-
-//             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-//               {categories.map((category, index) => {
-//                 const Icon = category.icon;
-//                 return (
-//                   <TiltedCard key={index}>
-//                     <div className="group cursor-pointer">
-//                       <div className={`bg-gradient-to-br ${category.color} p-6 rounded-2xl text-center transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-green-500/25 border border-white/10 backdrop-blur-md`}>
-//                         <Icon size={40} className="mx-auto mb-4 text-white" />
-//                         <h3 className="text-lg font-semibold text-white mb-2">{category.name}</h3>
-//                         <div className="text-xs text-white/80">{category.count}</div>
-//                         <button className="mt-3 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors">
-//                           Browse
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </TiltedCard>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Video Section with Auto-play */}
-//         <section className="py-20 bg-black/50 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="text-center mb-12">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-//                 See <AnimatedGradientText>CityConnect</AnimatedGradientText> in Action
-//               </h2>
-//               <p className="text-xl text-gray-300">A modern city experience powered by technology</p>
-//             </div>
-
-//             <div className="relative max-w-4xl mx-auto">
-//               <div className="relative bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-3xl p-8 backdrop-blur-md border border-gray-700">
-//                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-3xl"></div>
-//                 <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
-//                   <video
-//                     ref={videoRef}
-//                     className="w-full aspect-video object-cover"
-//                     muted
-//                     loop
-//                     playsInline
-//                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23111827'/%3E%3Ctext x='400' y='225' text-anchor='middle' dy='.3em' fill='%2310b981' font-size='24' font-family='Inter'%3ECityConnect Demo%3C/text%3E%3C/svg%3E"
-//                   >
-//                     <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-//                     <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-gray-900">
-//                       <div className="text-center">
-//                         <Play className="mx-auto mb-4 text-green-400" size={64} />
-//                         <p className="text-gray-300">CityConnect Demo</p>
-//                       </div>
-//                     </div>
-//                   </video>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Live Updates Section with Animated List */}
-//         <section className="py-20 bg-black/30 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="grid lg:grid-cols-2 gap-12 items-center">
-//               <div>
-//                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
-//                   <AnimatedGradientText>Live Updates</AnimatedGradientText> from Your City
-//                 </h2>
-//                 <p className="text-xl text-gray-300 mb-8">
-//                   Stay connected with real-time updates from local businesses. See new reviews, service requests, and activity happening around you.
-//                 </p>
-                
-//                 <div className="space-y-4">
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Real-time notifications</span>
-//                   </div>
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Live business status</span>
-//                   </div>
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Community updates</span>
-//                   </div>
-//                 </div>
-//               </div>
-
-//               <div className="relative">
-//                 <TiltedCard>
-//                   <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-3xl p-8 border border-gray-700 backdrop-blur-md">
-//                     <div className="text-green-400 font-semibold mb-6 flex items-center">
-//                       <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
-//                       Live Updates
-//                     </div>
-                    
-//                     <AnimatedList delay={2500} className="max-h-[400px] overflow-hidden">
-//                       {liveUpdates.map((update, index) => (
-//                         <div key={index} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all">
-//                           <div className="flex items-start space-x-3">
-//                             <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${update.color} flex items-center justify-center text-lg`}>
-//                               {update.icon}
-//                             </div>
-//                             <div className="flex-1">
-//                               <div className="text-white font-medium text-sm mb-1">{update.title}</div>
-//                               <div className="text-gray-300 text-sm mb-2">{update.subtitle}</div>
-//                               <div className="flex items-center justify-between">
-//                                 <div className="flex items-center text-blue-400 text-xs">
-//                                   <MapPin className="w-3 h-3 mr-1" />
-//                                   {update.location}
-//                                 </div>
-//                                 <div className="flex items-center text-gray-400 text-xs">
-//                                   <Clock className="w-3 h-3 mr-1" />
-//                                   {update.time}
-//                                 </div>
-//                               </div>
-//                             </div>
-//                           </div>
-//                         </div>
-//                       ))}
-//                     </AnimatedList>
-//                   </div>
-//                 </TiltedCard>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Stepper Section */}
-//         <section className="py-20 bg-black/50 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="text-center mb-16">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-//                 How <AnimatedGradientText>CityConnect</AnimatedGradientText> Works
-//               </h2>
-//               <p className="text-xl text-gray-300">Simple steps to connect with your local community</p>
-//             </div>
-
-//             <Stepper steps={steps} currentStep={currentStep} />
-//           </div>
-//         </section>
-
-//         {/* Services Section */}
-//         <section className="py-20 bg-black/30 backdrop-blur-md" id="services">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="text-center mb-16">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-//                 Why Choose <AnimatedGradientText>CityConnect</AnimatedGradientText>
-//               </h2>
-//               <p className="text-xl text-gray-300">Everything you need for local business discovery</p>
-//             </div>
-
-//             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-//               {services.map((service, index) => {
-//                 const Icon = service.icon;
-//                 return (
-//                   <TiltedCard key={index}>
-//                     <div className="bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-2xl p-6 text-center hover:border-green-500/50 transition-all duration-300">
-//                       <div className="bg-gradient-to-br from-green-500 to-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-//                         <Icon size={32} className="text-white" />
-//                       </div>
-//                       <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-//                       <p className="text-gray-300">{service.description}</p>
-//                     </div>
-//                   </TiltedCard>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Map Section */}
-//         <section className="py-20 bg-black/50 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="grid lg:grid-cols-2 gap-12 items-center">
-//               <div>
-//                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
-//                   Find Businesses <AnimatedGradientText>Near You</AnimatedGradientText>
-//                 </h2>
-//                 <p className="text-xl text-gray-300 mb-8">
-//                   Our live map updates in real-time to help you connect with local sellers. Never miss out on the services you need.
-//                 </p>
-                
-//                 <div className="space-y-4">
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Real-time business locations</span>
-//                   </div>
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Live availability status</span>
-//                   </div>
-//                   <div className="flex items-center">
-//                     <CheckCircle className="text-green-500 mr-3" size={24} />
-//                     <span className="text-gray-300">Instant navigation</span>
-//                   </div>
-//                 </div>
-//               </div>
-
-//               <div className="relative">
-//                 <TiltedCard>
-//                   <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-3xl p-8 border border-gray-700 backdrop-blur-md">
-//                     <div className="aspect-square bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center relative overflow-hidden">
-//                       <MapPin className="text-green-400 absolute top-4 left-4 animate-bounce" size={24} />
-//                       <MapPin className="text-blue-400 absolute top-8 right-8 animate-bounce" size={20} style={{animationDelay: '0.5s'}} />
-//                       <MapPin className="text-purple-400 absolute bottom-6 left-8 animate-bounce" size={28} style={{animationDelay: '1s'}} />
-//                       <MapPin className="text-yellow-400 absolute bottom-4 right-4 animate-bounce" size={22} style={{animationDelay: '1.5s'}} />
-                      
-//                       <div className="text-center">
-//                         <div className="text-6xl mb-4">🗺️</div>
-//                         <div className="text-green-400 font-semibold">Live Map</div>
-//                         <div className="text-gray-300 text-sm">Real-time Updates</div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </TiltedCard>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Testimonials */}
-//         <section className="py-20 bg-black/30 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="text-center mb-16">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-//                 What Our <AnimatedGradientText>Users Say</AnimatedGradientText>
-//               </h2>
-//               <p className="text-xl text-gray-300">Trusted by thousands of local businesses and customers</p>
-//             </div>
-
-//             <div className="relative max-w-4xl mx-auto">
-//               <div className="overflow-hidden">
-//                 <div 
-//                   className="flex transition-transform duration-500 ease-in-out"
-//                   style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
-//                 >
-//                   {testimonials.map((testimonial, index) => (
-//                     <div key={index} className="w-full flex-shrink-0 px-4">
-//                       <TiltedCard>
-//                         <div className="bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-3xl p-8 text-center">
-//                           <div className="flex justify-center mb-4">
-//                             {[...Array(testimonial.rating)].map((_, i) => (
-//                               <Star key={i} className="text-yellow-400 fill-current" size={24} />
-//                             ))}
-//                           </div>
-                          
-//                           <p className="text-xl text-gray-300 mb-6 italic">
-//                             "{testimonial.feedback}"
-//                           </p>
-                          
-//                           <div className="flex items-center justify-center">
-//                             <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mr-4">
-//                               <Users className="text-white" size={24} />
-//                             </div>
-//                             <div className="text-left">
-//                               <div className="font-semibold text-white">{testimonial.name}</div>
-//                               <div className="text-gray-400 text-sm">{testimonial.role}</div>
-//                             </div>
-//                           </div>
-//                         </div>
-//                       </TiltedCard>
-//                     </div>
-//                   ))}
-//                 </div>
-//               </div>
-
-//               {/* Navigation dots */}
-//               <div className="flex justify-center mt-8 space-x-2">
-//                 {testimonials.map((_, index) => (
-//                   <button
-//                     key={index}
-//                     onClick={() => setCurrentTestimonial(index)}
-//                     className={`w-3 h-3 rounded-full transition-colors ${
-//                       index === currentTestimonial ? 'bg-green-500' : 'bg-gray-600'
-//                     }`}
-//                   />
-//                 ))}
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Seller Section */}
-//         <section className="py-20 bg-black/50 backdrop-blur-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-3xl border border-gray-700 p-12 text-center backdrop-blur-md">
-//               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-//                 <AnimatedGradientText>Become a Seller</AnimatedGradientText>
-//               </h2>
-//               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-//                 Expand your business by joining CityConnect and reach more customers instantly. Join thousands of successful local businesses.
-//               </p>
-              
-//               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-//                 <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/25">
-//                   Register as Seller <ArrowRight className="inline ml-2" size={20} />
-//                 </button>
-//                 <button className="border border-gray-600 hover:border-green-500 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 hover:bg-green-500/10">
-//                   Learn More
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* Footer */}
-//         <footer className="bg-black/80 backdrop-blur-md border-t border-gray-800 pt-20 pb-8">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             {/* Newsletter Section */}
-//             <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-3xl border border-gray-700 p-8 mb-16 backdrop-blur-md">
-//               <div className="text-center">
-//                 <h3 className="text-3xl font-bold mb-4">
-//                   <AnimatedGradientText>Stay Connected</AnimatedGradientText>
-//                 </h3>
-//                 <p className="text-gray-300 mb-6">Subscribe to get the latest updates and offers</p>
-                
-//                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-//                   <input
-//                     type="email"
-//                     value={email}
-//                     onChange={(e) => setEmail(e.target.value)}
-//                     placeholder="Enter your email"
-//                     className="flex-1 bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
-//                     required
-//                   />
-//                   <button
-//                     type="submit"
-//                     className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
-//                   >
-//                     Subscribe
-//                   </button>
-//                 </form>
-//               </div>
-//             </div>
-
-//             <div className="grid md:grid-cols-4 gap-8 mb-12">
-//               {/* Brand */}
-//               <div className="md:col-span-1">
-//                 <div className="text-2xl font-bold mb-4">
-//                   <AnimatedGradientText>CityConnect</AnimatedGradientText>
-//                 </div>
-//                 <p className="text-gray-400 mb-6">
-//                   Connecting local businesses with customers for a thriving community ecosystem.
-//                 </p>
-                
-//                 {/* Social Media */}
-//                 <div className="flex space-x-4">
-//                   <a href="#" className="bg-gray-800 hover:bg-green-500 p-3 rounded-xl transition-colors">
-//                     <Facebook size={20} />
-//                   </a>
-//                   <a href="#" className="bg-gray-800 hover:bg-blue-500 p-3 rounded-xl transition-colors">
-//                     <Twitter size={20} />
-//                   </a>
-//                   <a href="#" className="bg-gray-800 hover:bg-pink-500 p-3 rounded-xl transition-colors">
-//                     <Instagram size={20} />
-//                   </a>
-//                   <a href="#" className="bg-gray-800 hover:bg-blue-600 p-3 rounded-xl transition-colors">
-//                     <Linkedin size={20} />
-//                   </a>
-//                 </div>
-//               </div>
-
-//               {/* Quick Links */}
-//               <div>
-//                 <h4 className="text-lg font-semibold mb-4 text-green-400">Quick Links</h4>
-//                 <ul className="space-y-2">
-//                   <li><a href="/about" className="text-gray-400 hover:text-green-400 transition-colors">About Us</a></li>
-//                   <li><a href="/contact" className="text-gray-400 hover:text-green-400 transition-colors">Contact</a></li>
-//                   <li><a href="/careers" className="text-gray-400 hover:text-green-400 transition-colors">Careers</a></li>
-//                   <li><a href="/help" className="text-gray-400 hover:text-green-400 transition-colors">Help Center</a></li>
-//                 </ul>
-//               </div>
-
-//               {/* Services */}
-//               <div>
-//                 <h4 className="text-lg font-semibold mb-4 text-green-400">Services</h4>
-//                 <ul className="space-y-2">
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Find Businesses</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Book Services</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Rickshaw Booking</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Business Listings</a></li>
-//                 </ul>
-//               </div>
-
-//               {/* Support */}
-//               <div>
-//                 <h4 className="text-lg font-semibold mb-4 text-green-400">Support</h4>
-//                 <ul className="space-y-2">
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Privacy Policy</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Terms of Service</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">Cookie Policy</a></li>
-//                   <li><a href="#" className="text-gray-400 hover:text-green-400 transition-colors">GDPR</a></li>
-//                 </ul>
-//               </div>
-//             </div>
-
-//             {/* Copyright */}
-//             <div className="border-t border-gray-800 pt-8 text-center">
-//               <p className="text-gray-400">
-//                 © 2025 CityConnect. Crafted with ❤️ for local businesses.
-//               </p>
-//             </div>
-//           </div>
-//         </footer>
-
-//         {/* Floating CTA */}
-//         <div className="fixed bottom-8 right-8 z-50">
-//           <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 p-4 rounded-full shadow-2xl shadow-green-500/25 transition-all duration-300 transform hover:scale-110">
-//             <ArrowRight className="text-white" size={24} />
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Custom Styles */}
-//       <style jsx>{`
-//         @keyframes marquee {
-//           0% { transform: translateX(100%); }
-//           100% { transform: translateX(-100%); }
-//         }
-        
-//         @keyframes gradient {
-//           0%, 100% { background-position: 0% 50%; }
-//           50% { background-position: 100% 50%; }
-//         }
-        
-//         @keyframes slideUp {
-//           0% {
-//             opacity: 0;
-//             transform: translateY(30px);
-//           }
-//           100% {
-//             opacity: 1;
-//             transform: translateY(0);
-//           }
-//         }
-        
-//         .animate-gradient {
-//           background-size: 200% 200%;
-//           animation: gradient 3s ease infinite;
-//         }
-        
-//         .animate-marquee {
-//           animation: marquee 60s linear infinite;
-//         }
-        
-//         .animate-slide-up {
-//           animation: slideUp 0.5s ease-out forwards;
-//         }
-        
-//         /* Smooth scrolling */
-//         html {
-//           scroll-behavior: smooth;
-//         }
-        
-//         /* Custom scrollbar */
-//         ::-webkit-scrollbar {
-//           width: 8px;
-//         }
-        
-//         ::-webkit-scrollbar-track {
-//           background: #1f2937;
-//         }
-        
-//         ::-webkit-scrollbar-thumb {
-//           background: #10b981;
-//           border-radius: 4px;
-//         }
-        
-//         ::-webkit-scrollbar-thumb:hover {
-//           background: #059669;
-//         }
-        
-//         /* Ensure ballpit covers full background */
-//         .ballpit-container {
-//           position: fixed;
-//           top: 0;
-//           left: 0;
-//           width: 100vw;
-//           height: 100vh;
-//           z-index: 0;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// };
-
-// export default CityConnectLanding;
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
@@ -1035,7 +25,7 @@ import {
   PenTool,
   Sparkles
 } from 'lucide-react';
-import  { Vortex } from './Vortex';
+import { useNavigate } from 'react-router-dom';
 
 // Enhanced Animated List Component
 const AnimatedList = ({ children, delay = 2000, className = "" }) => {
@@ -1168,16 +158,15 @@ const MacBookMockup = ({ children, className = "" }) => {
       {/* Glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-3xl blur-3xl scale-110"></div>
       
-      {/* MacBook frame */}
+     
       <div className="relative">
-        {/* Screen */}
+    
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-2xl shadow-2xl">
-          {/* Screen bezel */}
+        
           <div className="bg-black rounded-xl overflow-hidden aspect-[16/10] relative">
-            {/* Webcam */}
+            
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full z-10"></div>
             
-            {/* Content */}
             <div className="w-full h-full">
               {children}
             </div>
@@ -1194,23 +183,23 @@ const MacBookMockup = ({ children, className = "" }) => {
   );
 };
 
-// Orbiting Circles Component
+
 const OrbitingCircles = ({ children }) => {
   return (
     <div className="relative flex items-center justify-center">
-      {/* Orbiting elements */}
+     
       <div className="absolute inset-0">
-        {/* Orbit 1 */}
+      
         <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></div>
         </div>
         
-        {/* Orbit 2 */}
+      
         <div className="absolute inset-4 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}>
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></div>
         </div>
         
-        {/* Orbit 3 */}
+      
         <div className="absolute inset-8 animate-spin" style={{ animationDuration: '25s' }}>
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-purple-500 rounded-full shadow-lg shadow-purple-500/50"></div>
         </div>
@@ -1221,7 +210,7 @@ const OrbitingCircles = ({ children }) => {
   );
 };
 
-// Stepper component
+
 const Stepper = ({ steps, currentStep = 0 }) => {
   return (
     <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
@@ -1411,8 +400,10 @@ const CityConnectLanding = () => {
     setEmail('');
   };
 
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen hide-scrollbar h-screen overflow-y-scroll bg-black text-white relative overflow-hidden">
       {/* Content */}
       
 
@@ -1433,10 +424,11 @@ const CityConnectLanding = () => {
                   <a href="#services" className="text-gray-300 hover:text-green-400 transition-all duration-300 hover:scale-105">Services</a>
                   <a href="#showcase" className="text-gray-300 hover:text-green-400 transition-all duration-300 hover:scale-105">Demo</a>
                   <a href="#about" className="text-gray-300 hover:text-green-400 transition-all duration-300 hover:scale-105">About</a>
-                  <button className="bg-gray-800/80 hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-300 backdrop-blur-md border border-gray-700">
+                  <button className="bg-gray-800/80 hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-300 backdrop-blur-md border border-gray-700" onClick={() => navigate('/login')}>
                     Login
                   </button>
-                  <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/25">
+                  <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/25"
+                onClick={() => navigate('/signup')}>
                     Sign Up
                   </button>
                 </div>
@@ -1461,8 +453,8 @@ const CityConnectLanding = () => {
                 <a href="#services" className="block px-3 py-2 text-gray-300 hover:text-green-400 rounded-lg hover:bg-gray-800/50 transition-all">Services</a>
                 <a href="#showcase" className="block px-3 py-2 text-gray-300 hover:text-green-400 rounded-lg hover:bg-gray-800/50 transition-all">Demo</a>
                 <a href="#about" className="block px-3 py-2 text-gray-300 hover:text-green-400 rounded-lg hover:bg-gray-800/50 transition-all">About</a>
-                <button className="block w-full text-left px-3 py-2 text-gray-300 hover:text-green-400 rounded-lg hover:bg-gray-800/50 transition-all">Login</button>
-                <button className="block w-full text-left px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg mt-2 transition-all transform hover:scale-105">Sign Up</button>
+                <button className="block w-full text-left px-3 py-2 text-gray-300 hover:text-green-400 rounded-lg hover:bg-gray-800/50 transition-all" onClick={() => navigate('/login')}>Login</button>
+                <button className="block w-full text-left px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg mt-2 transition-all transform hover:scale-105" onClick={() => navigate('/signup')}>Sign Up</button>
               </div>
             </div>
           )}
@@ -1505,7 +497,7 @@ const CityConnectLanding = () => {
               </div>
 
               <div className="animate-slide-up mb-7" style={{ animationDelay: '0.6s' }}>
-                <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-2xl text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30">
+                <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-2xl text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30" onClick={() => navigate('/login')}>
                   Get Started <ArrowRight className="inline ml-2" size={20} />
                 </button>
               </div>
@@ -1989,7 +981,8 @@ const CityConnectLanding = () => {
                   </p>
                   
                   <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                    <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30">
+                    <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 md:px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-green-500/30"
+                    onClick={() => navigate('/signup')}>
                       Register as Seller <ArrowRight className="inline ml-2" size={20} />
                     </button>
                     <button className="border border-gray-600 hover:border-green-500 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 hover:bg-green-500/10 backdrop-blur-md">
@@ -2126,7 +1119,7 @@ const CityConnectLanding = () => {
           <div className="relative">
             {/* Pulse effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-ping opacity-20"></div>
-            <button className="relative bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 p-4 rounded-full shadow-2xl shadow-green-500/30 transition-all duration-300 transform hover:scale-110 backdrop-blur-md">
+            <button className="relative bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 p-4 rounded-full shadow-2xl shadow-green-500/30 transition-all duration-300 transform hover:scale-110 backdrop-blur-md" onClick={() => navigate('/login')}>
               <ArrowRight className="text-white" size={24} />
             </button>
           </div>
