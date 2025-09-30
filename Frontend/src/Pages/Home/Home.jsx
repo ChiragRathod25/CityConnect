@@ -504,7 +504,7 @@ const StunningLandingPage = () => {
             <button className="px-8 py-4 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full font-semibold text-white hover:from-gray-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
               Get Started
             </button>
-            ◘</NavLink>
+            </NavLink>
           </div>
         </div>
       </div>
