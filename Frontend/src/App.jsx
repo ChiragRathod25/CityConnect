@@ -10,6 +10,7 @@ import {
   isPWAInstalled,
   markPWAInstalled 
 } from './utils/installPromptStore.js';
+import MyToaster from "./MyToaster";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -94,6 +95,7 @@ function App() {
     <div className="bg-gray-0 min-h-screen">
       <Layout>
         <main>
+          <MyToaster />
           <Outlet />
         </main>
       </Layout>
