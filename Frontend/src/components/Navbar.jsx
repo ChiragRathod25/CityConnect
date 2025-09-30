@@ -151,9 +151,8 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <div className="hidden xl:flex items-center space-x-1">
               {navItems.map((item, index) => (
-                <motion.a
-                  key={item.name}
-                  href={item.path}
+                <NavLink to={item.path} key={item.name}>
+                  <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: -20 }}
@@ -170,6 +169,7 @@ const Navbar = () => {
                     transition={{ duration: 0.2 }}
                   ></motion.div>
                 </motion.a>
+                   </NavLink>
               ))}
             </div>
 
