@@ -18,6 +18,7 @@ import {
   Star,
   MapPin,
   Users,
+  Package2,
 } from "lucide-react";
 import { AnimatedBackground } from "@/Pages/Category/ReusableComponent";
 import { FileUpload } from "../BusinessForm";
@@ -35,9 +36,10 @@ const AddProductCard = () => {
     dimensions: "",
     tags: [],
     images: [],
-    imageMethod: "", // 'upload', 'ai', 'camera'
+    imageMethod: "", // 'upload','camera'
     warranty: "",
-    returnPolicy: "30",
+    deliverycharge: "",
+    returnPolicy: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -84,6 +86,10 @@ const AddProductCard = () => {
       newErrors.imageMethod = "Please select an image method";
     }
 
+    if (!formData.deliverycharge) {
+      newErrors.deliverycharge = "Please Write The Delivery Charges";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -96,8 +102,8 @@ const AddProductCard = () => {
     setLoading(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-
+    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    console.log(formData);
     setLoading(false);
     setSuccess(true);
 
@@ -118,7 +124,8 @@ const AddProductCard = () => {
         images: [],
         imageMethod: "",
         warranty: "",
-        returnPolicy: "30",
+        deliverycharge: "",
+        returnPolicy: "",
       });
     }, 3000);
   };
@@ -231,11 +238,6 @@ const AddProductCard = () => {
     }));
   };
 
-  const handleAIGenerate = () => {
-    // Placeholder for AI generation - would integrate with actual AI service
-    alert("AI Image Generation feature coming soon!");
-  };
-
   return (
     <div className="min-h-screen py-20 px-3 relative">
       <AnimatedBackground />
@@ -298,7 +300,7 @@ const AddProductCard = () => {
           </AnimatePresence>
 
           {/* Form */}
-          <div className="py-8 sm:px-8 px-4 space-y-8">
+          <div className="py-8 sm:px-8 px-5 space-y-8">
             {/* Basic Info Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Product Name */}
@@ -519,7 +521,7 @@ const AddProductCard = () => {
               </label>
 
               {/* Image Method Selection */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.02 }}
@@ -540,31 +542,6 @@ const AddProductCard = () => {
                   <Upload className="w-8 h-8 mx-auto mb-2" />
                   <div className="font-semibold">Upload Image</div>
                   <div className="text-xs opacity-75">From device</div>
-                </motion.button>
-
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    handleInputChange("imageMethod", "ai");
-                    handleAIGenerate();
-                  }}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
-                    formData.imageMethod === "ai"
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      formData.imageMethod === "ai" ? "#1f2937" : "#ffffff",
-                    color:
-                      formData.imageMethod === "ai" ? "#ffffff" : "#374151",
-                  }}
-                >
-                  <Wand2 className="w-8 h-8 mx-auto mb-2" />
-                  <div className="font-semibold">AI Generated</div>
-                  <div className="text-xs opacity-75">Coming soon</div>
                 </motion.button>
 
                 <motion.button
@@ -805,7 +782,7 @@ const AddProductCard = () => {
             </motion.div>
 
             {/* Additional Details Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Weight */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -869,17 +846,47 @@ const AddProductCard = () => {
                 transition={{ delay: 0.7 }}
                 className="space-y-2"
               >
-                <label className="flex items-center gap-2 text-sm font-semibold" style={{ color: '#6b7280' }}>
-                  <Star size={16} style={{ color: '#9ca3af' }} />
+                <label
+                  className="flex items-center gap-2 text-sm font-semibold"
+                  style={{ color: "#6b7280" }}
+                >
+                  <Star size={16} style={{ color: "#9ca3af" }} />
                   Warranty Period
                 </label>
-                 <input
+                <input
                   type="text"
                   value={formData.warranty}
                   onChange={(e) =>
                     handleInputChange("warranty", e.target.value)
                   }
                   placeholder="e.g., 3 months"
+                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
+                  style={{
+                    borderColor: "#d1d5db",
+                    backgroundColor: "#ffffff",
+                  }}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className="space-y-2"
+              >
+                <label
+                  className="flex items-center gap-2 text-sm font-semibold"
+                  style={{ color: "#6b7280" }}
+                >
+                  <Package2 size={16} style={{ color: "#9ca3af" }} />
+                  Delivery Charges
+                </label>
+                <input
+                  type="text"
+                  value={formData.deliverycharge}
+                  onChange={(e) =>
+                    handleInputChange("deliverycharge", e.target.value)
+                  }
+                  placeholder="e.g., 30"
                   className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
                   style={{
                     borderColor: "#d1d5db",
@@ -904,8 +911,8 @@ const AddProductCard = () => {
                 Return Policy
               </label>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {["7", "15", "30", "60"].map((days) => (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {["0","7", "15", "30", "60"].map((days) => (
                   <motion.button
                     key={days}
                     type="button"

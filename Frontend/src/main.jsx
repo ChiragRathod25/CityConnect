@@ -40,6 +40,7 @@ import PaymentPage from "./Pages/Checkout/PaymentPage";
 import PaymentSuccess from "./Pages/Checkout/PaymentSuccess";
 import PaymentFailed from "./Pages/Checkout/PaymentFailed";
 import AiImageGeneratorUI from "./Pages/ImageGenerator";
+import AddServiceProviderForm from "./components/FormPage/AddServiceCard";
 
 const router = createBrowserRouter([
   {
@@ -121,34 +122,39 @@ const router = createBrowserRouter([
       },
       {
         // path: "/admin/manage-category",
-        path: '/neel',
+        path: "/neel",
         element: <ManageCategoryUI />,
       },
       {
         // path: "/admin/manage-user",
-        path: '/user',
+        path: "/user",
         element: <ManageUserUI />,
       },
       {
         // path: "/add-businesscard",
-        path: '/add',
+        path: "/add",
         element: <AddBusinessCard />,
       },
       {
         // path: "/add-productcard",
-        path: '/product',
+        path: "/product",
         element: <AddProductCard />,
       },
-       {
+      {
         // path: "/add-productcard",
-        path: '/service',
+        path: "/servicecard",
+        element: <AddServiceProviderForm />,
+      },
+      {
+        // path: "/add-productcard",
+        path: "/service",
         element: <ServiceProviderCardUI />,
       },
-       {
+      {
         path: "/card",
         element: <ProductCardUI />,
       },
-       {
+      {
         path: "/zxc",
         element: <EditOperatingHours />,
       },
