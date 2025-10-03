@@ -48,7 +48,7 @@ const Footer = () => {
                   <Store className="text-[#ffffff]" size={28} />
                 </div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-[#ffffff] to-[#9ca3af] bg-clip-text text-transparent">
-                  LocalConnect
+                  CityConnect
                 </span>
               </div>
               <p className="text-[#9ca3af] mb-6 leading-relaxed">
@@ -163,7 +163,7 @@ const Footer = () => {
                   </div>
                   <div>
                     <div className="text-[#9ca3af] group-hover:text-[#ffffff] transition-colors">
-                      info@localconnect.com
+                      info@CityConnect.com
                     </div>
                     <div className="text-xs text-[#6b7280]">General inquiries</div>
                   </div>
@@ -223,7 +223,7 @@ const Footer = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-[#9ca3af]">
-              <p>© {currentYear} LocalConnect. All rights reserved.</p>
+              <p>© {currentYear} CityConnect. All rights reserved.</p>
               <div className="flex items-center space-x-1">
                 <span>Made with</span>
                 <Heart size={12} className="text-[#6b7280] animate-pulse" />

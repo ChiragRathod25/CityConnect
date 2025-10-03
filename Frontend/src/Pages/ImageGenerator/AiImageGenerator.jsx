@@ -10,7 +10,7 @@ const AIImageGenerator = () => {
   const [history, setHistory] = useState([]);
 
   const colors = {
-    lightBg: "#f8fafc",
+    lightBg: "#ECF2F9",
     darkText: "#1f2937",
     mediumText: "#374151",
     lightText: "#6b7280",
