@@ -41,6 +41,8 @@ import PaymentSuccess from "./Pages/Checkout/PaymentSuccess";
 import PaymentFailed from "./Pages/Checkout/PaymentFailed";
 import AiImageGeneratorUI from "./Pages/ImageGenerator";
 import AddServiceProviderForm from "./components/FormPage/AddServiceCard";
+import ManageBusinessmanUI from "./Pages/ManageBusinessman";
+import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 
 const router = createBrowserRouter([
   {
@@ -130,6 +132,11 @@ const router = createBrowserRouter([
         path: "/user",
         element: <ManageUserUI />,
       },
+       {
+        // path: "/admin/manage-businessman",
+        path: "/business",
+        element: <ManageBusinessmanUI />,
+      },
       {
         // path: "/add-businesscard",
         path: "/add",
@@ -161,6 +168,10 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPageUI />,
+      },
+      {
+        path: "/adminadmin",
+        element: <AdminVerificationPanel />,
       },
       {
         path: "/payment",
