@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/Button";
 
-const ContactEditPage = ({ type = "email" }) => {
-  const isEmail = type === "email";
+const ContactEditPage = ({ type = "change-email" }) => {
+  const isEmail = type === "change-email";
 
   const [currentContact, setCurrentContact] = useState(
     isEmail ? "alex.johnson@business.com" : "+1 (555) 123-4567"

@@ -21,7 +21,10 @@ import {
   CheckCircle,
   Camera,
   ChevronRight,
+  FolderTree,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 const AdminProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
@@ -29,6 +32,7 @@ const AdminProfileDashboard = () => {
   const headerRef = useRef(null);
   const menuGridRef = useRef(null);
   const logoutSectionRef = useRef(null);
+  const navigate = useNavigate();
 
   const [adminProfile] = useState({
     name: "Admin Manager",
@@ -98,6 +102,14 @@ const AdminProfileDashboard = () => {
       priority: "high",
     },
     {
+      id: "manage-category",
+      label: "Manage Categories",
+      icon: FolderTree, // or you can use Layers, Grid, etc.
+      description: "Add, edit, update and delete product categories",
+      // badge: `${categories.length} Categories`, // or however many categories you have
+      priority: "high",
+    },
+    {
       id: "manage-services",
       label: "Manage Services",
       icon: Settings,
@@ -120,14 +132,6 @@ const AdminProfileDashboard = () => {
       description: "Handle customer inquiries and support requests",
       badge: "15 New",
       priority: "medium",
-    },
-    {
-      id: "verification-center",
-      label: "Verification Center",
-      icon: Shield,
-      description: "Manage email and phone verifications",
-      badge: `${adminProfile.adminStats.pendingApprovals} Pending`,
-      priority: "high",
     },
     {
       id: "analytics-dashboard",
@@ -212,8 +216,8 @@ const AdminProfileDashboard = () => {
   ];
 
   const handleMenuClick = (itemId) => {
-    console.log(`Navigating to: /admin/${itemId}`);
-    // Replace with your navigation logic: navigate(`/admin/${itemId}`);
+    // console.log(`Navigating to: /admin/${itemId}`);
+    navigate(`/admin/${itemId}`);
   };
 
   const handleLogout = () => {
@@ -262,7 +266,7 @@ const AdminProfileDashboard = () => {
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gray-200 opacity-30 rounded-full blur-3xl animate-float"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gray-300 opacity-20 rounded-full blur-3xl animate-float-delayed"></div>
       </div>
-      
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Modern Admin Header */}
         <div
@@ -311,7 +315,7 @@ const AdminProfileDashboard = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <p className="text-base sm:text-lg lg:text-xl mb-3 sm:mb-4 text-gray-300 font-medium">
                   {adminProfile.email}
                 </p>
@@ -428,7 +432,6 @@ const AdminProfileDashboard = () => {
             );
           })}
         </div>
-
         {/* Logout Section */}
         <div
           ref={logoutSectionRef}
@@ -438,7 +441,6 @@ const AdminProfileDashboard = () => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 opacity-50 rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
 
           <div className="relative md:flex md:justify-between md:items-center z-10">
-
             <div className="flex items-center gap-3 md:space-x-3 sm:gap-4 mb-6 sm:mb-0 ">
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex   items-center justify-center shadow-md bg-red-100">
                 <Shield
@@ -478,13 +480,17 @@ const AdminProfileDashboard = () => {
           <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-2xl transform animate-scaleIn border border-gray-200">
             <div className="text-center mb-6">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-100 shadow-xl">
-                <LogOut size={28} className="text-red-600 animate-bounce sm:w-8 sm:h-8" />
+                <LogOut
+                  size={28}
+                  className="text-red-600 animate-bounce sm:w-8 sm:h-8"
+                />
               </div>
               <h3 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-gray-800">
                 Confirm Admin Logout
               </h3>
               <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
-                Are you sure you want to logout from the admin panel? You'll need to sign in again to access admin features.
+                Are you sure you want to logout from the admin panel? You'll
+                need to sign in again to access admin features.
               </p>
             </div>
 

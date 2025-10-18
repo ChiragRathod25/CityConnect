@@ -21,6 +21,8 @@ import {
   Package,
   ShoppingBag,
 } from "lucide-react";
+import MoveBackButton from "@/components/ui/MoveBackButton";
+import { useNavigate } from "react-router-dom";
 
 // Mock businessman data
 const mockBusinessmen = [
@@ -376,7 +378,11 @@ const TypeBadge = ({ type }) => {
 };
 
 // StatusActionDropdown Component
-const StatusActionDropdown = ({ businessman, onStatusChange, isMobile = false }) => {
+const StatusActionDropdown = ({
+  businessman,
+  onStatusChange,
+  isMobile = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -609,7 +615,9 @@ const BusinessmanDetailsModal = ({ businessman, isOpen, onClose }) => {
                         : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {businessman.isEmailVerified ? "✓ Verified" : "✗ Not Verified"}
+                    {businessman.isEmailVerified
+                      ? "✓ Verified"
+                      : "✗ Not Verified"}
                   </span>
                 </div>
               </div>
@@ -630,7 +638,9 @@ const BusinessmanDetailsModal = ({ businessman, isOpen, onClose }) => {
                         : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {businessman.isPhoneVerified ? "✓ Verified" : "✗ Not Verified"}
+                    {businessman.isPhoneVerified
+                      ? "✓ Verified"
+                      : "✗ Not Verified"}
                   </span>
                 </div>
               </div>
@@ -692,7 +702,8 @@ const BusinessmanDetailsModal = ({ businessman, isOpen, onClose }) => {
               Account Information
             </label>
             <p className="text-xs sm:text-sm text-blue-600">
-              Member since: {new Date(businessman.joinDate).toLocaleDateString()}
+              Member since:{" "}
+              {new Date(businessman.joinDate).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -709,7 +720,7 @@ export default function AdminBusinessmanManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBusinessman, setSelectedBusinessman] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const navigate = useNavigate();
   const businessmenPerPage = 10;
 
   const sortOptions = [
@@ -753,8 +764,12 @@ export default function AdminBusinessmanManagement() {
             mockBusinessmen
               .filter(
                 (businessman) =>
-                  businessman.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  businessman.email.toLowerCase().includes(searchTerm.toLowerCase())
+                  businessman.name
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                  businessman.email
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
               )
               .slice(0, 5)
               .map((businessman) => businessman.name)
@@ -780,23 +795,34 @@ export default function AdminBusinessmanManagement() {
     console.log(`${action} businessman:`, businessmanId);
   };
 
+  const handleBackToProfile = () => {
+    navigate("/admin");
+  };
+
   return (
-    <div className="min-h-screen py-10 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen py-5 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 px-4 sm:px-6 lg:px-8">
+      <div className="relative mb-5 sm:mb-0  z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <MoveBackButton onClick={handleBackToProfile} />
+          </div>
+        </div>
+      </div>
+      <div className="max-w-7xl pb-5 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 sm:mb-10 text-center"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-2 sm:p-3 bg-gray-800 rounded-2xl shadow-lg">
-              <Briefcase className="w-5 h-5 sm:w-8 sm:h-8 text-gray-400" />
+          <div className="flex flex-col items-center justify-center mb-2">
+            <div className="p-3 w-16 h-16 bg-gray-800 rounded-2xl shadow-lg">
+              <Briefcase className="w-10 animate-pulse h-10  text-gray-400" />
             </div>
-            <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
-              Businessman Management
+            <h1 className="mt-4 text-2xl lg:text-4xl font-bold text-gray-800">
+              Businessmen Management
             </h1>
           </div>
-          <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-md  lg:text-lg max-w-2xl mx-auto">
             Manage and monitor business accounts with advanced controls
           </p>
         </motion.div>
@@ -1074,8 +1100,8 @@ export default function AdminBusinessmanManagement() {
                 No businessmen found
               </h3>
               <p className="text-gray-500 max-w-md mx-auto">
-                Try adjusting your search or filter criteria to find the businessmen
-                you're looking for.
+                Try adjusting your search or filter criteria to find the
+                businessmen you're looking for.
               </p>
             </div>
           )}

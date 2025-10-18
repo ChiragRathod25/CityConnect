@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit3, 
-  Trash2, 
-  X, 
-  Package, 
-  Wrench, 
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Plus,
+  Search,
+  Filter,
+  Edit3,
+  Trash2,
+  X,
+  Package,
+  Wrench,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -23,82 +23,88 @@ import {
   Shield,
   Globe,
   MoreVertical,
-  Calendar
-} from 'lucide-react';
+  Calendar,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import MoveBackButton from "@/components/ui/MoveBackButton";
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([
     {
       id: 1,
-      name: 'Electronics',
-      description: 'Electronic devices and gadgets for modern living',
-      type: 'product',
-      icon: 'Zap',
-      createdAt: '2024-01-15'
+      name: "Electronics",
+      description: "Electronic devices and gadgets for modern living",
+      type: "product",
+      icon: "Zap",
+      createdAt: "2024-01-15",
     },
     {
       id: 2,
-      name: 'Web Development',
-      description: 'Professional web development and design services',
-      type: 'service',
-      icon: 'Globe',
-      createdAt: '2024-01-14'
+      name: "Web Development",
+      description: "Professional web development and design services",
+      type: "service",
+      icon: "Globe",
+      createdAt: "2024-01-14",
     },
     {
       id: 3,
-      name: 'Mobile Phones',
-      description: 'Latest smartphones and premium accessories',
-      type: 'product',
-      icon: 'Settings',
-      createdAt: '2024-01-13'
+      name: "Mobile Phones",
+      description: "Latest smartphones and premium accessories",
+      type: "product",
+      icon: "Settings",
+      createdAt: "2024-01-13",
     },
     {
       id: 4,
-      name: 'Consulting',
-      description: 'Business consulting and strategic planning',
-      type: 'service',
-      icon: 'Shield',
-      createdAt: '2024-01-12'
+      name: "Consulting",
+      description: "Business consulting and strategic planning",
+      type: "service",
+      icon: "Shield",
+      createdAt: "2024-01-12",
     },
     {
       id: 5,
-      name: 'Gaming',
-      description: 'Gaming consoles, accessories, and digital content',
-      type: 'product',
-      icon: 'Star',
-      createdAt: '2024-01-11'
+      name: "Gaming",
+      description: "Gaming consoles, accessories, and digital content",
+      type: "product",
+      icon: "Star",
+      createdAt: "2024-01-11",
     },
     {
       id: 6,
-      name: 'Design Services',
-      description: 'Creative design and branding solutions',
-      type: 'service',
-      icon: 'Sparkles',
-      createdAt: '2024-01-10'
-    }
+      name: "Design Services",
+      description: "Creative design and branding solutions",
+      type: "service",
+      icon: "Sparkles",
+      createdAt: "2024-01-10",
+    },
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [deleteCategory, setDeleteCategory] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showToast, setShowToast] = useState({ show: false, message: '', type: '' });
+  const [showToast, setShowToast] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [isIconDropdownOpen, setIsIconDropdownOpen] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    type: 'product',
-    icon: 'Box'
+    name: "",
+    description: "",
+    type: "product",
+    icon: "Box",
   });
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const filterDropdownRef = useRef(null);
   const typeDropdownRef = useRef(null);
   const iconDropdownRef = useRef(null);
@@ -106,63 +112,75 @@ const CategoryManagement = () => {
 
   // Available icons with zinc/gray variations
   const availableIcons = [
-    { name: 'Box', icon: Box, color: 'from-zinc-600 to-zinc-700' },
-    { name: 'Zap', icon: Zap, color: 'from-gray-600 to-gray-700' },
-    { name: 'Settings', icon: Settings, color: 'from-zinc-500 to-zinc-600' },
-    { name: 'Star', icon: Star, color: 'from-gray-500 to-gray-600' },
-    { name: 'Heart', icon: Heart, color: 'from-zinc-700 to-zinc-800' },
-    { name: 'Shield', icon: Shield, color: 'from-gray-700 to-gray-800' },
-    { name: 'Globe', icon: Globe, color: 'from-zinc-400 to-zinc-500' },
-    { name: 'Package', icon: Package, color: 'from-gray-800 to-gray-900' },
-    { name: 'Wrench', icon: Wrench, color: 'from-zinc-800 to-zinc-900' },
-    { name: 'Sparkles', icon: Sparkles, color: 'from-gray-400 to-gray-500' }
+    { name: "Box", icon: Box, color: "from-zinc-600 to-zinc-700" },
+    { name: "Zap", icon: Zap, color: "from-gray-600 to-gray-700" },
+    { name: "Settings", icon: Settings, color: "from-zinc-500 to-zinc-600" },
+    { name: "Star", icon: Star, color: "from-gray-500 to-gray-600" },
+    { name: "Heart", icon: Heart, color: "from-zinc-700 to-zinc-800" },
+    { name: "Shield", icon: Shield, color: "from-gray-700 to-gray-800" },
+    { name: "Globe", icon: Globe, color: "from-zinc-400 to-zinc-500" },
+    { name: "Package", icon: Package, color: "from-gray-800 to-gray-900" },
+    { name: "Wrench", icon: Wrench, color: "from-zinc-800 to-zinc-900" },
+    { name: "Sparkles", icon: Sparkles, color: "from-gray-400 to-gray-500" },
   ];
 
   // Prevent body scroll when modals are open
   useEffect(() => {
     if (isModalOpen || isDeleteModalOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isModalOpen, isDeleteModalOpen]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target)
+      ) {
         setIsFilterDropdownOpen(false);
       }
-      if (typeDropdownRef.current && !typeDropdownRef.current.contains(event.target)) {
+      if (
+        typeDropdownRef.current &&
+        !typeDropdownRef.current.contains(event.target)
+      ) {
         setIsTypeDropdownOpen(false);
       }
-      if (iconDropdownRef.current && !iconDropdownRef.current.contains(event.target)) {
+      if (
+        iconDropdownRef.current &&
+        !iconDropdownRef.current.contains(event.target)
+      ) {
         setIsIconDropdownOpen(false);
       }
-      if (activeCard && !event.target.closest('.card-menu')) {
+      if (activeCard && !event.target.closest(".card-menu")) {
         setActiveCard(null);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeCard]);
 
   // Get icon component by name
   const getIcon = (iconName) => {
-    const iconObj = availableIcons.find(icon => icon.name === iconName);
-    return iconObj ? { icon: iconObj.icon, color: iconObj.color } : { icon: Box, color: 'from-zinc-500 to-zinc-600' };
+    const iconObj = availableIcons.find((icon) => icon.name === iconName);
+    return iconObj
+      ? { icon: iconObj.icon, color: iconObj.color }
+      : { icon: Box, color: "from-zinc-500 to-zinc-600" };
   };
 
   // Filter and search categories
-  const filteredCategories = categories.filter(category => {
-    const matchesSearch = category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         category.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || category.type === filterType;
+  const filteredCategories = categories.filter((category) => {
+    const matchesSearch =
+      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      category.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterType === "all" || category.type === filterType;
     return matchesSearch && matchesFilter;
   });
 
@@ -181,45 +199,51 @@ const CategoryManagement = () => {
   // Form validation
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (formData.name.length > 50) newErrors.name = 'Name must be less than 50 characters';
-    if (formData.description.length > 200) newErrors.description = 'Description must be less than 200 characters';
-    
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.description.trim())
+      newErrors.description = "Description is required";
+    if (formData.name.length > 50)
+      newErrors.name = "Name must be less than 50 characters";
+    if (formData.description.length > 200)
+      newErrors.description = "Description must be less than 200 characters";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const showToastMessage = (message, type) => {
     setShowToast({ show: true, message, type });
-    setTimeout(() => setShowToast({ show: false, message: '', type: '' }), 3000);
+    setTimeout(
+      () => setShowToast({ show: false, message: "", type: "" }),
+      3000
+    );
   };
 
   const handleSubmit = () => {
     if (!validateForm()) return;
 
     if (currentCategory) {
-      setCategories(cats => cats.map(cat => 
-        cat.id === currentCategory.id 
-          ? { ...cat, ...formData }
-          : cat
-      ));
-      showToastMessage('Category updated successfully!', 'success');
+      setCategories((cats) =>
+        cats.map((cat) =>
+          cat.id === currentCategory.id ? { ...cat, ...formData } : cat
+        )
+      );
+      showToastMessage("Category updated successfully!", "success");
     } else {
       const newCategory = {
         id: Date.now(),
         ...formData,
-        createdAt: new Date().toISOString().split('T')[0]
+        createdAt: new Date().toISOString().split("T")[0],
       };
-      setCategories(cats => [...cats, newCategory]);
-      showToastMessage('Category created successfully!', 'success');
+      setCategories((cats) => [...cats, newCategory]);
+      showToastMessage("Category created successfully!", "success");
     }
 
     resetForm();
   };
 
   const resetForm = () => {
-    setFormData({ name: '', description: '', type: 'product', icon: 'Box' });
+    setFormData({ name: "", description: "", type: "product", icon: "Box" });
     setCurrentCategory(null);
     setIsModalOpen(false);
     setIsTypeDropdownOpen(false);
@@ -233,7 +257,7 @@ const CategoryManagement = () => {
       name: category.name,
       description: category.description,
       type: category.type,
-      icon: category.icon
+      icon: category.icon,
     });
     setIsModalOpen(true);
     setActiveCard(null);
@@ -246,24 +270,35 @@ const CategoryManagement = () => {
   };
 
   const confirmDelete = () => {
-    setCategories(cats => cats.filter(cat => cat.id !== deleteCategory.id));
-    showToastMessage('Category deleted successfully!', 'success');
+    setCategories((cats) => cats.filter((cat) => cat.id !== deleteCategory.id));
+    showToastMessage("Category deleted successfully!", "success");
     setIsDeleteModalOpen(false);
     setDeleteCategory(null);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+  };
+
+  const handleBackToProfile = () => {
+    navigate("/admin");
   };
 
   return (
     <div className="min-h-screen bg-zinc-50 p-3 sm:p-6">
-      <div className="max-w-7xl mt-10 mb-20 mx-auto">
+      <div className="max-w-7xl mb-20 mx-auto">
         {/* Header */}
+        <div className="relative mb-5 sm:mb-0  z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <MoveBackButton onClick={handleBackToProfile} />
+            </div>
+          </div>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -277,7 +312,9 @@ const CategoryManagement = () => {
               <h1 className="text-2xl sm:text-4xl font-bold text-zinc-900">
                 Category Management
               </h1>
-              <p className="text-zinc-600 text-sm sm:text-lg">Organize and manage your categories efficiently</p>
+              <p className="text-zinc-600 pt-2 text-sm sm:text-lg">
+                Organize and manage your categories efficiently
+              </p>
             </div>
           </div>
         </motion.div>
@@ -301,9 +338,11 @@ const CategoryManagement = () => {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none z-10">
-                      <Search className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors ${
-                        isSearchFocused ? 'text-zinc-700' : 'text-zinc-400'
-                      }`} />
+                      <Search
+                        className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors ${
+                          isSearchFocused ? "text-zinc-700" : "text-zinc-400"
+                        }`}
+                      />
                     </div>
                     <input
                       type="text"
@@ -320,7 +359,7 @@ const CategoryManagement = () => {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
-                          onClick={() => setSearchTerm('')}
+                          onClick={() => setSearchTerm("")}
                           className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center"
                         >
                           <div className="p-1 hover:bg-zinc-100 rounded-lg transition-colors">
@@ -337,16 +376,22 @@ const CategoryManagement = () => {
                   <motion.button
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
-                    onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                    onClick={() =>
+                      setIsFilterDropdownOpen(!isFilterDropdownOpen)
+                    }
                     className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-white border border-zinc-300 rounded-xl sm:rounded-2xl hover:bg-zinc-50 hover:shadow-sm transition-all min-w-[140px] sm:min-w-[160px] justify-between"
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
                       <Filter className="w-4 h-4 text-zinc-500" />
                       <span className="text-zinc-700 font-medium capitalize text-sm sm:text-base">
-                        {filterType === 'all' ? 'All Types' : filterType}
+                        {filterType === "all" ? "All Types" : filterType}
                       </span>
                     </div>
-                    <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-zinc-500 transition-transform ${isFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`w-3 h-3 sm:w-4 sm:h-4 text-zinc-500 transition-transform ${
+                        isFilterDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </motion.button>
 
                   <AnimatePresence>
@@ -357,7 +402,7 @@ const CategoryManagement = () => {
                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
                         className="absolute top-full mt-2 left-0 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl shadow-lg z-50 min-w-[140px] sm:min-w-[160px] overflow-hidden"
                       >
-                        {['all', 'product', 'service'].map((type, index) => (
+                        {["all", "product", "service"].map((type, index) => (
                           <motion.button
                             key={type}
                             initial={{ opacity: 0, x: -10 }}
@@ -368,14 +413,22 @@ const CategoryManagement = () => {
                               setIsFilterDropdownOpen(false);
                             }}
                             className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-left transition-all flex items-center gap-2 sm:gap-3 group ${
-                              filterType === type ? 'bg-zinc-100 text-zinc-900' : 'hover:bg-zinc-50 text-zinc-700'
+                              filterType === type
+                                ? "bg-zinc-100 text-zinc-900"
+                                : "hover:bg-zinc-50 text-zinc-700"
                             }`}
                           >
-                            {type === 'product' && <Package className="w-4 h-4 text-zinc-600" />}
-                            {type === 'service' && <Wrench className="w-4 h-4 text-zinc-600" />}
-                            {type === 'all' && <Filter className="w-4 h-4 text-zinc-600" />}
+                            {type === "product" && (
+                              <Package className="w-4 h-4 text-zinc-600" />
+                            )}
+                            {type === "service" && (
+                              <Wrench className="w-4 h-4 text-zinc-600" />
+                            )}
+                            {type === "all" && (
+                              <Filter className="w-4 h-4 text-zinc-600" />
+                            )}
                             <span className="capitalize font-medium text-sm sm:text-base">
-                              {type === 'all' ? 'All Types' : type}
+                              {type === "all" ? "All Types" : type}
                             </span>
                           </motion.button>
                         ))}
@@ -417,8 +470,12 @@ const CategoryManagement = () => {
               >
                 <Package className="w-8 h-8 sm:w-12 sm:h-12 text-zinc-400" />
               </motion.div>
-              <h3 className="text-xl sm:text-2xl font-bold text-zinc-700 mb-2 sm:mb-3">No categories found</h3>
-              <p className="text-zinc-500 text-sm sm:text-lg">Try adjusting your search or filter criteria</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-zinc-700 mb-2 sm:mb-3">
+                No categories found
+              </h3>
+              <p className="text-zinc-500 text-sm sm:text-lg">
+                Try adjusting your search or filter criteria
+              </p>
             </motion.div>
           ) : (
             <motion.div
@@ -441,14 +498,20 @@ const CategoryManagement = () => {
                     className="group relative bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md hover:border-zinc-300 transition-all duration-300"
                   >
                     {/* Card Header */}
-                    <div className={`h-16 sm:h-20 bg-gradient-to-br ${color} relative`}>
+                    <div
+                      className={`h-16 sm:h-20 bg-gradient-to-br ${color} relative`}
+                    >
                       <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                       <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                         <div className="relative card-menu">
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setActiveCard(activeCard === category.id ? null : category.id)}
+                            onClick={() =>
+                              setActiveCard(
+                                activeCard === category.id ? null : category.id
+                              )
+                            }
                             className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl flex items-center justify-center text-white hover:bg-white/30 transition-all"
                           >
                             <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -494,24 +557,30 @@ const CategoryManagement = () => {
                     {/* Content */}
                     <div className="p-4 sm:p-6 pt-3 sm:pt-4">
                       <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <h3 className="font-bold text-zinc-900 text-base sm:text-lg truncate flex-1">{category.name}</h3>
-                        <div className={`px-2 py-1 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs font-medium ${
-                          category.type === 'product' 
-                            ? 'bg-zinc-100 text-zinc-700' 
-                            : 'bg-gray-100 text-gray-700'
-                        }`}>
+                        <h3 className="font-bold text-zinc-900 text-base sm:text-lg truncate flex-1">
+                          {category.name}
+                        </h3>
+                        <div
+                          className={`px-2 py-1 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs font-medium ${
+                            category.type === "product"
+                              ? "bg-zinc-100 text-zinc-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}
+                        >
                           {category.type}
                         </div>
                       </div>
-                      
+
                       <p className="text-zinc-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 leading-relaxed">
                         {category.description}
                       </p>
-                      
+
                       <div className="flex items-center justify-between text-xs text-zinc-500">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>{new Date(category.createdAt).toLocaleDateString()}</span>
+                          <span>
+                            {new Date(category.createdAt).toLocaleDateString()}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -537,13 +606,13 @@ const CategoryManagement = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white border border-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-sm hover:border-zinc-300 transition-all"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
             </motion.button>
-            
+
             <div className="flex gap-1 sm:gap-2">
               {[...Array(totalPages)].map((_, i) => (
                 <motion.button
@@ -553,19 +622,21 @@ const CategoryManagement = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={`px-3 py-2 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl font-medium transition-all text-sm sm:text-base ${
                     currentPage === i + 1
-                      ? 'bg-gradient-to-r from-zinc-800 to-zinc-900 text-white shadow-sm'
-                      : 'bg-white border border-zinc-200 hover:shadow-sm hover:border-zinc-300 text-zinc-700'
+                      ? "bg-gradient-to-r from-zinc-800 to-zinc-900 text-white shadow-sm"
+                      : "bg-white border border-zinc-200 hover:shadow-sm hover:border-zinc-300 text-zinc-700"
                   }`}
                 >
                   {i + 1}
                 </motion.button>
               ))}
             </div>
-            
+
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white border border-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-sm hover:border-zinc-300 transition-all"
             >
@@ -598,10 +669,12 @@ const CategoryManagement = () => {
                   <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-                        {currentCategory ? 'Edit Category' : 'Add Category'}
+                        {currentCategory ? "Edit Category" : "Add Category"}
                       </h2>
                       <p className="text-zinc-600 mt-1 text-sm sm:text-base">
-                        {currentCategory ? 'Update category information' : 'Create a new category'}
+                        {currentCategory
+                          ? "Update category information"
+                          : "Create a new category"}
                       </p>
                     </div>
                     <motion.button
@@ -626,7 +699,9 @@ const CategoryManagement = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         className={`w-full px-4 py-3 sm:py-4 bg-white border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all placeholder-zinc-400 text-sm sm:text-base ${
-                          errors.name ? 'border-red-300 bg-red-50' : 'border-zinc-300'
+                          errors.name
+                            ? "border-red-300 bg-red-50"
+                            : "border-zinc-300"
                         }`}
                         placeholder="Enter category name"
                       />
@@ -653,7 +728,9 @@ const CategoryManagement = () => {
                         onChange={handleInputChange}
                         rows="4"
                         className={`w-full px-4 py-3 sm:py-4 bg-white border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all resize-none placeholder-zinc-400 text-sm sm:text-base ${
-                          errors.description ? 'border-red-300 bg-red-50' : 'border-zinc-300'
+                          errors.description
+                            ? "border-red-300 bg-red-50"
+                            : "border-zinc-300"
                         }`}
                         placeholder="Enter category description"
                       />
@@ -679,11 +756,13 @@ const CategoryManagement = () => {
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           type="button"
-                          onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
+                          onClick={() =>
+                            setIsTypeDropdownOpen(!isTypeDropdownOpen)
+                          }
                           className="w-full px-4 py-3 sm:py-4 bg-white border border-zinc-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all text-left flex items-center justify-between text-sm sm:text-base"
                         >
                           <div className="flex items-center gap-3">
-                            {formData.type === 'product' ? (
+                            {formData.type === "product" ? (
                               <Package className="w-4 h-4 text-zinc-600" />
                             ) : (
                               <Wrench className="w-4 h-4 text-zinc-600" />
@@ -692,7 +771,11 @@ const CategoryManagement = () => {
                               {formData.type}
                             </span>
                           </div>
-                          <ChevronDown className={`w-4 h-4 text-zinc-500 transition-transform ${isTypeDropdownOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown
+                            className={`w-4 h-4 text-zinc-500 transition-transform ${
+                              isTypeDropdownOpen ? "rotate-180" : ""
+                            }`}
+                          />
                         </motion.button>
 
                         <AnimatePresence>
@@ -703,7 +786,7 @@ const CategoryManagement = () => {
                               exit={{ opacity: 0, scale: 0.95, y: -10 }}
                               className="absolute top-full mt-2 left-0 right-0 bg-white border border-zinc-200 rounded-xl sm:rounded-2xl shadow-lg z-50 overflow-hidden"
                             >
-                              {['product', 'service'].map((type, index) => (
+                              {["product", "service"].map((type, index) => (
                                 <motion.button
                                   key={type}
                                   type="button"
@@ -711,14 +794,16 @@ const CategoryManagement = () => {
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: index * 0.05 }}
                                   onClick={() => {
-                                    setFormData(prev => ({ ...prev, type }));
+                                    setFormData((prev) => ({ ...prev, type }));
                                     setIsTypeDropdownOpen(false);
                                   }}
                                   className={`w-full px-4 py-3 text-left transition-all flex items-center gap-3 ${
-                                    formData.type === type ? 'bg-zinc-100 text-zinc-900' : 'hover:bg-zinc-50 text-zinc-700'
+                                    formData.type === type
+                                      ? "bg-zinc-100 text-zinc-900"
+                                      : "hover:bg-zinc-50 text-zinc-700"
                                   }`}
                                 >
-                                  {type === 'product' ? (
+                                  {type === "product" ? (
                                     <Package className="w-4 h-4 text-zinc-600" />
                                   ) : (
                                     <Wrench className="w-4 h-4 text-zinc-600" />
@@ -744,20 +829,33 @@ const CategoryManagement = () => {
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           type="button"
-                          onClick={() => setIsIconDropdownOpen(!isIconDropdownOpen)}
+                          onClick={() =>
+                            setIsIconDropdownOpen(!isIconDropdownOpen)
+                          }
                           className="w-full px-4 py-3 sm:py-4 bg-white border border-zinc-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all text-left flex items-center justify-between"
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getIcon(formData.icon).color} flex items-center justify-center`}>
-                              {React.createElement(getIcon(formData.icon).icon, {
-                                className: "w-4 h-4 text-white"
-                              })}
+                            <div
+                              className={`w-8 h-8 rounded-lg bg-gradient-to-br ${
+                                getIcon(formData.icon).color
+                              } flex items-center justify-center`}
+                            >
+                              {React.createElement(
+                                getIcon(formData.icon).icon,
+                                {
+                                  className: "w-4 h-4 text-white",
+                                }
+                              )}
                             </div>
                             <span className="text-zinc-700 font-medium">
                               {formData.icon}
                             </span>
                           </div>
-                          <ChevronDown className={`w-4 h-4 text-zinc-500 transition-transform ${isIconDropdownOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown
+                            className={`w-4 h-4 text-zinc-500 transition-transform ${
+                              isIconDropdownOpen ? "rotate-180" : ""
+                            }`}
+                          />
                         </motion.button>
 
                         <AnimatePresence>
@@ -770,7 +868,8 @@ const CategoryManagement = () => {
                             >
                               {availableIcons.map((iconItem, index) => {
                                 const IconComponent = iconItem.icon;
-                                const isSelected = formData.icon === iconItem.name;
+                                const isSelected =
+                                  formData.icon === iconItem.name;
                                 return (
                                   <motion.button
                                     key={iconItem.name}
@@ -779,14 +878,21 @@ const CategoryManagement = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.03 }}
                                     onClick={() => {
-                                      setFormData(prev => ({ ...prev, icon: iconItem.name }));
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        icon: iconItem.name,
+                                      }));
                                       setIsIconDropdownOpen(false);
                                     }}
                                     className={`w-full px-4 py-3 text-left transition-all flex items-center gap-3 relative ${
-                                      isSelected ? 'bg-zinc-100 text-zinc-900' : 'hover:bg-zinc-50 text-zinc-700'
+                                      isSelected
+                                        ? "bg-zinc-100 text-zinc-900"
+                                        : "hover:bg-zinc-50 text-zinc-700"
                                     }`}
                                   >
-                                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${iconItem.color} flex items-center justify-center`}>
+                                    <div
+                                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${iconItem.color} flex items-center justify-center`}
+                                    >
                                       <IconComponent className="w-4 h-4 text-white" />
                                     </div>
                                     <span className="font-medium flex-1">
@@ -822,7 +928,9 @@ const CategoryManagement = () => {
                         onClick={handleSubmit}
                         className="flex-1 px-6 py-3 sm:py-4 bg-gradient-to-r from-zinc-800 to-zinc-900 text-white rounded-xl sm:rounded-2xl hover:shadow-lg transition-all font-medium text-sm sm:text-base"
                       >
-                        {currentCategory ? 'Update Category' : 'Create Category'}
+                        {currentCategory
+                          ? "Update Category"
+                          : "Create Category"}
                       </motion.button>
                     </div>
                   </div>
@@ -859,9 +967,15 @@ const CategoryManagement = () => {
                   >
                     <Trash2 className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </motion.div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 mb-2 sm:mb-3">Delete Category</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 mb-2 sm:mb-3">
+                    Delete Category
+                  </h3>
                   <p className="text-zinc-600 mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base">
-                    Are you sure you want to delete <span className="font-semibold text-zinc-800">"{deleteCategory?.name}"</span>? This action cannot be undone.
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold text-zinc-800">
+                      "{deleteCategory?.name}"
+                    </span>
+                    ? This action cannot be undone.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <motion.button
@@ -897,13 +1011,15 @@ const CategoryManagement = () => {
             exit={{ opacity: 0, y: 100, scale: 0.3 }}
             className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50"
           >
-            <div className={`flex items-center gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg border text-sm sm:text-base ${
-              showToast.type === 'success' 
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-400' 
-                : 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-400'
-            }`}>
+            <div
+              className={`flex items-center gap-3 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg border text-sm sm:text-base ${
+                showToast.type === "success"
+                  ? "bg-gradient-to-r from-green-500 to-green-600 text-white border-green-400"
+                  : "bg-gradient-to-r from-red-500 to-red-600 text-white border-red-400"
+              }`}
+            >
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-white/20 flex items-center justify-center">
-                {showToast.type === 'success' ? (
+                {showToast.type === "success" ? (
                   <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
                   <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />

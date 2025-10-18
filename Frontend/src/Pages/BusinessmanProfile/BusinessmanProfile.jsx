@@ -104,21 +104,21 @@ const BusinessmanProfileDashboard = () => {
       priority: "high",
     },
     {
-      id: "email-verify",
-      label: "Email Verification",
+      id: "change-email",
+      label: "Update Email Address",
       icon: Mail,
-      description: "Verify and secure your email address",
-      badge: businessmanProfile.isEmailVerified
-        ? "Verified"
-        : "Action Required",
+      description: "Update and secure your email address",
+      // badge: businessmanProfile.isEmailVerified
+      //   ? "Verified"
+      //   : "Action Required",
       priority: businessmanProfile.isEmailVerified ? "low" : "high",
     },
     {
-      id: "phone-verify",
-      label: "Phone Verification",
+      id: "change-phone",
+      label: "Update Phone Number",
       icon: Phone,
-      description: "Add an extra layer of security",
-      badge: businessmanProfile.isPhoneVerified ? "Verified" : "Pending",
+      description: "Update and secure your phone number",
+      // badge: businessmanProfile.isPhoneVerified ? "Verified" : "Pending",
       priority: businessmanProfile.isPhoneVerified ? "low" : "medium",
     },
     {

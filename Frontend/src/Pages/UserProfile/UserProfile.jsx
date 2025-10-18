@@ -80,19 +80,19 @@ const UserProfileDashboard = () => {
       priority: 'high'
     },
     { 
-      id: 'email-verify', 
-      label: 'Email Verification', 
+      id: 'change-email', 
+      label: 'Update Email Address', 
       icon: Mail, 
-      description: 'Verify and secure your email address',
-      badge: userProfile.isEmailVerified ? 'Verified' : 'Action Required',
+      description: 'Update and secure your email address',
+      // badge: userProfile.isEmailVerified ? 'Verified' : 'Action Required',
       priority: userProfile.isEmailVerified ? 'low' : 'high'
     },
     { 
-      id: 'phone-verify', 
-      label: 'Phone Verification', 
+      id: 'change-phone', 
+      label: 'Update Phone Number', 
       icon: Phone, 
-      description: 'Add an extra layer of security',
-      badge: userProfile.isPhoneVerified ? 'Verified' : 'Pending',
+      description: 'Update and secure your phone number',
+      // badge: userProfile.isPhoneVerified ? 'Verified' : 'Pending',
       priority: userProfile.isPhoneVerified ? 'low' : 'medium'
     },
     { 
