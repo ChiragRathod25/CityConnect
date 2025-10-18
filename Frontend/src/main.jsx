@@ -43,6 +43,7 @@ import AiImageGeneratorUI from "./Pages/ImageGenerator";
 import AddServiceProviderForm from "./components/FormPage/AddServiceCard";
 import ManageBusinessmanUI from "./Pages/ManageBusinessman";
 import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
+import ContactEditPage from "./components/businessmanProfile/Email";
 
 const router = createBrowserRouter([
   {
@@ -107,34 +108,27 @@ const router = createBrowserRouter([
         element: <EditBusinessmanProfileNavigation />,
       },
       {
-        path: "/email",
-        element: <EmailEditPage />,
+        path: "/profile/edit-profile",
+        element: <EditUserProfileInfo />,
       },
       {
         path: "/admin",
         element: <AdminProfilePageUI />,
       },
       {
-        path: "/profile/edit-profile",
-        element: <EditUserProfileInfo />,
-      },
-      {
         path: "/contactus",
         element: <ContactUsPageUI />,
       },
       {
-        // path: "/admin/manage-category",
-        path: "/neel",
+        path: "/admin/manage-category",
         element: <ManageCategoryUI />,
       },
       {
-        // path: "/admin/manage-user",
-        path: "/user",
+        path: "/admin/manage-users",
         element: <ManageUserUI />,
       },
-       {
-        // path: "/admin/manage-businessman",
-        path: "/business",
+      {
+        path: "/admin/manage-businessmen",
         element: <ManageBusinessmanUI />,
       },
       {

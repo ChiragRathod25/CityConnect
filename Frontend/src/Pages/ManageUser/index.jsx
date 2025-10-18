@@ -1,10 +1,8 @@
-import React from 'react'
-import AdminUserManagement from './ManageUser'
+import React from "react";
+import AdminUserManagement from "./ManageUser";
 
 const ManageUserUI = () => {
-  return (
-    <AdminUserManagement/>
-  )
-}
+  return <AdminUserManagement />;
+};
 
-export default ManageUserUI
+export default ManageUserUI;

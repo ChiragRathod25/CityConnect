@@ -18,6 +18,8 @@ import {
   Shield,
   AlertTriangle,
 } from "lucide-react";
+import MoveBackButton from "@/components/ui/MoveBackButton";
+import { useNavigate } from "react-router-dom";
 
 // Mock user data
 const mockUsers = [
@@ -662,7 +664,7 @@ export default function AdminUserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const navigate = useNavigate();
   const usersPerPage = 10;
 
   // Sort options
@@ -732,25 +734,36 @@ export default function AdminUserManagement() {
   const handleUserAction = (userId, action) => {
     console.log(`${action} user:`, userId);
   };
+  
+  const handleBackToProfile = () => {
+    navigate("/admin");
+  };
 
   return (
-    <div className="min-h-screen py-10 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200  px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen py-5 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200  px-4 sm:px-6 lg:px-8">
+      <div className="relative mb-5 sm:mb-0  z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <MoveBackButton onClick={handleBackToProfile} />
+          </div>
+        </div>
+      </div>
+      <div className="max-w-7xl pb-10 mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 sm:mb-10 text-center"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-2 sm:p-3 bg-gray-800 rounded-2xl shadow-lg">
-              <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+          <div className="flex flex-col items-center justify-center mb-2">
+            <div className="w-16 h-16 p-3 bg-gray-800 rounded-2xl shadow-lg">
+              <User className="w-10 h-10 animate-pulse  text-gray-400" />
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+            <h1 className="text-3xl pt-4 lg:text-4xl font-bold text-gray-800">
               User Management
             </h1>
           </div>
-          <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-md sm:text-base lg:text-lg max-w-2xl mx-auto">
             Manage and monitor user accounts with advanced controls
           </p>
         </motion.div>

@@ -1,7 +1,10 @@
-import BusinessmanProfileInfo from "@/components/businessmanProfile/ProfileInfo";import { Button } from "@/components/ui/Button";
+import ContactEditPage from "@/components/businessmanProfile/Email";
+import BusinessmanProfileInfo from "@/components/businessmanProfile/ProfileInfo";
+import { Button } from "@/components/ui/Button";
 import MoveBackButton from "@/components/ui/MoveBackButton";
 import EditUserProfileInfo from "@/components/userProfile/EditProfileInfo";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import NotFoundPageUI from "../NotFound/Index";
 
 const ProfilePage = () => {
   const { itemId } = useParams();
@@ -10,11 +13,10 @@ const ProfilePage = () => {
   const pathSegments = location.pathname.split("/");
   const profileType = pathSegments[1]; // This will be 'user-profile' or 'business-profile'
   const basePath = `/${profileType}`;
-
   const userComponents = {
     "profile-info": EditUserProfileInfo,
-    // 'email-verify': EmailVerification,
-    // 'phone-verify': PhoneVerification,
+    "change-email": ContactEditPage,
+    "change-phone": ContactEditPage,
     // 'password-update': SecuritySettings,
     // 'status': AccountStatus,
     // 'orders': OrderHistory,
@@ -26,8 +28,8 @@ const ProfilePage = () => {
 
   const businessComponents = {
     "profile-info": BusinessmanProfileInfo,
-    // 'email-verify': EmailVerification,
-    // 'phone-verify': PhoneVerification,
+    "change-email": ContactEditPage,
+    "change-phone": ContactEditPage,
     // 'password-update': SecuritySettings,
     // 'status': AccountStatus,
     // 'orders': OrderHistory,
@@ -47,24 +49,7 @@ const ProfilePage = () => {
   const componentMap =
     profileType === "user-profile" ? userComponents : businessComponents;
 
-  const ComponentToRender =
-    componentMap[itemId] ||
-    (() => (
-      <div className="min-h-screen p-6">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={() => navigate(basePath)}
-            className="mb-6 flex items-center text-gray-600 hover:text-gray-900"
-          >
-            ← Back to Dashboard
-          </button>
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h1 className="text-2xl font-bold mb-4">Page Not Found</h1>
-            <p>The page you are looking for does not exist.</p>
-          </div>
-        </div>
-      </div>
-    ));
+  const ComponentToRender = componentMap[itemId] || (() => <NotFoundPageUI />);
 
   const handleBackToProfile = () => {
     profileType === "user-profile"
@@ -79,20 +64,32 @@ const ProfilePage = () => {
         <div className="absolute inset-0">
           {/* Animated circles */}
           <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full opacity-15 animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-32 left-1/4 w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full opacity-25 animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+          <div
+            className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full opacity-15 animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute bottom-32 left-1/4 w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full opacity-25 animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full opacity-10 animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
         </div>
-        
+
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
               linear-gradient(to right, #6b7280 1px, transparent 1px),
               linear-gradient(to bottom, #6b7280 1px, transparent 1px)
             `,
-            backgroundSize: '50px 50px'
-          }}></div>
+              backgroundSize: "50px 50px",
+            }}
+          ></div>
         </div>
       </div>
 
@@ -105,8 +102,8 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-        
-        <ComponentToRender basePath={basePath} />
+
+        <ComponentToRender basePath={basePath} type={itemId} />
       </div>
     </div>
   );
