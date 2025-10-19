@@ -6,6 +6,14 @@ const userSchema = new mongoose.Schema(
     dateOfBirth: {
       type: Date,
     },
+    firstName:{
+      type: String,
+      trim: true,
+    },
+    lastName:{
+      type: String,
+      trim: true,
+    },
     username: {
       type: String,
       required: true,
@@ -33,7 +41,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 8,
     },
-    image: {
+    avatar: {
       type: String,
       default: null,
     },

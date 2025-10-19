@@ -142,14 +142,14 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       return next();
     }
 
-    console.log("Verifying JWT token...",req.cookies);
+    // console.log("Verifying JWT token...",req.cookies);
     const token =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
    
     if (!token) throw new ApiError(401, `Token is required`);
     const decodeToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    console.log("Decoded Token:", decodeToken);
+    // console.log("Decoded Token:", decodeToken);
     const user = await User.findById(decodeToken?.userId).select(
       "-password -refreshToken"
     );
