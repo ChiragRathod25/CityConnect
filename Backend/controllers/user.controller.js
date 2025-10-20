@@ -30,6 +30,42 @@ const generateOTP = () => {
   return otp;
 };
 
+
+// createTempContactSession.controller.js
+const createTempContactSession = asyncHandler(async (req, res) => {
+  const { userId, newContact, type } = req.body; // type = "email" or "phone"
+
+  if (!userId || !newContact || !["email", "phone"].includes(type)) {
+    throw new ApiError(400, "Invalid data provided");
+  }
+
+  const sessionId = generateSessionId();
+
+  const tempData = {
+    userData: {
+      userId,
+      [type]: newContact,
+    },
+    verificationStatus: {
+      emailVerified: type === "email" ? false : true,
+      phoneVerified: type === "phone" ? false : true,
+    },
+    type,
+    createdAt: new Date().toISOString(),
+  };
+
+  await storeTempData(sessionId, tempData, 600); // 10 min validity
+
+  res.status(201).json(
+    new ApiResponse(201, "Temporary contact update session created", {
+      sessionId,
+      type,
+      nextStep: `${type}_verification`,
+    })
+  );
+});
+
+
 // Step 1: Store registration data temporarily (no user creation yet)
 const InitialUserRegister = asyncHandler(async (req, res) => {
   // Sanitized Data
@@ -124,9 +160,9 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Registration session not found or expired");
   }
 
-  if (tempData.verificationStatus.emailVerified) {
-    throw new ApiError(400, "Email already verified");
-  }
+  // if (tempData.verificationStatus.emailVerified) {
+  //   throw new ApiError(400, "Email already verified");
+  // }
   // Check rate limiting
   const rateLimit = await checkRateLimit(sessionId, "email");
 
@@ -185,13 +221,14 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   const tempData = await getTempData(sessionId);
 
+  console.log("tempData for verification:", tempData);
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
 
-  if (tempData.verificationStatus.emailVerified) {
-    throw new ApiError(400, "Email already verified");
-  }
+  // if (tempData.verificationStatus.emailVerified) {
+  //   throw new ApiError(400, "Email already verified");
+  // }
 
   try {
     // Verify OTP from Redis
@@ -207,6 +244,16 @@ const verifyEmail = asyncHandler(async (req, res) => {
       "emailVerified",
       true
     );
+
+    //check email is same as a backend data, 
+    //get user from the backend
+    const user = await User.findById(tempData.userData.userId);
+    if (!user) {
+      throw new ApiError(404, "User not found for email update");
+    }
+    //update email in the backend
+    user.email = tempData.userData.email;
+    await user.save({ validateBeforeSave: true });
 
     return res.status(200).json(
       new ApiResponse(200, "Email verified successfully", {
@@ -241,9 +288,9 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Please verify your email first");
   }
 
-  if (tempData.verificationStatus.phoneVerified) {
-    throw new ApiError(400, "phoneNumber already verified");
-  }
+  // if (tempData.verificationStatus.phoneVerified) {
+  //   throw new ApiError(400, "phoneNumber already verified");
+  // }
 
   // Check rate limiting
   const rateLimit = await checkRateLimit(sessionId, "phoneNumber");
@@ -261,9 +308,10 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
     // Store OTP in Redis
     await storeOTP(sessionId, otp, "phone_verification", 120);
 
+    console.log("tempData for phone verification:", tempData);
     // Send OTP via SMS
     const smsResponse = await sendMobileVerification({
-      phoneNumber: tempData.userData.phoneNumber,
+      phoneNumber: tempData.userData?.phoneNumber || tempData.userData.phone,
       verificationCode: otp,
     });
 
@@ -299,9 +347,9 @@ const verifyPhone = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Please verify your email first");
   }
 
-  if (tempData.verificationStatus.phoneVerified) {
-    throw new ApiError(400, "Phone already verified");
-  }
+  // if (tempData.verificationStatus.phoneVerified) {
+  //   throw new ApiError(400, "Phone already verified");
+  // }
 
   // Verify OTP
   const isValidOTP = await verifyOTP(sessionId, otp, "phone_verification");
@@ -313,6 +361,18 @@ const verifyPhone = asyncHandler(async (req, res) => {
   tempData.verificationStatus.phoneVerified = true;
   // save back in Redis or wherever you keep it
   await storeTempData(sessionId, tempData, 600); // refresh expiry
+
+
+  // check phone is same as a backend data,
+  //get user from the backend
+  const user = await User.findById(tempData.userData?.userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  //update phone in the backend
+  user.phoneNumber = tempData.userData?.phoneNumber || tempData.userData?.phone;
+  await user.save({ validateBeforeSave: true });
+
 
   return res.status(200).json(
     new ApiResponse(200, "Phone number verified successfully", {
@@ -776,6 +836,13 @@ const updateAvatar = asyncHandler(async (req, res) => {
   );
 });
 
+const updateUserEmail = asyncHandler(async (req, res) => {
+
+});
+const updateUserMobile = asyncHandler(async (req, res) => {
+
+});
+
 const updatePassword = asyncHandler(async (req, res) => {});
 
 const forgotPassword = asyncHandler(async (req, res) => {});
@@ -786,8 +853,10 @@ const getUserById = asyncHandler(async (req, res) => {});
 
 // const getCurrentUser = asyncHandler(async (req, res) => {});
 
+
 export {
   InitialUserRegister,
+  createTempContactSession,
   sendEmailVerificationOTP,
   verifyEmail,
   sendPhoneVerificationOTP,

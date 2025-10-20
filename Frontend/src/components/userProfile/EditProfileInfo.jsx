@@ -430,6 +430,7 @@ const EditUserProfileInfo = () => {
   const [profileData, setProfileData] = useState(
     useSelector((state) => state.auth.userData?.user)
   );
+  
   useEffect(() => {
     setEditedData({ ...profileData });
   }, [profileData]);

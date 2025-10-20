@@ -3,6 +3,7 @@ import {Router} from "express"
 const router = Router()
 
 import {
+    createTempContactSession,
    InitialUserRegister,
     sendEmailVerificationOTP,
     verifyEmail,
@@ -25,6 +26,7 @@ from "../controllers/user.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
+router.post("/create-temp-contact-session", createTempContactSession);
 router.post("/initialRegister", InitialUserRegister);
 router.post("/send-email-verification-otp", sendEmailVerificationOTP);
 router.post("/verify-email", verifyEmail);

@@ -3,6 +3,28 @@ import { handleApiRequest } from "../utils/apiHelper.js";
 import toast from "react-hot-toast";
 
 export class DatabaseService {
+
+  async createTempContactSession({ userId, newContact, type }) {
+    
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.post("/api/v1/user/create-temp-contact-session", {
+            userId,
+            newContact,
+            type,
+          }),
+        "Create Temp Contact Session"
+      ),
+      {
+        loading: "Creating session...",
+        success: "Session created successfully!",
+        error: "Failed to create session. Please try again.",
+      }
+    );
+  }
+  
+
   async InitialUserRegister({ username, email, password, phoneNumber, role }) {
     return toast.promise(
       handleApiRequest(
@@ -192,6 +214,8 @@ export class DatabaseService {
       }
     );
   }
+
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;
