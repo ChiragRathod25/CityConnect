@@ -462,9 +462,9 @@ const EditUserProfileInfo = () => {
     try {
       //2 phase - first check, if the avatar is updated then first update it
 
-      if (editedData.avatar !== profileData.avatar) {
+      if (editedData?.avatar !== profileData?.avatar) {
         try {
-          const updatedAvatarUrl = await updateProfileAvatar(editedData.avatar);
+          const updatedAvatarUrl = await updateProfileAvatar(editedData?.avatar);
           editedData.avatar = updatedAvatarUrl; // now a Cloudinary URL
         } catch (error) {
           console.error("Error updating avatar:", error);
@@ -474,7 +474,7 @@ const EditUserProfileInfo = () => {
       }
 
       console.log("Begging to update other profile info");
-      console.log("Cloudinary Avatar URL:", editedData.avatar);
+      console.log("Cloudinary Avatar URL:", editedData?.avatar);
       //2nd phase - upadte other profile info
       const response = await databaseService.updateUserProfile(editedData);
       if (response.error) {
@@ -557,8 +557,8 @@ const EditUserProfileInfo = () => {
                   <img
                     src={
                       isEditing
-                        ? editedData.avatarPreview || profileData.avatar
-                        : profileData.avatar
+                        ? editedData?.avatarPreview || profileData?.avatar
+                        : profileData?.avatar
                     }
                     alt="Profile"
                     className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
@@ -585,7 +585,7 @@ const EditUserProfileInfo = () => {
               {/* Profile Header Info */}
               <div className="flex-1 text-center md:text-left">
                 <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
-                  @{profileData.username}
+                  @{profileData?.username}
                 </h2>
                 <div className="flex items-center justify-center md:justify-start space-x-2 mb-2 sm:mb-4">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse" />
@@ -611,12 +611,61 @@ const EditUserProfileInfo = () => {
           {/* Profile Fields */}
           <div className="p-4 sm:p-6 md:p-8 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+             
               {/* Username Field */}
+              <div className="space-y-3 sm:space-y-4 group">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-[#fef3c7] text-[#d97706]">
+                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                   User Name
+                  </h3>
+                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-0.5 sm:py-1 bg-[#fef3c7] rounded-md sm:rounded-lg">
+                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#d97706]" />
+                    <span className="text-xs font-bold text-[#d97706] uppercase">
+                      Protected
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
+                  <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
+                    {profileData?.username}
+                  </div>
+                </div>
+              </div>
+
+              {/* Email Field - Protected */}
+              <div className="space-y-3 sm:space-y-4 group">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-[#fef3c7] text-[#d97706]">
+                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                    Email Address
+                  </h3>
+                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-0.5 sm:py-1 bg-[#fef3c7] rounded-md sm:rounded-lg">
+                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#d97706]" />
+                    <span className="text-xs font-bold text-[#d97706] uppercase">
+                      Protected
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
+                  <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
+                    {profileData?.email}
+                  </div>
+                </div>
+              </div>
+
+                {/* firstName Field */}
               <div className="space-y-3 sm:space-y-4 group">
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div
                     className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                      activeField === "username" && isEditing
+                      activeField === "firstName" && isEditing
                         ? "bg-[#1f2937] text-white shadow-lg"
                         : "bg-[#f8fafc] text-[#6b7280]"
                     }`}
@@ -624,13 +673,13 @@ const EditUserProfileInfo = () => {
                     <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   </div>
                   <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    Username
+                    First Name
                   </h3>
                 </div>
 
                 <div
                   className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
-                    activeField === "username" && isEditing
+                    activeField === "firstName" && isEditing
                       ? "border-[#1f2937] bg-white shadow-lg"
                       : "border-[#e2e8f0] bg-[#f8fafc]"
                   }`}
@@ -638,18 +687,18 @@ const EditUserProfileInfo = () => {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editedData.username}
+                      value={editedData?.firstName}
                       onChange={(e) =>
-                        handleInputChange("username", e.target.value)
+                        handleInputChange("firstName", e.target.value)
                       }
-                      onFocus={() => setActiveField("username")}
+                      onFocus={() => setActiveField("firstName")}
                       onBlur={() => setActiveField("")}
                       className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-semibold text-[#1f2937] placeholder-[#9ca3af]"
-                      placeholder="Enter firstname..."
+                      placeholder="Enter first name..."
                     />
                   ) : (
                     <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
-                      {profileData.firstname}
+                      {profileData?.firstName}
                     </div>
                   )}
                 </div>
@@ -671,9 +720,26 @@ const EditUserProfileInfo = () => {
                   </h3>
                 </div>
 
+                {/* lastName Field */}
+              <div className="space-y-3 sm:space-y-4 group">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div
+                    className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
+                      activeField === "lastName" && isEditing
+                        ? "bg-[#1f2937] text-white shadow-lg"
+                        : "bg-[#f8fafc] text-[#6b7280]"
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                    Last Name
+                  </h3>
+                </div>
+
                 <div
                   className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
-                    activeField === "lastname" && isEditing
+                    activeField === "lastName" && isEditing
                       ? "border-[#1f2937] bg-white shadow-lg"
                       : "border-[#e2e8f0] bg-[#f8fafc]"
                   }`}
@@ -681,68 +747,23 @@ const EditUserProfileInfo = () => {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editedData.lastname}
+                      value={editedData?.lastName}
                       onChange={(e) =>
-                        handleInputChange("lastname", e.target.value)
+                        handleInputChange("lastName", e.target.value)
                       }
-                      onFocus={() => setActiveField("lastname")}
+                      onFocus={() => setActiveField("lastName")}
                       onBlur={() => setActiveField("")}
                       className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-semibold text-[#1f2937] placeholder-[#9ca3af]"
-                      placeholder="Enter lastname..."
+                      placeholder="Enter last name..."
                     />
                   ) : (
                     <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
-                      {profileData.lastname}
+                      {profileData?.lastName}
                     </div>
                   )}
                 </div>
               </div>
-              {/* username Field - Protected */}
-              <div className="space-y-3 sm:space-y-4 group">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div className="p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-[#fef3c7] text-[#d97706]">
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  </div>
-                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    UserName
-                  </h3>
-                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-0.5 sm:py-1 bg-[#fef3c7] rounded-md sm:rounded-lg">
-                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#d97706]" />
-                    <span className="text-xs font-bold text-[#d97706] uppercase">
-                      Protected
-                    </span>
-                  </div>
-                </div>
 
-                <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
-                  <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
-                    {profileData.username}
-                  </div>
-                </div>
-              </div>
-              {/* Email Field - Protected */}
-              <div className="space-y-3 sm:space-y-4 group">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div className="p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-[#fef3c7] text-[#d97706]">
-                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  </div>
-                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    Email Address
-                  </h3>
-                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-0.5 sm:py-1 bg-[#fef3c7] rounded-md sm:rounded-lg">
-                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#d97706]" />
-                    <span className="text-xs font-bold text-[#d97706] uppercase">
-                      Protected
-                    </span>
-                  </div>
-                </div>
-
-                <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
-                  <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
-                    {profileData.email}
-                  </div>
-                </div>
-              </div>
 
               {/* Phone Field - Protected */}
               <div className="space-y-3 sm:space-y-4 group">
@@ -763,7 +784,7 @@ const EditUserProfileInfo = () => {
 
                 <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
                   <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
-                    {profileData.phoneNumber}
+                    {profileData?.phoneNumber}
                   </div>
                 </div>
               </div>
@@ -791,13 +812,13 @@ const EditUserProfileInfo = () => {
                 >
                   {isEditing ? (
                     <DatePicker
-                      value={editedData.dob}
+                      value={editedData?.dob}
                       onChange={(value) => handleInputChange("dob", value)}
                     />
                   ) : (
                     <div className="rounded-xl sm:rounded-2xl border-2 border-[#e2e8f0] bg-[#f8fafc]">
                       <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
-                        {new Date(profileData.dateOfBirth).toLocaleDateString(
+                        {new Date(profileData?.dateOfBirth).toLocaleDateString(
                           "en-US",
                           {
                             year: "numeric",
@@ -838,17 +859,17 @@ const EditUserProfileInfo = () => {
               >
                 {isEditing ? (
                   <textarea
-                    value={editedData.bio}
-                    onChange={(e) => handleInputChange("bio", e.target.value)}
-                    onFocus={() => setActiveField("bio")}
-                    onBlur={() => setActiveField("")}
+                    value={editedData?.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    onFocus={() => setActiveField('bio')}
+                    onBlur={() => setActiveField('')}
                     rows={4}
                     className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-medium text-[#1f2937] placeholder-[#9ca3af] resize-none"
                     placeholder="Tell your story..."
                   />
                 ) : (
                   <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#1f2937] leading-relaxed min-h-[80px] sm:min-h-[100px] md:min-h-[120px] flex items-center">
-                    {profileData.bio}
+                    {profileData?.bio}
                   </div>
                 )}
               </div>
