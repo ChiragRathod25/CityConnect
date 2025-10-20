@@ -1,7 +1,8 @@
 import { ApiError } from "./ApiError.js";
 
 const errorHandler = (err, req, res, next) => {
-  console.log("Error caught:", err.message);
+  console.log("Entering error handler middleware",err);
+  console.log("Error caught:", err.message); 
   
   // Handle our custom ApiError
   if (err instanceof ApiError) {

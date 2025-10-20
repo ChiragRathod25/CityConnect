@@ -22,6 +22,7 @@ import { sessionService } from "../services/sessionService.js";
 
 import sanitize from "mongo-sanitize";
 import crypto from "crypto";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateOTP = () => {
   const otp = crypto.randomInt(100000, 1000000).toString(); // Generate a 6-digit OTP
@@ -95,16 +96,16 @@ const InitialUserRegister = asyncHandler(async (req, res) => {
 
   await storeTempData(sessionId, tempData, 600); // 10 minutes
 
-  return res.status(201).json(
+  res.status(201).json(
     new ApiResponse(
       201,
       "Registration data stored. Please verify your email and phoneNumber.",
       {
         sessionId,
         nextStep: "email_verification",
-        email: validatedData.email,
-        phoneNumber: validatedData.phoneNumber,
-        role: validatedData.role,
+        email: validatedData?.email,
+        phoneNumber: validatedData?.phoneNumber,
+        role: validatedData?.role,
       }
     )
   );
@@ -139,7 +140,6 @@ const sendEmailVerificationOTP = asyncHandler(async (req, res) => {
   const otp = generateOTP();
 
   try {
-
     await storeOTP(sessionId, otp, "email_verification", 120);
 
     // Send OTP via email
@@ -194,10 +194,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   try {
-
     // Verify OTP from Redis
     const isValidOTP = await verifyOTP(sessionId, otp, "email_verification");
-    
+
     if (!isValidOTP) {
       throw new ApiError(400, "Invalid or expired verification code");
     }
@@ -259,7 +258,6 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
   const otp = generateOTP();
 
   try {
-
     // Store OTP in Redis
     await storeOTP(sessionId, otp, "phone_verification", 120);
 
@@ -286,7 +284,6 @@ const sendPhoneVerificationOTP = asyncHandler(async (req, res) => {
 // Step 5: Verify phoneNumber OTP
 // phoneVerification.controller.js
 const verifyPhone = asyncHandler(async (req, res) => {
-
   const { sessionId, otp } = req.body;
 
   if (!sessionId || !otp) {
@@ -442,7 +439,7 @@ const getRegistrationStatus = asyncHandler(async (req, res) => {
   }
 
   const tempData = await getTempData(sessionId);
-  
+
   if (!tempData) {
     throw new ApiError(404, "Registration session not found or expired");
   }
@@ -722,9 +719,62 @@ const validateCurrentSession = asyncHandler(async (req, res) => {
 //   return res.status(200).json(new ApiResponse(200, "Logout successful", null));
 // });
 
-const updateUserProfile = asyncHandler(async (req, res) => {});
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { firstName, lastName, dateOfBirth, email, phoneNumber } = req.body;
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
-const updateAvatar = asyncHandler(async (req, res) => {});
+  // Update fields if provided
+  user.firstName = firstName || user.firstName;
+  user.lastName = lastName || user.lastName;
+  user.dateOfBirth = dateOfBirth || user.dateOfBirth;
+  user.email = email || user.email;
+  user.phoneNumber = phoneNumber || user.phoneNumber;
+
+  await user.save({ validateBeforeSave: true });
+
+  return res.status(200).json(
+    new ApiResponse(200, "User profile updated successfully", {
+      user: user.toObject(),
+    })
+  );
+});
+
+const updateAvatar = asyncHandler(async (req, res) => {
+  //file is already uploaded by multer middleware
+  if (!req.file) {
+    throw new ApiError(400, "No avatar file uploaded");
+  }
+  else{
+    console.log("Uploaded file info:", req.file);
+  }
+  
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  try {
+    // Upload on cloudinary 
+  const uploadResult = await uploadOnCloudinary(req.file.path, 'avatars');
+
+  // Update user's avatar URL
+  user.avatar = uploadResult.secure_url;
+  await user.save();
+  console.log("Avatar updated successfully:", user.avatar);
+
+  } catch (error) {
+    throw new ApiError(500, "Error uploading avatar");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, "Avatar updated successfully", {
+      avatar: user.avatar,
+    })
+  );
+});
 
 const updatePassword = asyncHandler(async (req, res) => {});
 

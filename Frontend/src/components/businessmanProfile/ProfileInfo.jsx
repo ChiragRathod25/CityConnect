@@ -186,6 +186,7 @@ const BusinessmanProfileInfo = () => {
     }
   };
 
+  
   const tabs = [
     { id: 'personal', label: 'Personal Info', icon: User },
     { id: 'business', label: 'Business Details', icon: Building2 },

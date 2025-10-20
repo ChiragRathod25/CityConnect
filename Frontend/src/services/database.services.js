@@ -113,16 +113,16 @@ export class DatabaseService {
 
   async getCurrentuser() {
     return handleApiRequest(
-        () => axiosInstace.get("/api/v1/user/getCurrentUser"),
-        "Get Current User"
-      );
+      () => axiosInstace.get("/api/v1/user/getCurrentUser"),
+      "Get Current User"
+    );
   }
 
   async refreshAccessToken() {
     return handleApiRequest(
-        () => axiosInstace.get("/api/v1/user/refresh-token"),
-        "Refresh Access Token"
-      );
+      () => axiosInstace.get("/api/v1/user/refresh-token"),
+      "Refresh Access Token"
+    );
   }
 
   async login({ email, password }) {
@@ -153,6 +153,42 @@ export class DatabaseService {
         loading: "Logging out...",
         success: "Logout successful!",
         error: "Logout failed. Please try again.",
+      }
+    );
+  }
+
+  async updateUserProfile(profileData) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.put("/api/v1/user/update-user-profile", profileData),
+        "Update User Profile"
+      ),
+      {
+        loading: "Updating profile...",
+        success: "Profile updated successfully!",
+        error: "Failed to update profile. Please try again.",
+      }
+    );
+  }
+
+  async updateUserAvatar(avatarFile) {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile); // 'avatar' MUST match multer field name
+
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put("/api/v1/user/update-avatar", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }),
+        "Update User Avatar"
+      ),
+      {
+        loading: "Updating avatar...",
+        success: "Avatar updated successfully!",
+        error: "Failed to update avatar. Please try again.",
       }
     );
   }

@@ -8,10 +8,13 @@ function AuthLayout({ children, authentication = true }) {
   const navigate = useNavigate();
 
   const authStatus = useSelector((state) => state.auth.status);
+  console.log("Redux store data:", useSelector((state) => state));
+
   useEffect(() => {
     if (authentication === false) {
       console.log("Authentication is not required!");
     } else if (authentication && authStatus !== authentication) {
+      console.log("User not authenticated, redirecting to login.");
       navigate("/login");
     }
     setLoading(false);

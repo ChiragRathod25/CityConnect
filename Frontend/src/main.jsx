@@ -44,6 +44,7 @@ import AddServiceProviderForm from "./components/FormPage/AddServiceCard";
 import ManageBusinessmanUI from "./Pages/ManageBusinessman";
 import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 import ContactEditPage from "./components/businessmanProfile/Email";
+import { AuthLayout } from "./components";
 
 const router = createBrowserRouter([
   {
@@ -89,7 +90,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/user-profile",
-        element: <UserProfileUI />,
+        element: (
+          <AuthLayout>
+            <UserProfileUI />
+          </AuthLayout>
+        )
       },
       {
         path: "/user-profile/:itemId",

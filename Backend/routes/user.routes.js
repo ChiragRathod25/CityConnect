@@ -23,6 +23,7 @@ import {
 }
 from "../controllers/user.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 router.post("/initialRegister", InitialUserRegister);
 router.post("/send-email-verification-otp", sendEmailVerificationOTP);
@@ -39,7 +40,7 @@ router.get("/refresh-token",
 router.use(verifyJWT); // Protect all routes below this middleware
 router.get("/getCurrentUser", getCurrentUser);
 router.put("/update-user-profile", updateUserProfile);
-router.put("/update-avatar", updateAvatar);
+router.put("/update-avatar",upload.single("avatar"), updateAvatar);
 router.put("/update-password", updatePassword);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);

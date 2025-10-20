@@ -14,6 +14,9 @@ import {
   Shield,
   ChevronDown,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import databaseService from "@/services/database.services";
+import { updateUser } from "@/slices/userSlice/authSlices";
 
 const Button = ({
   children,
@@ -414,18 +417,22 @@ const EditUserProfileInfo = () => {
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [activeField, setActiveField] = useState("");
+  const dispatch = useDispatch();
 
-  const [profileData, setProfileData] = useState({
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    username: "alex_creative",
-    firstname: "Neel",
-    lastname: "Sathvara",
-    email: "alex@creative.studio",
-    phone: "+1 (555) 987-6543",
-    dob: "1995-06-15",
-    bio: "Digital artist & UX designer crafting beautiful experiences. Passionate about minimalist design, emerging technologies, and creating meaningful connections through design.",
-  });
+  // const [profileData, setProfileData] = useState({
+  //   avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+  //   username: "alex_creative",
+  //   email: "alex@creative.studio",
+  //   phone: "+1 (555) 987-6543",
+  //   dob: "1995-06-15",
+  //   bio: "Digital artist & UX designer crafting beautiful experiences. Passionate about minimalist design, emerging technologies, and creating meaningful connections through design."
+  // });
+  const [profileData, setProfileData] = useState(
+    useSelector((state) => state.auth.userData?.user)
+  );
+  useEffect(() => {
+    setEditedData({ ...profileData });
+  }, [profileData]);
 
   const [editedData, setEditedData] = useState({ ...profileData });
 
@@ -440,10 +447,46 @@ const EditUserProfileInfo = () => {
     setActiveField("");
   };
 
+  const updateProfileAvatar = async (avatarFile) => {
+    try {
+      const response = await databaseService.updateUserAvatar(avatarFile);
+      // response should contain Cloudinary URL
+      return response.data.avatarUrl;
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+    }
+  };
+
   const handleSave = async () => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      //2 phase - first check, if the avatar is updated then first update it
+
+      if (editedData.avatar !== profileData.avatar) {
+        try {
+          const updatedAvatarUrl = await updateProfileAvatar(editedData.avatar);
+          editedData.avatar = updatedAvatarUrl; // now a Cloudinary URL
+        } catch (error) {
+          console.error("Error updating avatar:", error);
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log("Begging to update other profile info");
+      console.log("Cloudinary Avatar URL:", editedData.avatar);
+      //2nd phase - upadte other profile info
+      const response = await databaseService.updateUserProfile(editedData);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setLoading(false);
+      return;
+    }
     setProfileData({ ...editedData });
+    dispatch(updateUser(editedData));
     setLastUpdated(new Date()); // Update the last modified date
     setIsEditing(false);
     setLoading(false);
@@ -460,11 +503,15 @@ const EditUserProfileInfo = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // For preview
       const reader = new FileReader();
-      reader.onload = (e) => {
-        handleInputChange("avatar", e.target.result);
+      reader.onload = (event) => {
+        handleInputChange("avatarPreview", event.target.result); // for image preview
       };
       reader.readAsDataURL(file);
+
+      // Store the actual file for uploading
+      handleInputChange("avatar", file);
     }
   };
 
@@ -508,7 +555,11 @@ const EditUserProfileInfo = () => {
               <div className="relative">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl hover:scale-105 transition-all duration-500 group">
                   <img
-                    src={isEditing ? editedData.avatar : profileData.avatar}
+                    src={
+                      isEditing
+                        ? editedData.avatarPreview || profileData.avatar
+                        : profileData.avatar
+                    }
                     alt="Profile"
                     className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
                   />
@@ -520,7 +571,7 @@ const EditUserProfileInfo = () => {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={(e) => handleImageUpload(e)}
                       className="hidden"
                     />
                   </label>
@@ -560,13 +611,12 @@ const EditUserProfileInfo = () => {
           {/* Profile Fields */}
           <div className="p-4 sm:p-6 md:p-8 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-              {/* Firstname Field */}
-
+              {/* Username Field */}
               <div className="space-y-3 sm:space-y-4 group">
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div
                     className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                      activeField === "firstname" && isEditing
+                      activeField === "username" && isEditing
                         ? "bg-[#1f2937] text-white shadow-lg"
                         : "bg-[#f8fafc] text-[#6b7280]"
                     }`}
@@ -574,13 +624,13 @@ const EditUserProfileInfo = () => {
                     <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                   </div>
                   <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    FirstName
+                    Username
                   </h3>
                 </div>
 
                 <div
                   className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
-                    activeField === "firstname" && isEditing
+                    activeField === "username" && isEditing
                       ? "border-[#1f2937] bg-white shadow-lg"
                       : "border-[#e2e8f0] bg-[#f8fafc]"
                   }`}
@@ -588,11 +638,11 @@ const EditUserProfileInfo = () => {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editedData.firstname}
+                      value={editedData.username}
                       onChange={(e) =>
-                        handleInputChange("firstname", e.target.value)
+                        handleInputChange("username", e.target.value)
                       }
-                      onFocus={() => setActiveField("firstname")}
+                      onFocus={() => setActiveField("username")}
                       onBlur={() => setActiveField("")}
                       className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-semibold text-[#1f2937] placeholder-[#9ca3af]"
                       placeholder="Enter firstname..."
@@ -713,7 +763,7 @@ const EditUserProfileInfo = () => {
 
                 <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
                   <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
-                    {profileData.phone}
+                    {profileData.phoneNumber}
                   </div>
                 </div>
               </div>
@@ -747,11 +797,14 @@ const EditUserProfileInfo = () => {
                   ) : (
                     <div className="rounded-xl sm:rounded-2xl border-2 border-[#e2e8f0] bg-[#f8fafc]">
                       <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
-                        {new Date(profileData.dob).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {new Date(profileData.dateOfBirth).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
                       </div>
                     </div>
                   )}
@@ -760,7 +813,7 @@ const EditUserProfileInfo = () => {
             </div>
 
             {/* Bio Section - Full Width */}
-            <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4 group">
+            {/* <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4 group">
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div
                   className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
@@ -799,7 +852,7 @@ const EditUserProfileInfo = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* Action Buttons */}
             {isEditing && (
