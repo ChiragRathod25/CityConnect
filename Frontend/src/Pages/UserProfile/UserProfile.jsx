@@ -19,6 +19,7 @@ import {
   Bell
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const UserProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
@@ -29,18 +30,25 @@ const UserProfileDashboard = () => {
   const logoutSectionRef = useRef(null);
   const navigate = useNavigate();
 
-  const [userProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 8900',
-    isEmailVerified: true,
-    isPhoneVerified: false,
-    status: 'active',
-    avatar: '/api/placeholder/120/120',
-    joinDate: '2023-01-15',
-    completedOrders: 47,
-    wishlistItems: 8
-  });
+  // const [userProfile] = useState({
+  //   name: 'John Doe',
+  //   email: 'john.doe@example.com',
+  //   phone: '+1 234 567 8900',
+  //   isEmailVerified: true,
+  //   isPhoneVerified: false,
+  //   status: 'active',
+  //   avatar: '/api/placeholder/120/120',
+  //   joinDate: '2023-01-15',
+  //   completedOrders: 47,
+  //   wishlistItems: 8
+  // });
+
+
+  const [userProfile, setUserProfile] = useState(useSelector(state=>state.auth.userData?.user));
+ 
+  useEffect(()=>{
+    console.log("userProfile data in UserProfile.jsx:",userProfile);
+  },[userProfile]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -84,16 +92,16 @@ const UserProfileDashboard = () => {
       label: 'Update Email Address', 
       icon: Mail, 
       description: 'Update and secure your email address',
-      // badge: userProfile.isEmailVerified ? 'Verified' : 'Action Required',
-      priority: userProfile.isEmailVerified ? 'low' : 'high'
+      // badge: userProfile?.isEmailVerified ? 'Verified' : 'Action Required',
+      priority: userProfile?.isEmailVerified ? 'low' : 'high'
     },
     { 
       id: 'change-phone', 
       label: 'Update Phone Number', 
       icon: Phone, 
       description: 'Update and secure your phone number',
-      // badge: userProfile.isPhoneVerified ? 'Verified' : 'Pending',
-      priority: userProfile.isPhoneVerified ? 'low' : 'medium'
+      // badge: userProfile?.isPhoneVerified ? 'Verified' : 'Pending',
+      priority: userProfile?.isPhoneVerified ? 'low' : 'medium'
     },
     { 
       id: 'password-update', 
@@ -116,7 +124,7 @@ const UserProfileDashboard = () => {
       label: 'Order History', 
       icon: ShoppingBag, 
       description: 'Track and manage your purchases',
-      badge: `${userProfile.completedOrders} Orders`,
+      badge: `${userProfile?.completedOrders} Orders`,
       priority: 'high'
     },
     {
@@ -175,13 +183,13 @@ const UserProfileDashboard = () => {
   };
 
   const handleBecomeSeller = () => {
-    console.log('Starting seller application process...');
+    console.log('Starting seller application process..');
     setBecomeSellerModal(false);
   };
 
   const headerStats = [
-    { label: 'Orders', value: userProfile.completedOrders, suffix: '' },
-    { label: 'Wishlist', value: userProfile.wishlistItems, suffix: '' },
+    { label: 'Orders', value: userProfile?.completedOrders, suffix: '' },
+    { label: 'Wishlist', value: userProfile?.wishlistItems, suffix: '' },
     { label: 'Status', value: 'Active', suffix: '' }
   ];
 
@@ -209,8 +217,8 @@ const UserProfileDashboard = () => {
               <div className="relative group">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full p-1 bg-gray-600 shadow-2xl">
                   <img 
-                    src={userProfile.avatar} 
-                    alt={userProfile.name}
+                    src={userProfile?.avatar} 
+                    alt={userProfile?.username}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -228,7 +236,7 @@ const UserProfileDashboard = () => {
               <div className="flex-1 text-center lg:text-left w-full">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 mb-4">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
-                    {userProfile.name}
+                    {userProfile?.name}
                   </h1>
                   <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
                     <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
@@ -240,10 +248,10 @@ const UserProfileDashboard = () => {
                 </div>
 
                 <p className="text-base sm:text-lg lg:text-xl mb-3 sm:mb-4 text-gray-300 font-medium">
-                  {userProfile.email}
+                  {userProfile?.email}
                 </p>
                 <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
-                  Member since {new Date(userProfile.joinDate).toLocaleDateString('en-US', { 
+                  Member since {new Date(userProfile?.joinDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long',
                     day: 'numeric'
@@ -270,25 +278,25 @@ const UserProfileDashboard = () => {
                 {/* Verification Status */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
                   <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                    userProfile.isEmailVerified 
+                    userProfile?.isEmailVerified 
                       ? 'bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30' 
                       : 'bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30'
                   } shadow-lg`}>
-                    {userProfile.isEmailVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
+                    {userProfile?.isEmailVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">
-                      <span className="hidden sm:inline">Email {userProfile.isEmailVerified ? 'Verified' : 'Unverified'}</span>
-                      <span className="sm:hidden">{userProfile.isEmailVerified ? 'Email ✓' : 'Email ✗'}</span>
+                      <span className="hidden sm:inline">Email {userProfile?.isEmailVerified ? 'Verified' : 'Unverified'}</span>
+                      <span className="sm:hidden">{userProfile?.isEmailVerified ? 'Email ✓' : 'Email ✗'}</span>
                     </span>
                   </div>
                   <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                    userProfile.isPhoneVerified 
+                    userProfile?.isPhoneVerified 
                       ? 'bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30' 
                       : 'bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30'
                   } shadow-lg`}>
-                    {userProfile.isPhoneVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
+                    {userProfile?.isPhoneVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">
-                      <span className="hidden sm:inline">Phone {userProfile.isPhoneVerified ? 'Verified' : 'Unverified'}</span>
-                      <span className="sm:hidden">{userProfile.isPhoneVerified ? 'Phone ✓' : 'Phone ✗'}</span>
+                      <span className="hidden sm:inline">Phone {userProfile?.isPhoneVerified ? 'Verified' : 'Unverified'}</span>
+                      <span className="sm:hidden">{userProfile?.isPhoneVerified ? 'Phone ✓' : 'Phone ✗'}</span>
                     </span>
                   </div>
                 </div>

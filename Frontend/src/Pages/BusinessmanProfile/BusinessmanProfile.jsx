@@ -28,8 +28,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-
-
 const BusinessmanProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
