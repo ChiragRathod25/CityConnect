@@ -430,7 +430,7 @@ const EditUserProfileInfo = () => {
   const [profileData, setProfileData] = useState(
     useSelector((state) => state.auth.userData?.user)
   );
-  const existingUserData=useSelector((state) => state.auth.userData);
+  const existingUserData= useSelector((state) => state.auth.userData);
   
   useEffect(() => {
     setEditedData({ ...profileData });
@@ -488,8 +488,8 @@ const EditUserProfileInfo = () => {
       return;
     }
     setProfileData({ ...editedData });
-    existingUserData.user={ ...editedData };
-    dispatch(updateUser(existingUserData));
+
+    dispatch(updateUser({ ...existingUserData, user: { ...editedData } }));
     
     setLastUpdated(new Date()); // Update the last modified date
     setIsEditing(false);
@@ -707,22 +707,6 @@ const EditUserProfileInfo = () => {
                   )}
                 </div>
               </div>
-              {/* Lastname Field */}
-              <div className="space-y-3 sm:space-y-4 group">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div
-                    className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                      activeField === "lastname" && isEditing
-                        ? "bg-[#1f2937] text-white shadow-lg"
-                        : "bg-[#f8fafc] text-[#6b7280]"
-                    }`}
-                  >
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  </div>
-                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    LastName
-                  </h3>
-                </div>
 
                 {/* lastName Field */}
               <div className="space-y-3 sm:space-y-4 group">
@@ -840,27 +824,21 @@ const EditUserProfileInfo = () => {
             {/* Bio Section - Full Width */}
             {/* <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4 group">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <div
-                  className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                    activeField === "bio" && isEditing
-                      ? "bg-[#1f2937] text-white shadow-lg"
-                      : "bg-[#f8fafc] text-[#6b7280]"
-                  }`}
-                >
+                <div className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
+                  activeField === 'bio' && isEditing
+                    ? 'bg-[#1f2937] text-white shadow-lg' 
+                    : 'bg-[#f8fafc] text-[#6b7280]'
+                }`}>
                   <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                 </div>
-                <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                  About Me
-                </h3>
+                <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">About Me</h3>
               </div>
-
-              <div
-                className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
-                  activeField === "bio" && isEditing
-                    ? "border-[#1f2937] bg-white shadow-lg"
-                    : "border-[#e2e8f0] bg-[#f8fafc]"
-                }`}
-              >
+              
+              <div className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
+                activeField === 'bio' && isEditing
+                  ? 'border-[#1f2937] bg-white shadow-lg' 
+                  : 'border-[#e2e8f0] bg-[#f8fafc]'
+              }`}>
                 {isEditing ? (
                   <textarea
                     value={editedData?.bio}
