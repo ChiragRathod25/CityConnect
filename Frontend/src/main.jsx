@@ -45,6 +45,7 @@ import ManageBusinessmanUI from "./Pages/ManageBusinessman";
 import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 import ContactEditPage from "./components/businessmanProfile/Email";
 import { AuthLayout } from "./components";
+import ContactUsForAdmin from "./Pages/AdminContactUs";
 
 const router = createBrowserRouter([
   {
@@ -135,6 +136,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/manage-businessmen",
         element: <ManageBusinessmanUI />,
+      },
+      {
+        path: "/admin/contactus",
+        element: <ContactUsForAdmin />,
       },
       {
         // path: "/add-businesscard",
