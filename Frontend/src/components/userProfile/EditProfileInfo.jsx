@@ -645,16 +645,81 @@ const EditUserProfileInfo = () => {
                       onFocus={() => setActiveField("username")}
                       onBlur={() => setActiveField("")}
                       className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-semibold text-[#1f2937] placeholder-[#9ca3af]"
-                      placeholder="Enter username..."
+                      placeholder="Enter firstname..."
                     />
                   ) : (
                     <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
-                      {profileData.username}
+                      {profileData.firstname}
                     </div>
                   )}
                 </div>
               </div>
+              {/* Lastname Field */}
+              <div className="space-y-3 sm:space-y-4 group">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div
+                    className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
+                      activeField === "lastname" && isEditing
+                        ? "bg-[#1f2937] text-white shadow-lg"
+                        : "bg-[#f8fafc] text-[#6b7280]"
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                    LastName
+                  </h3>
+                </div>
 
+                <div
+                  className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
+                    activeField === "lastname" && isEditing
+                      ? "border-[#1f2937] bg-white shadow-lg"
+                      : "border-[#e2e8f0] bg-[#f8fafc]"
+                  }`}
+                >
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editedData.lastname}
+                      onChange={(e) =>
+                        handleInputChange("lastname", e.target.value)
+                      }
+                      onFocus={() => setActiveField("lastname")}
+                      onBlur={() => setActiveField("")}
+                      className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-semibold text-[#1f2937] placeholder-[#9ca3af]"
+                      placeholder="Enter lastname..."
+                    />
+                  ) : (
+                    <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-[#1f2937]">
+                      {profileData.lastname}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* username Field - Protected */}
+              <div className="space-y-3 sm:space-y-4 group">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-[#fef3c7] text-[#d97706]">
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                    UserName
+                  </h3>
+                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-0.5 sm:py-1 bg-[#fef3c7] rounded-md sm:rounded-lg">
+                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#d97706]" />
+                    <span className="text-xs font-bold text-[#d97706] uppercase">
+                      Protected
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl sm:rounded-2xl border-2 border-[#fde68a] bg-[#fef3c7]/30">
+                  <div className="px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-medium text-[#92400e]">
+                    {profileData.username}
+                  </div>
+                </div>
+              </div>
               {/* Email Field - Protected */}
               <div className="space-y-3 sm:space-y-4 group">
                 <div className="flex items-center space-x-2 sm:space-x-3">
@@ -750,27 +815,33 @@ const EditUserProfileInfo = () => {
             {/* Bio Section - Full Width */}
             {/* <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4 group">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                  activeField === 'bio' && isEditing
-                    ? 'bg-[#1f2937] text-white shadow-lg' 
-                    : 'bg-[#f8fafc] text-[#6b7280]'
-                }`}>
+                <div
+                  className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
+                    activeField === "bio" && isEditing
+                      ? "bg-[#1f2937] text-white shadow-lg"
+                      : "bg-[#f8fafc] text-[#6b7280]"
+                  }`}
+                >
                   <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                 </div>
-                <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">About Me</h3>
+                <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
+                  About Me
+                </h3>
               </div>
-              
-              <div className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
-                activeField === 'bio' && isEditing
-                  ? 'border-[#1f2937] bg-white shadow-lg' 
-                  : 'border-[#e2e8f0] bg-[#f8fafc]'
-              }`}>
+
+              <div
+                className={`relative rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
+                  activeField === "bio" && isEditing
+                    ? "border-[#1f2937] bg-white shadow-lg"
+                    : "border-[#e2e8f0] bg-[#f8fafc]"
+                }`}
+              >
                 {isEditing ? (
                   <textarea
                     value={editedData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
-                    onFocus={() => setActiveField('bio')}
-                    onBlur={() => setActiveField('')}
+                    onChange={(e) => handleInputChange("bio", e.target.value)}
+                    onFocus={() => setActiveField("bio")}
+                    onBlur={() => setActiveField("")}
                     rows={4}
                     className="w-full px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 bg-transparent border-none outline-none text-sm sm:text-base md:text-lg font-medium text-[#1f2937] placeholder-[#9ca3af] resize-none"
                     placeholder="Tell your story..."
