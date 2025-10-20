@@ -430,6 +430,7 @@ const EditUserProfileInfo = () => {
   const [profileData, setProfileData] = useState(
     useSelector((state) => state.auth.userData?.user)
   );
+  const existingUserData= useSelector((state) => state.auth.userData);
   
   useEffect(() => {
     setEditedData({ ...profileData });
@@ -487,7 +488,9 @@ const EditUserProfileInfo = () => {
       return;
     }
     setProfileData({ ...editedData });
-    dispatch(updateUser(editedData));
+
+    dispatch(updateUser({ ...existingUserData, user: { ...editedData } }));
+    
     setLastUpdated(new Date()); // Update the last modified date
     setIsEditing(false);
     setLoading(false);
