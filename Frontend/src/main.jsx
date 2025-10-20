@@ -107,10 +107,10 @@ const router = createBrowserRouter([
         path: "/businessman-profile/profile-info/edit-profile",
         element: <EditBusinessmanProfileNavigation />,
       },
-      {
-        path: "/profile/edit-profile",
-        element: <EditUserProfileInfo />,
-      },
+      // {
+      //   path: "/profile/edit-profile",
+      //   element: <EditUserProfileInfo />,
+      // },
       {
         path: "/admin",
         element: <AdminProfilePageUI />,
