@@ -708,23 +708,6 @@ const EditUserProfileInfo = () => {
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div
                     className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
-                      activeField === "lastname" && isEditing
-                        ? "bg-[#1f2937] text-white shadow-lg"
-                        : "bg-[#f8fafc] text-[#6b7280]"
-                    }`}
-                  >
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-                  </div>
-                  <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-[#6b7280]">
-                    LastName
-                  </h3>
-                </div>
-
-                {/* lastName Field */}
-              <div className="space-y-3 sm:space-y-4 group">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div
-                    className={`p-2 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 ${
                       activeField === "lastName" && isEditing
                         ? "bg-[#1f2937] text-white shadow-lg"
                         : "bg-[#f8fafc] text-[#6b7280]"
