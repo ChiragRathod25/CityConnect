@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const contactSchema = new Schema(
+const adminContactSchema = new Schema(
   {
     name: {
       type: String,
@@ -48,8 +48,8 @@ const contactSchema = new Schema(
   }
 );
 
-contactSchema.index({ email: 1, createdAt: -1 });
+adminContactSchema.index({ email: 1, createdAt: -1 });
 
-const Contact = model("ContactUS", contactSchema);
+const AdminContact = model("ContactUS", adminContactSchema);
 
-export default Contact;
+export default AdminContact;
