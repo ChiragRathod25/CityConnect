@@ -14,19 +14,13 @@ const adminContactSchema = new Schema(
       required: [true, "Email is required"],
       trim: true,
       lowercase: true,
-      match: [
-        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Please enter a valid email address",
-      ],
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
     },
     phone: {
       type: String,
       required: [true, "Phone number is required"],
       trim: true,
-      match: [
-        /^[0-9]{10}$/,
-        "Please enter a valid phone number (10 digits only)",
-      ],
+      match: [/^[0-9]{10}$/, "Phone number must be 10 digits"],
     },
     subject: {
       type: String,
@@ -42,14 +36,22 @@ const adminContactSchema = new Schema(
       minlength: [10, "Message must be at least 10 characters long"],
       maxlength: [1000, "Message cannot exceed 1000 characters"],
     },
+    status: {
+      type: String,
+      enum: ["new", "read", "replied", "archived"],
+      default: "new",
+    },
   },
   {
     timestamps: true,
   }
 );
 
+// Index for better query performance
 adminContactSchema.index({ email: 1, createdAt: -1 });
+adminContactSchema.index({ status: 1 });
+adminContactSchema.index({ createdAt: -1 });
 
-const AdminContact = model("ContactUS", adminContactSchema);
+const AdminContactModel = model("ContactUS", adminContactSchema);
 
-export default AdminContact;
+export default AdminContactModel;
