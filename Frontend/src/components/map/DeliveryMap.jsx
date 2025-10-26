@@ -74,7 +74,7 @@ const destinationIcon = new L.Icon({
   className: 'destination-marker'
 });
 
-const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
+const DeliveryMap = ({ height = 30, width = 80, mode = "delivery", businessName="" }) => {
   const defaultPosition = [22.3072, 73.1812];
   const [userPosition, setUserPosition] = useState(null);
   const [clickedMarkers, setClickedMarkers] = useState(null);
@@ -209,6 +209,7 @@ const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
           onUseCurrentLocation={handleUseCurrentLocation}
           userPosition={userPosition}
           selectedLocation={businessLocation}
+          businessName={businessName}
         />
       )}
       

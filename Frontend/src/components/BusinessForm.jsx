@@ -38,6 +38,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Modal from "./Modal.jsx"
+import {useSelector} from "react-redux"
 
 // Enhanced color palette
 const colors = {
@@ -433,13 +434,13 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
   const currentLocationMarkerRef = useRef(null);
 
   // Load Google Maps Script
-  useEffect(() => {
-    if (showMap && !window.google) {
-      loadGoogleMapsScript();
-    } else if (showMap && window.google) {
-      initializeMap();
-    }
-  }, [showMap]);
+  // useEffect(() => {
+  //   if (showMap && !window.google) {
+  //     loadGoogleMapsScript();
+  //   } else if (showMap && window.google) {
+  //     initializeMap();
+  //   }
+  // }, [showMap]);
 
   const loadGoogleMapsScript = () => {
     const script = document.createElement("script");
@@ -711,7 +712,7 @@ const MapComponent = ({ onLocationSelect, selectedLocation, error }) => {
     setModalTitle('Location');
     setModalContent(
       <div className="flex flex-col items-center justify-center">
-        <DeliveryMap  mode="business"  />
+        <DeliveryMap  mode="business"  businessName={formData?.businessName || "My Business"} />
       </div>
     );
     openModal();
@@ -1189,13 +1190,26 @@ export const FileUpload = ({
 
 const ModernSellerForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const personalInfo=useSelector((state)=>state.auth?.userData?.user)
 
+  useEffect(()=>{
+    if(personalInfo){
+      setFormData((prev)=>({
+        ...prev,
+        fullName:personalInfo.firstName + " " + personalInfo.lastName || "",
+        contactNumber:personalInfo.phoneNumber || "",
+        email:personalInfo.email || "",
+      }))
+    }
+  },[personalInfo])
+
+  
   const [formData, setFormData] = useState({
     // Personal Information
     fullName: "",
     contactNumber: "",
     email: "",
-    password: "",
+
 
     // Business Information
     businessName: "",
@@ -1229,8 +1243,7 @@ const ModernSellerForm = () => {
     // Agreement
     acceptTerms: false,
   });
-
-  const [showPassword, setShowPassword] = useState(false);
+  
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -1395,6 +1408,7 @@ const ModernSellerForm = () => {
 
     switch (step) {
       case 1:
+        console.log("Starting step 1")
         if (!formData.fullName.trim()) {
           newErrors.fullName = "Full name is required";
         } else if (formData.fullName.length < 2) {
@@ -1418,15 +1432,7 @@ const ModernSellerForm = () => {
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           newErrors.email = "Please enter a valid email address";
         }
-
-        if (!formData.password) {
-          newErrors.password = "Password is required";
-        } else if (formData.password.length < 8) {
-          newErrors.password = "Password must be at least 8 characters";
-        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-          newErrors.password =
-            "Password must contain at least one uppercase letter, one lowercase letter, and one number";
-        }
+        console.log("Breaking step 1")
         break;
 
       case 2:
@@ -1535,11 +1541,14 @@ const ModernSellerForm = () => {
     }
 
     setErrors(newErrors);
+    console.log("Errors: ",newErrors)
     return Object.keys(newErrors).length === 0;
   };
 
   const nextStep = () => {
-    if (!validateStep(currentStep)) {
+    console.log(currentStep)
+    console.log("Validate current step",validateStep(currentStep))
+    if (validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(prev + 1, 5));
     }
   };
@@ -1568,7 +1577,7 @@ const ModernSellerForm = () => {
         fullName: "",
         contactNumber: "",
         email: "",
-        password: "",
+        
         businessName: "",
         businessType: "",
         businessCategory: "",
@@ -1653,38 +1662,7 @@ const ModernSellerForm = () => {
                 error={errors.email}
               />
 
-              <div className="relative">
-                <FormInput
-                  label="Password"
-                  icon={Shield}
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Create a strong password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  error={errors.password}
-                  className="pr-12"
-                />
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-9 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? (
-                    <div className="py-2">
-                      <EyeOff size={20} />
-                    </div>
-                  ) : (
-                    <div className="py-2">
-                      <Eye size={20} />
-                    </div>
-                  )}
-                </motion.button>
-              </div>
+              
             </div>
           </motion.div>
         );
@@ -2679,7 +2657,7 @@ const ModernSellerForm = () => {
             className="inline-flex items-center gap-3 bg-black text-white px-6 py-3 rounded-full font-semibold mb-6"
           >
             <Store size={20} />
-            Become a Seller
+            Register your Business
           </motion.div>
 
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
