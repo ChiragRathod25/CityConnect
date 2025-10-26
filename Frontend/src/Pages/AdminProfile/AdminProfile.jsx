@@ -110,6 +110,14 @@ const AdminProfileDashboard = () => {
       priority: "high",
     },
     {
+      id: "contactus",
+      label: "Contact Us Management",
+      icon: MessageSquare,
+      description: "Handle customer inquiries and support requests",
+      badge: "15 New",
+      priority: "medium",
+    },
+    {
       id: "manage-services",
       label: "Manage Services",
       icon: Settings,
@@ -124,14 +132,6 @@ const AdminProfileDashboard = () => {
       description: "Oversee product listings and inventory",
       badge: `${adminProfile.adminStats.totalProducts} Products`,
       priority: "high",
-    },
-    {
-      id: "contact-us",
-      label: "Contact Us Management",
-      icon: MessageSquare,
-      description: "Handle customer inquiries and support requests",
-      badge: "15 New",
-      priority: "medium",
     },
     {
       id: "analytics-dashboard",
