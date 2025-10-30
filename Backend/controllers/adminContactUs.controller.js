@@ -42,52 +42,16 @@ const createContactMessage = asyncHandler(async (req, res, next) => {
     );
 });
 
-// Get all contact messages (Admin)
-const getAllContactMessages = asyncHandler(async (req, res, next) => {
-  const { page = 1, limit = 6, search, sortBy = "createdAt", sortOrder = "desc" } = req.query;
-
-  // Build filter object
-  const filter = {};
-  if (search) {
-    filter.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-      { subject: { $regex: search, $options: "i" } },
-    ];
-  }
-
-  // Build sort object
-  const sort = {};
-  sort[sortBy] = sortOrder === "desc" ? -1 : 1;
-
-  // Calculate pagination
-  const skip = (page - 1) * limit;
-
-  const contacts = await AdminContactModel.find(filter)
-    .sort(sort)
-    .skip(skip)
-    .limit(parseInt(limit))
+const getAllContactMessages = asyncHandler(async (req, res) => {
+  const contacts = await AdminContactModel.find()
+    .sort({ createdAt: -1 })
     .select("-__v");
 
-  const totalContacts = await AdminContactModel.countDocuments(filter);
-  const totalPages = Math.ceil(totalContacts / limit);
-
-  if (!contacts || contacts.length === 0) {
-    throw new ApiError(404, "No contact messages found");
-  }
-
-  res.status(200).json(
-    new ApiResponse(200, "Contact messages retrieved successfully", {
-      contacts,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages,
-        totalContacts,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
-      },
-    })
-  );
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, contacts, "Contact messages retrieved successfully")
+    );
 });
 
 // Get single contact message by ID (Admin)
@@ -104,9 +68,11 @@ const getContactMessageById = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Contact message not found");
   }
 
-  res.status(200).json(
-    new ApiResponse(200, "Contact message retrieved successfully", contact)
-  );
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Contact message retrieved successfully", contact)
+    );
 });
 
 // Delete contact message (Admin)
@@ -123,9 +89,9 @@ const deleteContactMessage = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Contact message not found");
   }
 
-  res.status(200).json(
-    new ApiResponse(200, "Contact message deleted successfully", null)
-  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Contact message deleted successfully", null));
 });
 
 export {
