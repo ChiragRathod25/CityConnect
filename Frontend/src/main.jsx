@@ -46,6 +46,7 @@ import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 import ContactEditPage from "./components/businessmanProfile/Email";
 import { AuthLayout } from "./components";
 import ContactUsForAdmin from "./Pages/AdminContactUs";
+import FeedbackComponent from "./components/Feedback";
 
 const router = createBrowserRouter([
   {
@@ -164,6 +165,10 @@ const router = createBrowserRouter([
       {
         path: "/card",
         element: <ProductCardUI />,
+      },
+      {
+        path: "/feedback",
+        element: <FeedbackComponent />,
       },
       {
         path: "/zxc",
