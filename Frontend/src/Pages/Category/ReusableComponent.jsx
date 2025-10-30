@@ -7,6 +7,8 @@ import {
   X,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export const AnimatedBackground = () => {
@@ -208,95 +210,98 @@ export const FilterDropdown = ({
 };
 
 export const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+  const [inputPage, setInputPage] = useState(currentPage.toString());
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    setInputPage(page.toString());
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5;
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputPage(value);
 
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      const startPage = Math.max(
-        1,
-        currentPage - Math.floor(maxVisiblePages / 2)
-      );
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const pageNum = parseInt(value);
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
+    }
+  };
 
-      if (startPage > 1) {
-        pageNumbers.push(1);
-        if (startPage > 2) {
-          pageNumbers.push("...");
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          pageNumbers.push("...");
-        }
-        pageNumbers.push(totalPages);
+  const handleInputKeyPress = (e) => {
+    if (e.key === "Enter") {
+      const pageNum = parseInt(inputPage);
+      if (pageNum >= 1 && pageNum <= totalPages) {
+        handlePageChange(pageNum);
+      } else {
+        setInputPage(currentPage.toString());
       }
     }
-
-    return pageNumbers;
   };
 
   return (
-    <div className="flex justify-center items-center gap-3 mt-10">
-      <button
+    <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mt-12">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`p-3 rounded-full bg-gray-700 text-gray-200 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 hover:bg-gray-600 hover:shadow-xl ${
+        className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-sm border-2 border-gray-200 text-gray-600 shadow-lg sm:shadow-xl transition-all duration-300 ${
           currentPage === 1
-            ? "opacity-50 cursor-not-allowed scale-100"
-            : "hover:-translate-y-1"
-        }`}
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:border-gray-400 hover:bg-white hover:shadow-xl sm:hover:shadow-2xl transform hover:-translate-y-1"
+        } w-full sm:w-auto`}
       >
-        <ChevronLeftIcon className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
-      </button>
+        <div className="flex items-center justify-center gap-2">
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="sm:hidden font-medium">Previous</span>
+        </div>
+      </motion.button>
 
-      <div className="flex gap-2">
-        {renderPageNumbers().map((page, index) => (
-          <button
-            key={index}
-            onClick={() => typeof page === "number" && handlePageChange(page)}
-            disabled={page === "..."}
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-medium transition-all duration-300 ease-in-out transform ${
-              currentPage === page
-                ? "bg-gray-800 text-white shadow-lg scale-105"
-                : page === "..."
-                ? "text-gray-500 cursor-default"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-500 hover:text-white hover:shadow-xl hover:scale-110 hover:-translate-y-1"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
+      <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl w-full sm:w-auto justify-center">
+        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">
+          Page
+        </span>
+        <input
+          type="text"
+          min="1"
+          max={totalPages}
+          value={inputPage}
+          onChange={handleInputChange}
+          onKeyPress={handleInputKeyPress}
+          onBlur={() => {
+            const pageNum = parseInt(inputPage);
+            if (isNaN(pageNum) || pageNum < 1 || pageNum > totalPages) {
+              setInputPage(currentPage.toString());
+            }
+          }}
+          className="w-16 sm:w-20 text-center border-2 border-gray-300 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-2 text-base sm:text-lg font-semibold sm:font-bold text-gray-800 focus:outline-none focus:border-gray-500 focus:ring-4 focus:ring-gray-500/20 shadow-inner"
+        />
+        <span className="text-gray-700 text-base sm:text-lg font-medium sm:font-semibold whitespace-nowrap">
+          of {totalPages}
+        </span>
       </div>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`p-3 rounded-full bg-gray-700 text-gray-200 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 hover:bg-gray-600 hover:shadow-xl ${
+        className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-sm border-2 border-gray-200 text-gray-600 shadow-lg sm:shadow-xl transition-all duration-300 ${
           currentPage === totalPages
-            ? "opacity-50 cursor-not-allowed scale-100"
-            : "hover:-translate-y-1"
-        }`}
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:border-gray-400 hover:bg-white hover:shadow-xl sm:hover:shadow-2xl transform hover:-translate-y-1"
+        } w-full sm:w-auto`}
       >
-        <ChevronRightIcon className="w-6 h-6 transition-transform duration-300 group-hover:-rotate-12" />
-      </button>
+        <div className="flex items-center justify-center gap-2">
+          <span className="sm:hidden font-medium">Next</span>
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+      </motion.button>
     </div>
   );
 };
+
 
 // CategorySkeleton (unchanged)
 export const CategorySkeleton = () => (
