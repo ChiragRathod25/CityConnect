@@ -174,7 +174,7 @@ const router = createBrowserRouter([
         element: <CartPageUI />,
       },
       {
-        path: "/adminadmin",
+        path: "/admin/businessman-verification",
         element: <AdminVerificationPanel />,
       },
       {
