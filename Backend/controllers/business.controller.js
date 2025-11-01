@@ -14,6 +14,7 @@ const registerBusiness = asyncHandler(async (req, res, next) => {
     return next(new ApiError("All fields are required", 400));
   }
 
+  console.log("Registering business for user:", req.user);
   // Check if the user already has a business profile
   const existingBusiness = await Business.findOne({ ownerId: req.user._id });
 

@@ -11,6 +11,9 @@ import {
   findNearbyBusinesses,
 } from "../controllers/businessLocation.controller.js";
 
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+
+router.use(verifyJWT);
 router.post("/:businessId", addLocation);
 router.get("/:businessId", getAllLocationsByBusinessId);
 router.get("/location/:locationId", getLocationById);
