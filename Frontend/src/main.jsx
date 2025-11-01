@@ -71,22 +71,6 @@ const router = createBrowserRouter([
         element: <LoginPageUI />,
       },
       {
-        path: "/category",
-        element: <CategoryPageUi />,
-      },
-      {
-        path: "/category/:slug",
-        element: <SubcategoryPage />,
-      },
-      {
-        path: "/start",
-        element: <CityConnectLanding />,
-      },
-      {
-        path: "/register-business",
-        element: <ModernSellerForm />,
-      },
-      {
         path: "/reset-password",
         element: <PasswordResetPage />,
       },
@@ -96,11 +80,29 @@ const router = createBrowserRouter([
           <AuthLayout>
             <UserProfileUI />
           </AuthLayout>
-        )
+        ),
       },
       {
         path: "/user-profile/:itemId",
         element: <ProfilePage />,
+      },
+
+      
+      //on the user side
+      {
+        path: "/category",
+        element: <CategoryPageUi />,
+      },
+      {
+        path: "/category/:slug",
+        element: <SubcategoryPage />,
+      },
+
+
+      //on the businessman side
+      {
+        path: "/register-business",
+        element: <ModernSellerForm />,
       },
       {
         path: "/businessman-profile",
@@ -114,18 +116,39 @@ const router = createBrowserRouter([
         path: "/businessman-profile/profile-info/edit-profile",
         element: <EditBusinessmanProfileNavigation />,
       },
-      // {
-      //   path: "/profile/edit-profile",
-      //   element: <EditUserProfileInfo />,
-      // },
+      {
+        // path: "/add-productcard", //used to add product of business
+        path: "/product",
+        element: <AddProductCard />,
+      },
+      {
+        // path: "/add-productcard",  //used to add service of business
+        path: "/servicecard",
+        element: <AddServiceProviderForm />,
+      },
+      {
+        path: "/service", //get information about the service of the business
+        element: <ServiceProviderCardUI />,
+      },
+      {
+        path: "/card", //get information about the products of the business
+        element: <ProductCardUI />,
+      },
+      {
+        path: "/edit-operating-hours", //of business , TODO: needs improvement
+        element: <EditOperatingHours />,
+      },
+      {
+        path: "/cart",
+        element: <CartPageUI />,
+      },
+
+      ///admin side
       {
         path: "/admin",
         element: <AdminProfilePageUI />,
       },
-      {
-        path: "/contactus",
-        element: <ContactUsPageUI />,
-      },
+
       {
         path: "/admin/manage-category",
         element: <ManageCategoryUI />,
@@ -139,49 +162,22 @@ const router = createBrowserRouter([
         element: <ManageBusinessmanUI />,
       },
       {
-        path: "/admin/contactus",
-        element: <ContactUsForAdmin />,
-      },
-      {
-        // path: "/add-businesscard",
-        path: "/add",
-        element: <AddBusinessCard />,
-      },
-      {
-        // path: "/add-productcard",
-        path: "/product",
-        element: <AddProductCard />,
-      },
-      {
-        // path: "/add-productcard",
-        path: "/servicecard",
-        element: <AddServiceProviderForm />,
-      },
-      {
-        // path: "/add-productcard",
-        path: "/service",
-        element: <ServiceProviderCardUI />,
-      },
-      {
-        path: "/card",
-        element: <ProductCardUI />,
-      },
-      {
-        path: "/feedback",
-        element: <FeedbackComponent />,
-      },
-      {
-        path: "/zxc",
-        element: <EditOperatingHours />,
-      },
-      {
-        path: "/cart",
-        element: <CartPageUI />,
-      },
-      {
         path: "/admin/businessman-verification",
         element: <AdminVerificationPanel />,
       },
+      {
+        path: "/admin/contactus",
+        element: <ContactUsForAdmin />,
+      },
+
+      {
+        path: "/add",
+        element: <AddBusinessCard />,
+      },
+      
+
+
+
       {
         path: "/payment",
         element: <PaymentPage />,
@@ -194,9 +190,23 @@ const router = createBrowserRouter([
         path: "/payment-failed",
         element: <PaymentFailed />,
       },
+
+      //not used routes, or least important
+      {
+        path: "/feedback",
+        element: <FeedbackComponent />,
+      },
       {
         path: "/ai",
         element: <AiImageGeneratorUI />,
+      },
+      {
+        path: "/contactus",
+        element: <ContactUsPageUI />,
+      },
+      {
+        path: "/start",
+        element: <CityConnectLanding />,
       },
       {
         path: "*",
