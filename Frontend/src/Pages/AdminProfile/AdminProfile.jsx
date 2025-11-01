@@ -110,6 +110,22 @@ const AdminProfileDashboard = () => {
       priority: "high",
     },
     {
+      id: "contactus",
+      label: "Contact Us Management",
+      icon: MessageSquare,
+      description: "Handle customer inquiries and support requests",
+      badge: "15 New",
+      priority: "medium",
+    },
+    {
+      id: "businessman-verification",
+      label: "Businessman Verification Panel",
+      icon: BarChart3,
+      description: "View and manage the businessman",
+      badge: "10 Panel",
+      priority: "medium",
+    },
+    {
       id: "manage-services",
       label: "Manage Services",
       icon: Settings,
@@ -125,22 +141,7 @@ const AdminProfileDashboard = () => {
       badge: `${adminProfile.adminStats.totalProducts} Products`,
       priority: "high",
     },
-    {
-      id: "contact-us",
-      label: "Contact Us Management",
-      icon: MessageSquare,
-      description: "Handle customer inquiries and support requests",
-      badge: "15 New",
-      priority: "medium",
-    },
-    {
-      id: "analytics-dashboard",
-      label: "Analytics Dashboard",
-      icon: BarChart3,
-      description: "View comprehensive platform analytics",
-      badge: "Reports",
-      priority: "medium",
-    },
+    
     {
       id: "content-moderation",
       label: "Content Moderation",

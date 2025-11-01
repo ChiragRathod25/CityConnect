@@ -34,6 +34,8 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from "lucide-react";
+import MoveBackButton from "./ui/MoveBackButton";
+import { useNavigate } from "react-router-dom";
 
 // Mock data remains unchanged
 const mockApplications = [
@@ -1201,7 +1203,8 @@ const AdminVerificationPanel = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2; // Display 2 applications per page
-
+  const navigate = useNavigate();
+  
   const handleApprove = (appId) => {
     setApplications((prev) =>
       prev.map((app) =>
@@ -1244,7 +1247,10 @@ const AdminVerificationPanel = () => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
+  const paginatedApplications = filteredApplications.slice(
+    startIndex,
+    endIndex
+  );
 
   const stats = {
     total: applications.length,
@@ -1280,6 +1286,10 @@ const AdminVerificationPanel = () => {
     },
   ];
 
+  const handleBackToProfile = () => {
+    navigate("/admin");
+  };
+
   return (
     <div
       className="min-h-screen py-5 bg-gradient-to-br from-gray-50 via-gray-100/30 to-gray-50/30"
@@ -1288,7 +1298,14 @@ const AdminVerificationPanel = () => {
           "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
       }}
     >
-      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+      <div className="container mx-auto px-4 pb-16  max-w-7xl">
+        <div className="relative mb-5 sm:mb-0  z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <MoveBackButton onClick={handleBackToProfile} />
+            </div>
+          </div>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1310,7 +1327,7 @@ const AdminVerificationPanel = () => {
                 transition={{ delay: 0.2 }}
                 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mb-2"
               >
-                Seller Verification Panel
+                Businessman Verification Panel
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -1318,7 +1335,7 @@ const AdminVerificationPanel = () => {
                 transition={{ delay: 0.3 }}
                 className="text-gray-600 font-medium text-base sm:text-lg"
               >
-                Review and verify seller applications with ease
+                Review and verify Businessman applications with ease
               </motion.p>
             </div>
           </div>
@@ -1399,7 +1416,7 @@ const AdminVerificationPanel = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Search by business name, seller name, email, or app ID..."
+                  placeholder="Search by business name, Businessman name, email, or app ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all font-medium"
@@ -1517,15 +1534,6 @@ const AdminVerificationPanel = () => {
 
 export default AdminVerificationPanel;
 
-
-
-
-
-
-
-
-
-
 // import React, { useState, useRef, useEffect } from "react";
 // import { motion, AnimatePresence } from "framer-motion";
 // import {
@@ -1560,7 +1568,6 @@ export default AdminVerificationPanel;
 //   Search,
 //   Filter,
 // } from "lucide-react";
-
 
 // const mockApplications = [
 //   {
@@ -2928,5 +2935,3 @@ export default AdminVerificationPanel;
 // };
 
 // export default AdminVerificationPanel;
-
-

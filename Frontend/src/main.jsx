@@ -46,6 +46,7 @@ import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 import ContactEditPage from "./components/businessmanProfile/Email";
 import { AuthLayout } from "./components";
 import ContactUsForAdmin from "./Pages/AdminContactUs";
+import FeedbackComponent from "./components/Feedback";
 
 const router = createBrowserRouter([
   {
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
         element: <ProductCardUI />,
       },
       {
+        path: "/feedback",
+        element: <FeedbackComponent />,
+      },
+      {
         path: "/zxc",
         element: <EditOperatingHours />,
       },
@@ -174,7 +179,7 @@ const router = createBrowserRouter([
         element: <CartPageUI />,
       },
       {
-        path: "/adminadmin",
+        path: "/admin/businessman-verification",
         element: <AdminVerificationPanel />,
       },
       {
