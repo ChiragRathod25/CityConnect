@@ -52,7 +52,7 @@ const LocationStatus = ({
         <div className="instruction-overlay">
           <div className="instruction-content">
             <div className="instruction-icon">📍</div>
-            <div>Click anywhere on the map to set your destination</div>
+            <div>Click anywhere on the map to mark your business location</div>
           </div>
         </div>
       </div>

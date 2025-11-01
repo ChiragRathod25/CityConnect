@@ -10,6 +10,9 @@ import {
 
 const router = Router();
 
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+
+router.use(verifyJWT);
 router.post("/:businessId", addService);
 router.get("/:businessId", getAllServices);
 router.get("/service/:serviceId", getServiceById);

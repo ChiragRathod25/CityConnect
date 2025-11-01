@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { Business } from "./business.model";
-
+import { Business } from "./business.model.js";
 const businessLocationSchema = new mongoose.Schema(
   {
     businessId: {

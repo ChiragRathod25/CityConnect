@@ -8,6 +8,9 @@ import {
   updateBusinessHours,
   deleteBusinessHours,
 } from "../controllers/businessHour.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+
+router.use(verifyJWT);
 
 router.post("/:businessId", addBusinessHours);
 router.get("/:businessId", getBusinessHours);

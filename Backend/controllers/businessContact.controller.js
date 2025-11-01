@@ -1,4 +1,4 @@
-import { ApiResponce } from "../utils/ApiResponce.js";
+import { ApiResponse as ApiResponce } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Business } from "../models/business.model.js";
@@ -68,12 +68,14 @@ const getBusinessContact = asyncHandler(async (req, res, next) => {
 
 const updateBusinessContact = asyncHandler(async (req, res, next) => {
     const { businessId } = req.params;
+    console.log("req.body:", req.body);
     const { phone, email, address, socialLinks, website } = req.body;
 
     if(!businessId) {
       return next(new ApiError("Business ID is required", 400));
     }
-
+  
+    console.log("Updating business contact for businessId:", businessId);
     const business= await Business.findById(businessId);
     if(!business) {
       throw new ApiError(404, "Business not found");

@@ -216,6 +216,77 @@ export class DatabaseService {
   }
 
 
+
+  //business registration services can be added here
+ async registerBusinessBasicInfo(businessData) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.post("/api/v1/business/register", businessData),
+        "Register Business Basic Info"
+      ),
+      {
+        loading: "Registering business...",
+        success: "Business registered successfully!",
+        error: "Failed to register business. Please try again.",
+      }
+    );
+  }
+
+  async registerBusinessContactInfo(businessId, contactData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.post(
+            `/api/v1/business-contact/${businessId}`,
+            contactData
+          ),
+        "Register Business Contact Info"
+      ),
+      {
+        loading: "Updating business contact info...",
+        success: "Business contact info updated successfully!",
+        error: "Failed to update business contact info. Please try again.",
+      }
+    );
+  }
+
+  async registerBusinessLocationInfo(businessId, locationData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.post(
+            `/api/v1/business-location/${businessId}`,
+            locationData
+          ),
+        "Register Business Location Info"
+      ),
+      {
+        loading: "Updating business location info...",
+        success: "Business location info updated successfully!",
+        error: "Failed to update business location info. Please try again.",
+      }
+    );
+  }
+
+  async registerBusinessHoursInfo(businessId, hoursData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.post(
+            `/api/v1/business-hours/${businessId}`,
+            hoursData
+          ),
+        "Register Business Hours Info"
+      ),
+      {
+        loading: "Updating business hours info...",
+        success: "Business hours info updated successfully!",
+        error: "Failed to update business hours info. Please try again.",
+      }
+    );
+  }
+
+  
 }
 const databaseService = new DatabaseService();
 export default databaseService;

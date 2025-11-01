@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { AnimatedBackground } from "@/Pages/Category/ReusableComponent";
-import { FileUpload, TimeSelect } from "../BusinessForm";
+import { FileUpload, TimeSelect } from "../common/FormComponents";
 
 const AddBusinessCard = () => {
   // Static type for now - would come from Redux in real app

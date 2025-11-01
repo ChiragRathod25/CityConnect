@@ -13,6 +13,10 @@ import {
 
 const router = Router();
 
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+
+router.use(verifyJWT);
+
 router.post("/:businessId", addProduct);
 router.get("/:businessId", getAllProducts);
 router.get("/product/:productId", getProductById);
