@@ -83,7 +83,7 @@ const router = createBrowserRouter([
         element: <CityConnectLanding />,
       },
       {
-        path: "/become-a-seller",
+        path: "/register-business",
         element: <ModernSellerForm />,
       },
       {

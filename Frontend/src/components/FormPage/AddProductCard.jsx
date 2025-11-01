@@ -21,7 +21,7 @@ import {
   Package2,
 } from "lucide-react";
 import { AnimatedBackground } from "@/Pages/Category/ReusableComponent";
-import { FileUpload } from "../BusinessForm";
+import { FileUpload } from "../common/FormComponents";
 
 const AddProductCard = () => {
   const [formData, setFormData] = useState({

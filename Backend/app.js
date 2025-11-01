@@ -41,10 +41,24 @@ app.get("/api", (req, res) => {
 
 import userRoutes from "./routes/user.routes.js";
 import businessRoutes from "./routes/business.routes.js";
+import businessContactRoutes from "./routes/businessContact.routes.js";
+import businessHoursRoutes from "./routes/businessHour.routes.js";
+import businessLocationRoutes from "./routes/businessLocation.routes.js";
+import businessProductRoutes from "./routes/businessProduct.routes.js";
+import businessServiceRoutes from "./routes/businessService.routes.js";
+// import reviewRoutes from "./routes/review.routes.js";
+
 import { errorHandler } from "./utils/errorHandler.js";
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/business", businessRoutes);
+app.use("/api/v1/business-contact", businessContactRoutes);
+app.use("/api/v1/business-hours", businessHoursRoutes);
+app.use("/api/v1/business-location", businessLocationRoutes);
+app.use("/api/v1/business-product", businessProductRoutes);
+app.use("/api/v1/business-service", businessServiceRoutes);
+// app.use("/api/v1/review", reviewRoutes);
+
 
 app.use(errorHandler);
 export { app };

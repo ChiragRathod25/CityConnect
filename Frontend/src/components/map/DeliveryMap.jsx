@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import L from "leaflet";
-import RoutingControl from "./RoutingControl";
 import LocationStatus from "./LocationStatus";
-import BusinessLocationForm from "./BusinessLocationForm";
 import "../../styles/DeliveryMap.css";
 import "../../styles/LeafletCustom.css";
 import "../../styles/MapAnimations.css";
-import "../../styles/BusinessLocationForm.css";
 
-// Fix default marker icon (existing code)
+// Fix default marker icon
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
@@ -43,7 +39,7 @@ const MapCenterHandler = ({ center, zoom = 13 }) => {
   return null;
 };
 
-// Custom icons (existing code)
+// Custom icons
 const userIcon = new L.Icon({
   iconUrl: userIconImg,
   iconSize: [32, 32],
@@ -64,93 +60,66 @@ const businessIcon = new L.Icon({
   className: 'business-location-marker'
 });
 
-const destinationIcon = new L.Icon({
-  iconUrl: markerIcon,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl: markerShadow,
-  shadowSize: [41, 41],
-  className: 'destination-marker'
-});
+/**
+ * DeliveryMap Component - Simplified for Business Registration Form
+ * 
+ * @param {number} height - Map height in viewport height (vh) - default 60
+ * @param {number} width - Map width in percentage (%) - default 100
+ * @param {string} businessName - Name of the business (for display)
+ * @param {function} onLocationSelect - Callback when location is confirmed (returns { lat, lng })
+ * 
+ * Usage in BusinessForm.jsx Modal:
+ * <DeliveryMap
+ *   businessName="My Business"
+ *   onLocationSelect={(coords) => {
+ *     handleMapLocationSelect(coords);
+ *   }}
+ *   height={60}
+ *   width={100}
+ * />
+ */
 
-const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
-  const defaultPosition = [22.3072, 73.1812];
+const DeliveryMap = ({ 
+  height = 60, 
+  width = 100, 
+  businessName = "Business Location",
+  onLocationSelect = null
+}) => {
+  const defaultPosition = [22.3072, 73.1812]; // Vadodara, Gujarat
   const [userPosition, setUserPosition] = useState(null);
-  const [clickedMarkers, setClickedMarkers] = useState(null);
-  const [businessLocation, setBusinessLocation] = useState(null);
-  const [routeInfo, setRouteInfo] = useState(null);
-  const [showDirections, setShowDirections] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [locationError, setLocationError] = useState(null);
 
-  // Determine routing points based on mode
-  const getRoutingPoints = () => {
-    if (mode === "business") {
-      return {
-        from: userPosition || defaultPosition,
-        to: businessLocation?.coordinates
-      };
-    } else {
-      return {
-        from: userPosition || defaultPosition,
-        to: clickedMarkers
-      };
-    }
-  };
-
-  const { from, to } = getRoutingPoints();
-
   const handleMapClick = (pos) => {
-    if (mode === "business") {
-      // In business mode, clicking sets business location
-      handleBusinessLocationSelect(pos, {
-        address: `Coordinates: ${pos[0].toFixed(6)}, ${pos[1].toFixed(6)}`,
-        businessName: 'Selected Location'
-      });
-    } else {
-      // Original delivery mode functionality
-      setClickedMarkers(pos);
-      setShowDirections(true);
-    }
-  };
-
-  const handleBusinessLocationSelect = (coordinates, details) => {
-    if (coordinates) {
-      setBusinessLocation({
-        coordinates,
-        lat: coordinates[0],
-        lng: coordinates[1],
-        ...details
-      });
-      setShowDirections(true);
-    } else {
-      setBusinessLocation(null);
-      setShowDirections(false);
-    }
-  };
-
-  const handleUseCurrentLocation = (position, details) => {
-    setBusinessLocation({
-      coordinates: position,
-      lat: position[0],
-      lng: position[1],
-      ...details
+    setSelectedLocation({
+      coordinates: pos,
+      lat: pos[0],
+      lng: pos[1]
     });
-    setShowDirections(true);
   };
 
-  const handleRoutesFound = (routeData) => {
-    console.log('Route data received:', routeData);
-    setRouteInfo(routeData);
-  };
-
-  const closeDirections = () => {
-    setShowDirections(false);
-    setRouteInfo(null);
-    if (mode === "delivery") {
-      setClickedMarkers(null);
+  const handleUseCurrentLocation = () => {
+    if (userPosition) {
+      setSelectedLocation({
+        coordinates: userPosition,
+        lat: userPosition[0],
+        lng: userPosition[1]
+      });
     }
+  };
+
+  const handleConfirmLocation = () => {
+    if (selectedLocation && onLocationSelect) {
+      onLocationSelect({
+        lat: selectedLocation.lat,
+        lng: selectedLocation.lng
+      });
+    }
+  };
+
+  const handleClearLocation = () => {
+    setSelectedLocation(null);
   };
 
   const retryLocation = () => {
@@ -194,30 +163,71 @@ const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
 
   return (
     <div className="delivery-map-container">
-     
-   <LocationStatus
+      {/* Location Status Component */}
+      <LocationStatus
+      style={{ height: 'auto' }}
         userPosition={userPosition}
         isLoadingLocation={isLoadingLocation}
         locationError={locationError}
         onRetryLocation={retryLocation}
       />
 
-      
-      {mode === "business" && (
-        <BusinessLocationForm
-          onLocationSelect={handleBusinessLocationSelect}
-          onUseCurrentLocation={handleUseCurrentLocation}
-          userPosition={userPosition}
-          selectedLocation={businessLocation}
-        />
-      )}
-      
+    
 
-      <div className="map-wrapper">
+      {/* Use Current Location Button */}
+      <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
+        <button
+          onClick={handleUseCurrentLocation}
+          disabled={!userPosition}
+          style={{
+            flex: 1,
+            padding: '12px 20px',
+            background: userPosition ? '#3b82f6' : '#9ca3af',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: userPosition ? 'pointer' : 'not-allowed',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          📱 Use My Current Location
+        </button>
+        
+        {selectedLocation && (
+          <button
+            onClick={handleClearLocation}
+            style={{
+              padding: '12px 20px',
+              background: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            🗑️ Clear
+          </button>
+        )}
+      </div>
+
+      {/* Map Container */}
+      <div className="map-wrapper" style={{ marginBottom: '16px' }}>
         <MapContainer
           center={userPosition || defaultPosition}
           zoom={13}
-          style={{ height: `${height}vh`, width: `${width}%` }}
+          style={{ 
+            height: `${height}vh`, 
+            width: `${width}%`,
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }}
           className="leaflet-map"
         >
           <TileLayer
@@ -228,6 +238,7 @@ const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
           <ClickMarkerHandler onClick={handleMapClick} />
           <MapCenterHandler center={userPosition || defaultPosition} />
 
+          {/* User Location Marker */}
           {userPosition && (
             <Marker position={userPosition} icon={userIcon}>
               <Popup>
@@ -240,87 +251,104 @@ const DeliveryMap = ({ height = 30, width = 80, mode = "delivery" }) => {
             </Marker>
           )}
 
-          {mode === "business" && businessLocation && (
-            <Marker position={businessLocation.coordinates} icon={businessIcon}>
+          {/* Business Location Marker */}
+          {selectedLocation && (
+            <Marker position={selectedLocation.coordinates} icon={businessIcon}>
               <Popup>
                 <div className="popup-content">
-                  <h4>🏢 {businessLocation.businessName}</h4>
-                  <p>{businessLocation.address}</p>
-                  <p>Lat: {businessLocation.lat.toFixed(6)}</p>
-                  <p>Lng: {businessLocation.lng.toFixed(6)}</p>
+              
+                  <p>Lat: {selectedLocation.lat.toFixed(6)}</p>
+                  <p>Lng: {selectedLocation.lng.toFixed(6)}</p>
                 </div>
               </Popup>
             </Marker>
-          )}
-
-          {mode === "delivery" && clickedMarkers && (
-            <Marker position={clickedMarkers} icon={destinationIcon}>
-              <Popup>
-                <div className="popup-content">
-                  <h4>📍 Delivery Location</h4>
-                  <p>Lat: {clickedMarkers[0].toFixed(6)}</p>
-                  <p>Lng: {clickedMarkers[1].toFixed(6)}</p>
-                </div>
-              </Popup>
-            </Marker>
-          )}
-
-          {from && to && showDirections && (
-            <RoutingControl from={from} to={to} onRoutesFound={handleRoutesFound} />
           )}
         </MapContainer>
-
-        {showDirections && routeInfo && (
-          <div className="directions-panel">
-            <div className="directions-header">
-              <div className="header-content">
-                <h3>
-                  {mode === "business" ? "🏢 Business Location Route" : "🚚 Delivery Route"}
-                </h3>
-                <div className="route-summary">
-                  <div className="distance-badge">
-                    📏 {routeInfo.distance}
-                  </div>
-                  <div className="time-badge">
-                    ⏱️ {routeInfo.time}
-                  </div>
-                </div>
-              </div>
-              <button onClick={closeDirections} className="close-button">
-                ✖
-              </button>
-            </div>
-
-            <div className="directions-content">
-              <ol className="directions-list">
-                {routeInfo.steps.map((step, index) => (
-                  <li key={index} className="direction-step step-slide-in">
-                    <div className="step-number">{index + 1}</div>
-                    <div className="step-content">
-                      <div className="step-instruction">{step.text}</div>
-                      {step.distance > 0 && (
-                        <div className="step-distance">
-                          {step.distance > 1000 
-                            ? `${(step.distance / 1000).toFixed(1)} km` 
-                            : `${Math.round(step.distance)} m`}
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="directions-footer">
-              <button onClick={closeDirections} className="clear-route-btn">
-                🗑️ Clear Route
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
+      {/* Selected Location Info */}
+      {selectedLocation && (
+        <div style={{
+          padding: '16px',
+          background: '#f0fdf4',
+          border: '2px solid #86efac',
+          borderRadius: '12px',
+          marginBottom: '16px'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            marginBottom: '8px'
+          }}>
+            <span style={{ fontSize: '20px' }}>✅</span>
+            <span style={{ fontWeight: 'bold', color: '#166534' }}>
+              Location Selected
+            </span>
+          </div>
+          <div style={{ fontSize: '14px', color: '#15803d' }}>
+            <p style={{ margin: '4px 0', fontFamily: 'monospace' }}>
+              <strong>Coordinates:</strong> {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+            </p>
+          </div>
+        </div>
+      )}
 
+      {/* Submit Button */}
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button
+          onClick={handleConfirmLocation}
+          disabled={!selectedLocation}
+          style={{
+            flex: 1,
+            padding: '14px 24px',
+            background: selectedLocation ? '#10b981' : '#9ca3af',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            cursor: selectedLocation ? 'pointer' : 'not-allowed',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            if (selectedLocation) {
+              e.target.style.background = '#059669';
+              e.target.style.transform = 'scale(1.02)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (selectedLocation) {
+              e.target.style.background = '#10b981';
+              e.target.style.transform = 'scale(1)';
+            }
+          }}
+        >
+          <span style={{ fontSize: '18px' }}>✓</span>
+          Confirm Location
+        </button>
+      </div>
+
+      {/* Help Text */}
+      {!selectedLocation && (
+        <div style={{
+          marginTop: '16px',
+          padding: '12px',
+          background: '#fef3c7',
+          border: '2px solid #fbbf24',
+          borderRadius: '8px',
+          fontSize: '13px',
+          color: '#92400e',
+          textAlign: 'center'
+        }}>
+          💡 <strong>Tip:</strong> Click anywhere on the map above to select your business location, 
+          or use the "Use My Current Location" button
+        </div>
+      )}
     </div>
   );
 };

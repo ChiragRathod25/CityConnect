@@ -1,4 +1,4 @@
-import { ApiResponce } from "../utils/ApiResponce.js";
+import { ApiResponse as ApiResponce } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {BusinessHour} from "../models/businessHour.model.js";
@@ -17,7 +17,7 @@ const addBusinessHours= asyncHandler(async (req, res, next) => {
 
     const { dayOfWeek, openTime, closeTime, isClosed } = req.body;
     
-    if (!dayOfWeek || !openTime || !closeTime) {
+    if (!dayOfWeek ) {
         throw new ApiError(400, "dayOfWeek, openTime and closeTime are required");
     }
 

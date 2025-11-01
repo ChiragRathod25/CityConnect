@@ -23,11 +23,9 @@ const businessHourSchema = new mongoose.Schema(
     },
     openTime: {
       type: String, // Format: "HH:MM"
-      required: true,
     },
     closeTime: {
       type: String, // Format: "HH:MM"
-      required: true,
     },
     isClosed: {
       type: Boolean,

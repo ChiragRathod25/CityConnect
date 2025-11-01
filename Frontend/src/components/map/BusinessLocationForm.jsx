@@ -6,9 +6,10 @@ const BusinessLocationForm = ({
   onUseCurrentLocation,
   userPosition,
   selectedLocation,
+  businessname=""
 }) => {
   const [address, setAddress] = useState("");
-  const [businessName, setBusinessName] = useState("");
+  const [businessName, setBusinessName] = useState(businessname);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {

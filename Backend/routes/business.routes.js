@@ -13,8 +13,13 @@ import {
   addBusinessImages,
   removeBusinessImage,
 } from "../controllers/business.controller.js";
+
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+
+
 const router = Router();
 
+router.use(verifyJWT)
 router.post("/register", registerBusiness);
 router.get("/:id", getBusinessProfileById);
 router.put("/:id", updateBusinessProfileById);
