@@ -14,11 +14,37 @@ const addProduct = asyncHandler(async (req, res, next) => {
         throw new ApiError(404, "Business not found");
     }
     
-    const { name, description, price, stock, category } = req.body;
+    const { name, description, price, stock, category,
+            brand, sku, weight, dimensions, tags,  warranty, deliveryCharge, returnPolicyDays
+     } = req.body;
 
     if(!name || !price) {
         throw new ApiError(400, "Name and Price are required");
     }
+
+    //upload image to cloudinary, it can be single or multiple based on imageMethod
+    let images = [];
+    // if one
+    if(req.file) {
+        const uploadResult = await uploadOnCloudinary(req.file.path);
+        if(uploadResult && uploadResult.secure_url) {
+            images.push(uploadResult.secure_url);
+        }
+    }
+    else {
+        // if multiple
+        const files = req.files;
+        if (files && files.length > 0) {
+            for (const file of files) {
+                const uploadResult = await uploadOnCloudinary(file.path);
+                if (uploadResult && uploadResult.secure_url) {
+                    images.push(uploadResult.secure_url);
+                }
+            }
+        }
+    }   
+  
+    
 
     const newProduct =await BusinessProduct.create({
         businessId,
@@ -26,7 +52,18 @@ const addProduct = asyncHandler(async (req, res, next) => {
         description,
         price,
         stock,
-        category
+        category,
+        brand,
+        sku,
+        weight,
+        dimensions,
+        tags,
+        images,
+        warranty,
+        deliveryCharge,
+        returnPolicyDays
+        
+        
     });
 
     if(!newProduct) {

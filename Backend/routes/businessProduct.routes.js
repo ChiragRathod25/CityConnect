@@ -13,11 +13,12 @@ import {
 
 const router = Router();
 
+import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 router.use(verifyJWT);
 
-router.post("/:businessId", addProduct);
+router.post("/:businessId",upload.array("images"), addProduct);
 router.get("/:businessId", getAllProducts);
 router.get("/product/:productId", getProductById);
 router.put("/product/:productId", updateProductById);

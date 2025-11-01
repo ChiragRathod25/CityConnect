@@ -16,11 +16,12 @@ const registerBusiness = asyncHandler(async (req, res, next) => {
 
   console.log("Registering business for user:", req.user);
   // Check if the user already has a business profile
-  const existingBusiness = await Business.findOne({ ownerId: req.user._id });
+  // const existingBusiness = await Business.findOne({ ownerId: req.user._id });
 
-  if (existingBusiness) {
-    throw new ApiError(400, "User already has a business profile");
-  }
+  // if (existingBusiness) {
+  //   throw new ApiError(400, "User already has a business profile");
+  // }
+
   const business = await Business.create({
     ownerId: req.user._id,
     name,
@@ -117,11 +118,24 @@ const deleteBusinessProfileById = asyncHandler(async (req, res, next) => {
 });
 
 const getAllBusinessProfiles = asyncHandler(async (req, res, next) => {
-  const businesses = await Business.find({ isActive: true });
+  //use agregation pipeline to include the details of the owner and other business related information from the other models
+  //look up for user details, location details, 
+  const businesses=await Business.aggregate([
+    {
+      $match: { status: "active" } 
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "ownerId",
+        foreignField: "_id",
+        as: "ownerDetails"
+      }
+    },
+   
+  ]);
+  
 
-  if (!businesses || businesses.length === 0) {
-    throw new ApiError(404, "No active business profiles found");
-  }
   res
     .status(200)
     .json(

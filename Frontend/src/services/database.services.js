@@ -286,6 +286,49 @@ export class DatabaseService {
     );
   }
 
+
+  //business products
+  
+  async addBusinessProduct(businessId, productData) {
+  const formData = new FormData();
+
+  // append non-file fields
+  for (const [key, value] of Object.entries(productData)) {
+    if (key === "images") continue; // handle separately below
+
+    if (Array.isArray(value)) {
+      formData.append(key, JSON.stringify(value)); // handle tags, etc.
+    } else {
+      formData.append(key, value);
+    }
+  }
+
+  // append actual files
+  if (Array.isArray(productData.images)) {
+    productData.images.forEach((file) => {
+      if (file instanceof File || file instanceof Blob) {
+        formData.append("images", file); // 'images' must match multer field
+      }
+    });
+  }
+
+  console.log("FormData images:", formData.getAll("images"));
+
+  return toast.promise(
+    handleApiRequest(() =>
+      axiosInstace.post(`/api/v1/business-product/${businessId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+    ),
+    {
+      loading: "Adding product...",
+      success: "Product added successfully!",
+      error: "Failed to add product. Please try again.",
+    }
+  );
+}
+
+
   
 }
 const databaseService = new DatabaseService();

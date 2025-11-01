@@ -98,14 +98,22 @@ const router = createBrowserRouter([
         element: <SubcategoryPage />,
       },
 
-
       //on the businessman side
       {
         path: "/register-business",
         element: <ModernSellerForm />,
       },
+      
       {
-        path: "/businessman-profile",
+        path: "/businesses", //list all the businesses of the user
+        element:
+        (
+          <>
+          </>
+        )
+      },
+      {
+        path: "/business-profile",
         element: <BusinessmanProfileDashboard />,
       },
       {
@@ -118,12 +126,12 @@ const router = createBrowserRouter([
       },
       {
         // path: "/add-productcard", //used to add product of business
-        path: "/product",
+        path: "/:businessId/product",
         element: <AddProductCard />,
       },
       {
         // path: "/add-productcard",  //used to add service of business
-        path: "/servicecard",
+        path: "/servicecard/:businessId",
         element: <AddServiceProviderForm />,
       },
       {
@@ -217,9 +225,9 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
-  </StrictMode>
+  // </StrictMode>
 );

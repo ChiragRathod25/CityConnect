@@ -1,15 +1,5 @@
 import mongoose from "mongoose";
 
-const ImageSchema = new mongoose.Schema(
-  {
-    url: { type: String, required: true }, // stored CDN / S3 / dataURL
-    filename: { type: String }, // original filename or storage key
-    method: { type: String, enum: ["upload", "camera", "ai"], required: true },
-    size: { type: Number }, // bytes (optional)
-    alt: { type: String }, // optional alt text
-  },
-  { _id: true } // each image keeps its own id
-);
 
 const businessProductSchema = new mongoose.Schema(
   {
@@ -78,27 +68,14 @@ const businessProductSchema = new mongoose.Schema(
     tags: {
       type: [String],
       default: [],
-      index: true,
     },
 
     images: {
-      type: [ImageSchema],
+      type: [String], // array of image URLs
       default: [],
-      validate: {
-        validator: function (v) {
-          // require at least one image at model-level if necessary
-          return Array.isArray(v);
-        },
-        message: "Images must be an array",
-      },
     },
 
-    imageMethod: {
-      type: String,
-      enum: ["upload", "ai", "camera", ""],
-      default: "",
-    },
-
+   
     warranty: {
       type: String,
       trim: true,
@@ -124,7 +101,7 @@ const businessProductSchema = new mongoose.Schema(
 );
 
 // Indexes for faster lookup (adjust as needed)
-businessProductSchema.index({ name: "text", description: "text", tags: 1 });
+businessProductSchema.index({ name: "text", description: "text", tags: "text" });
 businessProductSchema.index({ deliveryCharge: 1 });
 
 // Virtual example: formatted price string

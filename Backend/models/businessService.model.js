@@ -174,6 +174,6 @@ businessServiceSchema.pre('save', function(next) {
 });
 
 export const BusinessService = mongoose.model(
-  "ServiceProvider",
+  "businessService",
   businessServiceSchema
 );

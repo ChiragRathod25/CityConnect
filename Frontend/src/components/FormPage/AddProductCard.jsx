@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -20,10 +20,49 @@ import {
   Users,
   Package2,
 } from "lucide-react";
-import { AnimatedBackground } from "@/Pages/Category/ReusableComponent";
-import { FileUpload } from "../common/FormComponents";
+import { useNavigate, useParams } from "react-router-dom";
+import databaseService from "@/services/database.services";
+
+// Mock AnimatedBackground component
+const AnimatedBackground = () => (
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-70" />
+);
+
+// Mock FileUpload component
+const FileUpload = ({
+  label,
+  icon: Icon,
+  accept,
+  onChange,
+  description,
+  error,
+}) => (
+  <div className="space-y-2">
+    <label className="block">
+      <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-gray-400 transition-colors cursor-pointer bg-gray-50 hover:bg-gray-100">
+        <Icon className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+        <div className="text-sm font-medium text-gray-700">{label}</div>
+        <div className="text-xs text-gray-500 mt-1">{description}</div>
+        <input
+          type="file"
+          accept={accept}
+          onChange={onChange}
+          className="hidden"
+        />
+      </div>
+    </label>
+    {error && (
+      <div className="flex items-center gap-1 text-xs text-red-500">
+        <AlertCircle size={12} />
+        {error}
+      </div>
+    )}
+  </div>
+);
 
 const AddProductCard = () => {
+  const { businessId } = useParams();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -35,11 +74,11 @@ const AddProductCard = () => {
     weight: "",
     dimensions: "",
     tags: [],
-    images: [],
-    imageMethod: "", // 'upload','camera'
+    images: [], // array of multiple images locally stored before upload
+    imageMethod: "", // 'upload', 'camera', 'ai'
     warranty: "",
-    deliverycharge: "",
-    returnPolicy: "",
+    deliveryCharge: "",
+    returnPolicyDays: 0,
   });
 
   const [errors, setErrors] = useState({});
@@ -68,11 +107,11 @@ const AddProductCard = () => {
 
     if (!formData.price) {
       newErrors.price = "Price is required";
-    } else if (parseFloat(formData.price) <= 0) {
-      newErrors.price = "Price must be greater than 0";
+    } else if (parseFloat(formData.price) < 0) {
+      newErrors.price = "Price must be >= 0";
     }
 
-    if (!formData.stock) {
+    if (!formData.stock && formData.stock !== "0") {
       newErrors.stock = "Stock quantity is required";
     } else if (parseInt(formData.stock) < 0) {
       newErrors.stock = "Stock cannot be negative";
@@ -86,48 +125,42 @@ const AddProductCard = () => {
       newErrors.imageMethod = "Please select an image method";
     }
 
-    if (!formData.deliverycharge) {
-      newErrors.deliverycharge = "Please Write The Delivery Charges";
+    if (formData.deliveryCharge && parseFloat(formData.deliveryCharge) < 0) {
+      newErrors.deliveryCharge = "Delivery charge cannot be negative";
     }
 
+    console.log("Validation Errors:", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const navigate = useNavigate();
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    const trueFalse = validateForm();
+    if (!trueFalse) return;
 
     setLoading(true);
 
-    // Simulate API call
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
-    console.log(formData);
-    setLoading(false);
-    setSuccess(true);
+    // Prepare data matching the model structure
 
-    setTimeout(() => {
-      setSuccess(false);
-      // Reset form
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        stock: "",
-        category: "",
-        brand: "",
-        sku: "",
-        weight: "",
-        dimensions: "",
-        tags: [],
-        images: [],
-        imageMethod: "",
-        warranty: "",
-        deliverycharge: "",
-        returnPolicy: "",
-      });
-    }, 3000);
+    const productData = {
+      ...formData,
+    };
+
+    try {
+      const response = await databaseService.addBusinessProduct(
+        businessId,
+        productData
+      );
+      console.log("Product added successfully:", response);
+      setSuccess(true);
+
+      navigate("/business-profile");
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+
+    setLoading(false);
   };
 
   const handleInputChange = (field, value) => {
@@ -154,26 +187,22 @@ const AddProductCard = () => {
     }));
   };
 
+  const [imagePreviews, setImagePreviews] = useState([]);
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (file && formData.imageMethod === "upload") {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newImage = {
-          id: Date.now(),
-          file: file,
-          preview: e.target.result,
-          method: "upload",
-        };
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, newImage],
-        }));
-        if (errors.images) {
-          setErrors((prev) => ({ ...prev, images: "" }));
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, file], // store only the File object
+      imageMethod: "upload",
+    }));
+
+    setImagePreviews((prev) => [...prev, URL.createObjectURL(file)]);
+
+    if (errors.images) {
+      setErrors((prev) => ({ ...prev, images: "" }));
     }
   };
 
@@ -203,21 +232,22 @@ const AddProductCard = () => {
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0);
 
-      canvas.toBlob((blob) => {
-        const newImage = {
-          id: Date.now(),
-          file: blob,
-          preview: canvas.toDataURL(),
-          method: "camera",
-        };
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, newImage],
-        }));
-        if (errors.images) {
-          setErrors((prev) => ({ ...prev, images: "" }));
-        }
-      });
+      const dataUrl = canvas.toDataURL("image/jpeg");
+      const newImage = {
+        id: Date.now(),
+        url: dataUrl, // In production, upload to CDN/S3
+        filename: `camera-${Date.now()}.jpg`,
+        method: "camera",
+        size: undefined, // Calculate from blob if needed
+        alt: formData.name || "Product image",
+      };
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, newImage],
+      }));
+      if (errors.images) {
+        setErrors((prev) => ({ ...prev, images: "" }));
+      }
 
       stopCamera();
     }
@@ -231,12 +261,14 @@ const AddProductCard = () => {
     setShowCamera(false);
   };
 
-  const removeImage = (imageId) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((img) => img.id !== imageId),
-    }));
-  };
+const removeImage = (index) => {
+  setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  setFormData((prev) => ({
+    ...prev,
+    images: prev.images.filter((_, i) => i !== index),
+  }));
+};
+
 
   return (
     <div className="min-h-screen py-20 px-3 relative">
@@ -245,14 +277,10 @@ const AddProductCard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl shadow-2xl overflow-hidden"
-          style={{ backgroundColor: "#ffffff" }}
+          className="rounded-3xl shadow-2xl overflow-hidden bg-white"
         >
           {/* Header */}
-          <div
-            className="px-8 py-6 text-center"
-            style={{ backgroundColor: "#1f2937" }}
-          >
+          <div className="px-8 py-6 text-center bg-gray-800">
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -272,26 +300,21 @@ const AddProductCard = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 flex items-center justify-center z-50"
-                style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
+                className="absolute inset-0 flex items-center justify-center z-50 bg-white bg-opacity-95"
               >
                 <div className="text-center">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ backgroundColor: "#10b981" }}
+                    className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-4"
                   >
                     <Check size={40} className="text-white" />
                   </motion.div>
-                  <h2
-                    className="text-2xl font-bold mb-2"
-                    style={{ color: "#1f2937" }}
-                  >
+                  <h2 className="text-2xl font-bold mb-2 text-gray-800">
                     Product Added Successfully!
                   </h2>
-                  <p style={{ color: "#6b7280" }}>
+                  <p className="text-gray-600">
                     Your product has been added to the catalog.
                   </p>
                 </div>
@@ -310,11 +333,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.1 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Package size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Package size={16} className="text-gray-400" />
                   Product Name *
                 </label>
                 <input
@@ -322,18 +342,15 @@ const AddProductCard = () => {
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   placeholder="Enter product name"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: errors.name ? "#ef4444" : "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 {errors.name && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: "#ef4444" }}
+                    className="flex items-center gap-1 text-xs text-red-500"
                   >
                     <AlertCircle size={12} />
                     {errors.name}
@@ -348,11 +365,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.1 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Tag size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Tag size={16} className="text-gray-400" />
                   Category
                 </label>
                 <input
@@ -362,11 +376,7 @@ const AddProductCard = () => {
                     handleInputChange("category", e.target.value)
                   }
                   placeholder="e.g., Electronics, Clothing"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
             </div>
@@ -380,11 +390,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.2 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <DollarSign size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <DollarSign size={16} className="text-gray-400" />
                   Price *
                 </label>
                 <input
@@ -393,18 +400,15 @@ const AddProductCard = () => {
                   value={formData.price}
                   onChange={(e) => handleInputChange("price", e.target.value)}
                   placeholder="0.00"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: errors.price ? "#ef4444" : "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
+                    errors.price ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 {errors.price && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: "#ef4444" }}
+                    className="flex items-center gap-1 text-xs text-red-500"
                   >
                     <AlertCircle size={12} />
                     {errors.price}
@@ -419,11 +423,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.25 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Hash size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Hash size={16} className="text-gray-400" />
                   Stock *
                 </label>
                 <input
@@ -431,18 +432,15 @@ const AddProductCard = () => {
                   value={formData.stock}
                   onChange={(e) => handleInputChange("stock", e.target.value)}
                   placeholder="0"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: errors.stock ? "#ef4444" : "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
+                    errors.stock ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 {errors.stock && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: "#ef4444" }}
+                    className="flex items-center gap-1 text-xs text-red-500"
                   >
                     <AlertCircle size={12} />
                     {errors.stock}
@@ -457,11 +455,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.3 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Star size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Star size={16} className="text-gray-400" />
                   Brand
                 </label>
                 <input
@@ -469,11 +464,7 @@ const AddProductCard = () => {
                   value={formData.brand}
                   onChange={(e) => handleInputChange("brand", e.target.value)}
                   placeholder="Brand name"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
 
@@ -484,11 +475,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.35 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Hash size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Hash size={16} className="text-gray-400" />
                   SKU
                 </label>
                 <input
@@ -496,11 +484,7 @@ const AddProductCard = () => {
                   value={formData.sku}
                   onChange={(e) => handleInputChange("sku", e.target.value)}
                   placeholder="Product SKU"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
             </div>
@@ -512,16 +496,13 @@ const AddProductCard = () => {
               transition={{ delay: 0.4 }}
               className="space-y-4"
             >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <Image size={16} style={{ color: "#9ca3af" }} />
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                <Image size={16} className="text-gray-400" />
                 Product Images *
               </label>
 
               {/* Image Method Selection */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.02 }}
@@ -529,22 +510,16 @@ const AddProductCard = () => {
                   onClick={() => handleInputChange("imageMethod", "upload")}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
                     formData.imageMethod === "upload"
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-gray-800 bg-gray-800 text-white"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
                   }`}
-                  style={{
-                    backgroundColor:
-                      formData.imageMethod === "upload" ? "#1f2937" : "#ffffff",
-                    color:
-                      formData.imageMethod === "upload" ? "#ffffff" : "#374151",
-                  }}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2" />
                   <div className="font-semibold">Upload Image</div>
                   <div className="text-xs opacity-75">From device</div>
                 </motion.button>
 
-                <motion.button
+                {/* <motion.button
                   type="button"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -554,28 +529,40 @@ const AddProductCard = () => {
                   }}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
                     formData.imageMethod === "camera"
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-gray-800 bg-gray-800 text-white"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
                   }`}
-                  style={{
-                    backgroundColor:
-                      formData.imageMethod === "camera" ? "#1f2937" : "#ffffff",
-                    color:
-                      formData.imageMethod === "camera" ? "#ffffff" : "#374151",
-                  }}
                 >
                   <Camera className="w-8 h-8 mx-auto mb-2" />
                   <div className="font-semibold">Capture Image</div>
                   <div className="text-xs opacity-75">Use camera</div>
                 </motion.button>
+
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleInputChange("imageMethod", "ai");
+                    alert("AI image generation coming soon!");
+                  }}
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
+                    formData.imageMethod === "ai"
+                      ? "border-gray-800 bg-gray-800 text-white"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
+                  }`}
+                >
+                  <Wand2 className="w-8 h-8 mx-auto mb-2" />
+                  <div className="font-semibold">AI Generated</div>
+                  <div className="text-xs opacity-75">Coming soon</div>
+                </motion.button> */}
               </div>
 
               {errors.imageMethod && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-1 text-xs"
-                  style={{ color: "#ef4444" }}
+                  className="flex items-center gap-1 text-xs text-red-500"
                 >
                   <AlertCircle size={12} />
                   {errors.imageMethod}
@@ -607,24 +594,21 @@ const AddProductCard = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
                   >
                     <motion.div
                       initial={{ scale: 0.8 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0.8 }}
-                      className="bg-white rounded-2xl p-6 max-w-md w-full mx-4"
+                      className="bg-white rounded-2xl p-6 max-w-md w-full"
                     >
                       <div className="text-center mb-4">
-                        <h3
-                          className="text-lg font-semibold"
-                          style={{ color: "#1f2937" }}
-                        >
+                        <h3 className="text-lg font-semibold text-gray-800">
                           Capture Product Photo
                         </h3>
                       </div>
 
-                      <div className="relative mb-4">
+                      <div className="relative mb-4 bg-black rounded-xl overflow-hidden">
                         <video
                           ref={videoRef}
                           autoPlay
@@ -639,21 +623,16 @@ const AddProductCard = () => {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={capturePhoto}
-                          className="flex-1 py-3 rounded-xl text-white font-semibold"
-                          style={{ backgroundColor: "#1f2937" }}
+                          className="flex-1 py-3 rounded-xl bg-gray-800 text-white font-semibold flex flex-col items-center"
                         >
-                          <Camera className="w-5 h-5 mx-auto mb-1" />
+                          <Camera className="w-5 h-5 mb-1" />
                           Capture
                         </motion.button>
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={stopCamera}
-                          className="flex-1 py-3 rounded-xl border-2 font-semibold"
-                          style={{
-                            borderColor: "#d1d5db",
-                            color: "#374151",
-                          }}
+                          className="flex-1 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold"
                         >
                           Cancel
                         </motion.button>
@@ -663,51 +642,51 @@ const AddProductCard = () => {
                 )}
               </AnimatePresence>
 
-              {/* Image Preview Grid */}
-              {formData.images.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
-                >
-                  {formData.images.map((image, index) => (
-                    <motion.div
-                      key={image.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="relative group"
-                    >
-                      <img
-                        src={image.preview}
-                        alt={`Product ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-xl shadow-md"
-                      />
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => removeImage(image.id)}
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ backgroundColor: "#ef4444" }}
-                      >
-                        <X size={12} />
-                      </motion.button>
-                      <div
-                        className="absolute bottom-1 left-1 px-1 py-0.5 rounded text-xs text-white"
-                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-                      >
-                        {image.method === "upload" ? "Upload" : "Camera"}
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
+            {/* 🖼️ Image Preview Grid */}
+{imagePreviews.length > 0 && (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-3"
+  >
+    {imagePreviews.map((src, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative group"
+      >
+        <img
+          src={src}
+          alt={`preview-${index}`}
+          className="w-24 h-24 object-cover rounded-lg border shadow-sm"
+        />
+
+        {/* ❌ Delete button */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => removeImage(index)}
+          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+        >
+          <X size={12} />
+        </motion.button>
+
+        {/* 📸 Image method label */}
+        <div className="absolute bottom-1 left-1 px-2 py-0.5 rounded text-xs text-white bg-black bg-opacity-60 capitalize">
+          {formData.imageMethod || "upload"}
+        </div>
+      </motion.div>
+    ))}
+  </motion.div>
+)}
+
 
               {errors.images && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-1 text-xs"
-                  style={{ color: "#ef4444" }}
+                  className="flex items-center gap-1 text-xs text-red-500"
                 >
                   <AlertCircle size={12} />
                   {errors.images}
@@ -722,11 +701,8 @@ const AddProductCard = () => {
               transition={{ delay: 0.5 }}
               className="space-y-4"
             >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <Tag size={16} style={{ color: "#9ca3af" }} />
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                <Tag size={16} className="text-gray-400" />
                 Product Tags
               </label>
 
@@ -739,46 +715,42 @@ const AddProductCard = () => {
                     e.key === "Enter" && (e.preventDefault(), addTag())
                   }
                   placeholder="Enter tag (e.g., bestseller, new, sale)"
-                  className="flex-1 px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={addTag}
-                  className="px-4 py-3 rounded-xl transition-all duration-300 sm:w-auto w-full flex items-center justify-center gap-2"
-                  style={{ backgroundColor: "#1f2937", color: "#ffffff" }}
+                  className="px-6 py-3 rounded-xl bg-gray-800 text-white transition-all duration-300 sm:w-auto w-full flex items-center justify-center gap-2 font-semibold"
                 >
                   <Plus size={20} />
-                  <span className="sm:hidden">Add Tag</span>
+                  <span>Add Tag</span>
                 </motion.button>
               </div>
 
               {/* Tags Display */}
-              <div className="flex flex-wrap gap-2">
-                {formData.tags.map((tag, index) => (
-                  <motion.span
-                    key={tag}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
-                    style={{ backgroundColor: "#374151", color: "#ffffff" }}
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      className="hover:bg-red-500 rounded-full p-1 transition-colors"
+              {formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.map((tag) => (
+                    <motion.span
+                      key={tag}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-700 text-white"
                     >
-                      <X size={12} />
-                    </button>
-                  </motion.span>
-                ))}
-              </div>
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="hover:bg-red-500 rounded-full p-0.5 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </motion.span>
+                  ))}
+                </div>
+              )}
             </motion.div>
 
             {/* Additional Details Grid */}
@@ -790,11 +762,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.6 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Package size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Package size={16} className="text-gray-400" />
                   Weight
                 </label>
                 <input
@@ -802,11 +771,7 @@ const AddProductCard = () => {
                   value={formData.weight}
                   onChange={(e) => handleInputChange("weight", e.target.value)}
                   placeholder="e.g., 1.5 kg"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
 
@@ -817,11 +782,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.65 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <MapPin size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <MapPin size={16} className="text-gray-400" />
                   Dimensions
                 </label>
                 <input
@@ -831,11 +793,7 @@ const AddProductCard = () => {
                     handleInputChange("dimensions", e.target.value)
                   }
                   placeholder="e.g., 20x15x10 cm"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
 
@@ -846,11 +804,8 @@ const AddProductCard = () => {
                 transition={{ delay: 0.7 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Star size={16} style={{ color: "#9ca3af" }} />
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Star size={16} className="text-gray-400" />
                   Warranty Period
                 </label>
                 <input
@@ -859,40 +814,44 @@ const AddProductCard = () => {
                   onChange={(e) =>
                     handleInputChange("warranty", e.target.value)
                   }
-                  placeholder="e.g., 3 months"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  placeholder="e.g., 3 months, 1 year"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 />
               </motion.div>
+
+              {/* Delivery Charge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
+                transition={{ delay: 0.75 }}
                 className="space-y-2"
               >
-                <label
-                  className="flex items-center gap-2 text-sm font-semibold"
-                  style={{ color: "#6b7280" }}
-                >
-                  <Package2 size={16} style={{ color: "#9ca3af" }} />
-                  Delivery Charges
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                  <Package2 size={16} className="text-gray-400" />
+                  Delivery Charge
                 </label>
                 <input
-                  type="text"
-                  value={formData.deliverycharge}
+                  type="number"
+                  step="0.01"
+                  value={formData.deliveryCharge}
                   onChange={(e) =>
-                    handleInputChange("deliverycharge", e.target.value)
+                    handleInputChange("deliveryCharge", e.target.value)
                   }
                   placeholder="e.g., 30"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{
-                    borderColor: "#d1d5db",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
+                    errors.deliveryCharge ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.deliveryCharge && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-1 text-xs text-red-500"
+                  >
+                    <AlertCircle size={12} />
+                    {errors.deliveryCharge}
+                  </motion.div>
+                )}
               </motion.div>
             </div>
 
@@ -900,39 +859,32 @@ const AddProductCard = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.75 }}
+              transition={{ delay: 0.8 }}
               className="space-y-4"
             >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <Users size={16} style={{ color: "#9ca3af" }} />
-                Return Policy
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                <Users size={16} className="text-gray-400" />
+                Return Policy Days
               </label>
 
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {["0","7", "15", "30", "60"].map((days) => (
+                {[0, 7, 15, 30, 60].map((days) => (
                   <motion.button
                     key={days}
                     type="button"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => handleInputChange("returnPolicy", days)}
+                    onClick={() => handleInputChange("returnPolicyDays", days)}
                     className={`p-3 rounded-xl border-2 transition-all duration-300 text-center ${
-                      formData.returnPolicy === days
-                        ? "border-black"
-                        : "border-gray-200 hover:border-gray-300"
+                      formData.returnPolicyDays === days
+                        ? "border-gray-800 bg-gray-800 text-white"
+                        : "border-gray-200 hover:border-gray-300 text-gray-700"
                     }`}
-                    style={{
-                      backgroundColor:
-                        formData.returnPolicy === days ? "#1f2937" : "#ffffff",
-                      color:
-                        formData.returnPolicy === days ? "#ffffff" : "#374151",
-                    }}
                   >
                     <div className="font-semibold">{days} Days</div>
-                    <div className="text-xs opacity-75">Return</div>
+                    <div className="text-xs opacity-75">
+                      {days === 0 ? "No Return" : "Return"}
+                    </div>
                   </motion.button>
                 ))}
               </div>
@@ -942,14 +894,11 @@ const AddProductCard = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 0.85 }}
               className="space-y-2"
             >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <FileText size={16} style={{ color: "#9ca3af" }} />
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                <FileText size={16} className="text-gray-400" />
                 Product Description *
               </label>
               <textarea
@@ -959,22 +908,21 @@ const AddProductCard = () => {
                 }
                 placeholder="Describe your product in detail - features, benefits, specifications..."
                 rows={5}
-                className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none resize-none"
-                style={{
-                  borderColor: errors.description ? "#ef4444" : "#d1d5db",
-                  backgroundColor: "#ffffff",
-                }}
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none ${
+                  errors.description ? "border-red-500" : "border-gray-300"
+                }`}
               />
               <div className="flex justify-between text-xs">
                 <span
-                  style={{
-                    color:
-                      formData.description.length < 20 ? "#ef4444" : "#10b981",
-                  }}
+                  className={
+                    formData.description.length < 20
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }
                 >
                   {formData.description.length}/20 minimum characters
                 </span>
-                <span style={{ color: "#9ca3af" }}>
+                <span className="text-gray-400">
                   {formData.description.length}/1000
                 </span>
               </div>
@@ -982,8 +930,7 @@ const AddProductCard = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-1 text-xs"
-                  style={{ color: "#ef4444" }}
+                  className="flex items-center gap-1 text-xs text-red-500"
                 >
                   <AlertCircle size={12} />
                   {errors.description}
@@ -998,8 +945,11 @@ const AddProductCard = () => {
               disabled={loading}
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
-              className="w-full py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2"
-              style={{ backgroundColor: loading ? "#6b7280" : "#1f2937" }}
+              className={`w-full py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-gray-800 hover:bg-gray-900"
+              }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
