@@ -47,6 +47,7 @@ import ContactEditPage from "./components/businessmanProfile/Email";
 import { AuthLayout } from "./components";
 import ContactUsForAdmin from "./Pages/AdminContactUs";
 import FeedbackComponent from "./components/Feedback";
+import AboutPageUi from "./Pages/About";
 
 const router = createBrowserRouter([
   {
@@ -63,12 +64,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/signup",
-
         element: <SignUpPageUI />,
       },
       {
         path: "/login",
         element: <LoginPageUI />,
+      },
+      {
+        path: "/about",
+        element: <AboutPageUi />,
       },
       {
         path: "/reset-password",
@@ -113,7 +117,7 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "/business-profile",
+        path: "/businessman-profile",
         element: <BusinessmanProfileDashboard />,
       },
       {
@@ -143,10 +147,10 @@ const router = createBrowserRouter([
         path: "/card", //get information about the products of the business
         element: <ProductCardUI />,
       },
-      {
-        path: "/edit-operating-hours", //of business , TODO: needs improvement
-        element: <EditOperatingHours />,
-      },
+      // {
+      //   path: "/edit-operating-hours", //of business , TODO: needs improvement
+      //   element: <EditOperatingHours />,
+      // },
       {
         path: "/cart",
         element: <CartPageUI />,
