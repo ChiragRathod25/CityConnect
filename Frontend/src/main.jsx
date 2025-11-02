@@ -124,18 +124,19 @@ const router = createBrowserRouter([
         path: "/businessman-profile/profile-info/edit-profile",
         element: <EditBusinessmanProfileNavigation />,
       },
+      
       {
         // path: "/add-productcard", //used to add product of business
-        path: "/:businessId/product",
+        path: "/:businessId/product/add",
         element: <AddProductCard />,
       },
       {
         // path: "/add-productcard",  //used to add service of business
-        path: "/servicecard/:businessId",
+        path: "/:businessId/service/add",
         element: <AddServiceProviderForm />,
       },
       {
-        path: "/service", //get information about the service of the business
+        path: "/:businessId/service", //get information about the service of the business
         element: <ServiceProviderCardUI />,
       },
       {

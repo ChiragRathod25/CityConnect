@@ -8,49 +8,47 @@ import {
   Building2,
   Tag,
   FileText,
-  Globe,
-  Calendar,
+  Clock,
   Award,
-  Users,
   Image,
   AlertCircle,
   Check,
   Loader2,
-  Star,
+  DollarSign,
   ChevronDown,
-  Facebook,
-  Instagram,
-  Twitter,
-  Youtube,
-  Linkedin,
+  MapPin,
+  Shield,
+  XCircle,
+  Calendar,
 } from "lucide-react";
+import databaseService from "@/services/database.services";
+import BusinessmanProfileDashboard from "@/Pages/BusinessmanProfile/BusinessmanProfile";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddServiceProviderForm = () => {
+const AddServiceForm = () => {
+
+  const {businessId}=useParams();
+  const navigate=useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
-    type: "",
     description: "",
-    categories: [],
-    website: "",
-    establishedYear: "",
+    category: "",
     price: "",
-    socialMedia: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-      youtube: "",
-      linkedin: "",
-    },
-    awards: [],
+    duration: "",
+    serviceType: "onsite",
+    availability: "",
+    tags: [],
     images: [],
+    warrantyDays: 0,
+    cancellationPolicy: "flexible",
     imageMethod: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState("");
-  const [currentAward, setCurrentAward] = useState("");
+  const [currentTag, setCurrentTag] = useState("");
   const [cameraStream, setCameraStream] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef(null);
@@ -58,7 +56,7 @@ const AddServiceProviderForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const serviceTypes = [
+  const serviceCategories = [
     "Photography",
     "Videography",
     "Catering",
@@ -74,31 +72,53 @@ const AddServiceProviderForm = () => {
     "Other",
   ];
 
+  const serviceTypes = [
+    { value: "onsite", label: "On-Site Service", icon: MapPin },
+    { value: "offsite", label: "Off-Site Service", icon: Building2 },
+    { value: "remote", label: "Remote Service", icon: Camera },
+  ];
+
+  const warrantyOptions = [
+    { value: 0, label: "No Warranty" },
+    { value: 7, label: "7 Days" },
+    { value: 15, label: "15 Days" },
+    { value: 30, label: "30 Days" },
+  ];
+
+  const cancellationPolicies = [
+    { value: "no-cancel", label: "No Cancellation", icon: XCircle },
+    { value: "24hr", label: "24 Hours Notice", icon: Clock },
+    { value: "48hr", label: "48 Hours Notice", icon: Clock },
+    { value: "flexible", label: "Flexible", icon: Check },
+  ];
+
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Business name is required";
+      newErrors.name = "Service name is required";
     } else if (formData.name.length < 3) {
-      newErrors.name = "Business name must be at least 3 characters";
-    }
-
-    if (!formData.type) {
-      newErrors.type = "Service type is required";
+      newErrors.name = "Service name must be at least 3 characters";
+    } else if (formData.name.length > 100) {
+      newErrors.name = "Service name must not exceed 100 characters";
     }
 
     if (!formData.description.trim()) {
       newErrors.description = "Description is required";
-    } else if (formData.description.length < 50) {
-      newErrors.description = "Description must be at least 50 characters";
+    } else if (formData.description.length < 20) {
+      newErrors.description = "Description must be at least 20 characters";
+    }
+
+    if (!formData.price || formData.price < 0) {
+      newErrors.price = "Valid price is required";
+    }
+
+    if (!formData.duration.trim()) {
+      newErrors.duration = "Duration is required";
     }
 
     if (formData.images.length === 0) {
-      newErrors.images = "At least one business image is required";
-    }
-
-    if (!formData.imageMethod) {
-      newErrors.imageMethod = "Please select an image method";
+      newErrors.images = "At least one service image is required";
     }
 
     setErrors(newErrors);
@@ -106,45 +126,41 @@ const AddServiceProviderForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+   
+    const isValid = validateForm();
+    if (!isValid) return;
     setLoading(true);
-    console.log(formData);
-
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-
-    setLoading(false);
-    setSuccess(true);
-
-    setTimeout(() => {
-      setSuccess(false);
-      resetForm();
-    }, 3000);
+    //prepare data 
+    const serviceData={
+      ...formData,
+    }
+    try { 
+      
+      const response=await databaseService.addBusinessService(businessId,serviceData);
+      console.log("Service added:", response);
+      setSuccess(true);
+      navigate(`/business-profile`);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setLoading(false);
+    }
+    return;
   };
 
   const resetForm = () => {
     setFormData({
       name: "",
-      type: "",
       description: "",
-      categories: [],
-
-      website: "",
-
-      establishedYear: "",
+      category: "",
       price: "",
-
-      socialMedia: {
-        facebook: "",
-        instagram: "",
-        twitter: "",
-        youtube: "",
-        linkedin: "",
-      },
-      awards: [],
+      duration: "",
+      serviceType: "onsite",
+      availability: "",
+      tags: [],
       images: [],
+      warrantyDays: 0,
+      cancellationPolicy: "flexible",
       imageMethod: "",
     });
   };
@@ -155,7 +171,6 @@ const AddServiceProviderForm = () => {
     setIsOpen(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -167,70 +182,41 @@ const AddServiceProviderForm = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSocialMediaChange = (platform, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      socialMedia: { ...prev.socialMedia, [platform]: value },
-    }));
-  };
-
-  const addCategory = () => {
-    if (
-      currentCategory.trim() &&
-      !formData.categories.includes(currentCategory.trim())
-    ) {
+  const addTag = () => {
+    if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
       setFormData((prev) => ({
         ...prev,
-        categories: [...prev.categories, currentCategory.trim()],
+        tags: [...prev.tags, currentTag.trim()],
       }));
-      setCurrentCategory("");
+      setCurrentTag("");
     }
   };
 
-  const removeCategory = (categoryToRemove) => {
+  const removeTag = (tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
-      categories: prev.categories.filter((cat) => cat !== categoryToRemove),
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
-  const addAward = () => {
-    if (currentAward.trim() && !formData.awards.includes(currentAward.trim())) {
-      setFormData((prev) => ({
-        ...prev,
-        awards: [...prev.awards, currentAward.trim()],
-      }));
-      setCurrentAward("");
-    }
-  };
 
-  const removeAward = (awardToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      awards: prev.awards.filter((award) => award !== awardToRemove),
-    }));
-  };
 
+  
+  const [imagePreviews, setImagePreviews] = useState([]);
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (file && formData.imageMethod === "upload") {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newImage = {
-          id: Date.now(),
-          file: file,
-          preview: e.target.result,
-          method: "upload",
-        };
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, newImage],
-        }));
-        if (errors.images) {
-          setErrors((prev) => ({ ...prev, images: "" }));
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, file], // store only the File object
+      imageMethod: "upload",
+    }));
+
+    setImagePreviews((prev) => [...prev, URL.createObjectURL(file)]);
+
+    if (errors.images) {
+      setErrors((prev) => ({ ...prev, images: "" }));
     }
   };
 
@@ -317,10 +303,10 @@ const AddServiceProviderForm = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-3xl font-bold text-white mb-2"
             >
-              Add Service Provider
+              Add Business Service
             </motion.h1>
             <p className="text-gray-300">
-              Create your professional business listing
+              Create your professional service listing
             </p>
           </div>
 
@@ -348,10 +334,10 @@ const AddServiceProviderForm = () => {
                     className="text-2xl font-bold mb-2"
                     style={{ color: "#1f2937" }}
                   >
-                    Service Provider Added!
+                    Service Added Successfully!
                   </h2>
                   <p style={{ color: "#6b7280" }}>
-                    Your business listing has been created successfully.
+                    Your service has been created and is now active.
                   </p>
                 </div>
               </motion.div>
@@ -362,7 +348,7 @@ const AddServiceProviderForm = () => {
           <div className="py-8 sm:px-8 px-5 space-y-8">
             {/* Basic Info */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Business Name */}
+              {/* Service Name */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -374,13 +360,13 @@ const AddServiceProviderForm = () => {
                   style={{ color: "#6b7280" }}
                 >
                   <Building2 size={16} style={{ color: "#9ca3af" }} />
-                  Business Name *
+                  Service Name *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Enter business name"
+                  placeholder="Enter service name"
                   className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
                   style={{
                     borderColor: errors.name ? "#ef4444" : "#d1d5db",
@@ -400,53 +386,7 @@ const AddServiceProviderForm = () => {
                 )}
               </motion.div>
 
-              {/* Service Type */}
-              {/* <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="space-y-2"
-              >
-                <label className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#6b7280" }}>
-                  <Tag size={16} style={{ color: "#9ca3af" }} />
-                  Service Type *
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.type}
-                    onChange={(e) => handleInputChange("type", e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none appearance-none cursor-pointer"
-                    style={{
-                      borderColor: errors.type ? "#ef4444" : "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  >
-                    <option value="">Select service type</option>
-                    {serviceTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-                {errors.type && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: "#ef4444" }}
-                  >
-                    <AlertCircle size={12} />
-                    {errors.type}
-                  </motion.div>
-                )}
-              </motion.div>
-            </div> */}
+              {/* Category */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -455,7 +395,7 @@ const AddServiceProviderForm = () => {
               >
                 <label className="flex items-center gap-2 text-sm font-semibold text-[#6b7280]">
                   <Tag size={16} className="text-[#9ca3af]" />
-                  Service Type *
+                  Service Category
                 </label>
 
                 <div className="relative" ref={dropdownRef}>
@@ -464,11 +404,7 @@ const AddServiceProviderForm = () => {
                     onClick={() => setIsOpen(!isOpen)}
                     className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none flex items-center justify-between bg-white"
                     style={{
-                      borderColor: errors.type
-                        ? "#ef4444"
-                        : isOpen
-                        ? "#495057"
-                        : "#d1d5db",
+                      borderColor: isOpen ? "#495057" : "#d1d5db",
                       boxShadow: isOpen
                         ? "0 0 0 3px rgba(59, 130, 246, 0.1)"
                         : "none",
@@ -478,10 +414,10 @@ const AddServiceProviderForm = () => {
                   >
                     <span
                       className={
-                        formData.type ? "text-gray-900" : "text-gray-400"
+                        formData.category ? "text-gray-900" : "text-gray-400"
                       }
                     >
-                      {formData.type || "Select service type"}
+                      {formData.category || "Select category"}
                     </span>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
@@ -501,11 +437,13 @@ const AddServiceProviderForm = () => {
                         className="absolute z-50 w-full mt-2 bg-white rounded-xl border-2 border-gray-200 shadow-xl overflow-hidden"
                       >
                         <div className="max-h-64 overflow-y-auto">
-                          {serviceTypes.map((type, index) => (
+                          {serviceCategories.map((category, index) => (
                             <motion.button
-                              key={type}
+                              key={category}
                               type="button"
-                              onClick={() => handleInputChange("type", type)}
+                              onClick={() =>
+                                handleInputChange("category", category)
+                              }
                               className="w-full px-4 py-3 text-left hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between group"
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
@@ -513,15 +451,15 @@ const AddServiceProviderForm = () => {
                               whileHover={{ x: 4 }}
                             >
                               <span
-                                className={`font-medium  ${
-                                  formData.type === type
+                                className={`font-medium ${
+                                  formData.category === category
                                     ? "text-[#22223b]"
                                     : "text-[#495057]"
                                 }`}
                               >
-                                {type}
+                                {category}
                               </span>
-                              {formData.type === type && (
+                              {formData.category === category && (
                                 <motion.div
                                   initial={{ scale: 0 }}
                                   animate={{ scale: 1 }}
@@ -541,48 +479,166 @@ const AddServiceProviderForm = () => {
                     )}
                   </AnimatePresence>
                 </div>
-
-                {errors.type && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1 text-xs text-red-500"
-                  >
-                    <AlertCircle size={12} />
-                    {errors.type}
-                  </motion.div>
-                )}
               </motion.div>
             </div>
 
-            {/* Additional Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Price and Duration */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.2 }}
                 className="space-y-2"
               >
                 <label
                   className="flex items-center gap-2 text-sm font-semibold"
                   style={{ color: "#6b7280" }}
                 >
-                  <Globe size={16} style={{ color: "#9ca3af" }} />
-                  Website
+                  <DollarSign size={16} style={{ color: "#9ca3af" }} />
+                  Price *
                 </label>
                 <input
-                  type="text"
-                  value={formData.website}
-                  onChange={(e) => handleInputChange("website", e.target.value)}
-                  placeholder="www.yourwebsite.com"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => handleInputChange("price", e.target.value)}
+                  placeholder="Enter price"
+                  min="0"
+                  step="0.01"
                   className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
                   style={{
-                    borderColor: "#d1d5db",
+                    borderColor: errors.price ? "#ef4444" : "#d1d5db",
                     backgroundColor: "#ffffff",
                   }}
                 />
+                {errors.price && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-1 text-xs"
+                    style={{ color: "#ef4444" }}
+                  >
+                    <AlertCircle size={12} />
+                    {errors.price}
+                  </motion.div>
+                )}
               </motion.div>
-              {/* Established Year */}
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="space-y-2"
+              >
+                <label
+                  className="flex items-center gap-2 text-sm font-semibold"
+                  style={{ color: "#6b7280" }}
+                >
+                  <Clock size={16} style={{ color: "#9ca3af" }} />
+                  Duration *
+                </label>
+                <input
+                  type="text"
+                  value={formData.duration}
+                  onChange={(e) =>
+                    handleInputChange("duration", e.target.value)
+                  }
+                  placeholder="e.g., 30 mins, 2 hours"
+                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
+                  style={{
+                    borderColor: errors.duration ? "#ef4444" : "#d1d5db",
+                    backgroundColor: "#ffffff",
+                  }}
+                />
+                {errors.duration && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-1 text-xs"
+                    style={{ color: "#ef4444" }}
+                  >
+                    <AlertCircle size={12} />
+                    {errors.duration}
+                  </motion.div>
+                )}
+              </motion.div>
+            </div>
+
+            {/* Service Type */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="space-y-4"
+            >
+              <label
+                className="flex items-center gap-2 text-sm font-semibold"
+                style={{ color: "#6b7280" }}
+              >
+                <MapPin size={16} style={{ color: "#9ca3af" }} />
+                Service Type
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {serviceTypes.map((type) => (
+                  <motion.button
+                    key={type.value}
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleInputChange("serviceType", type.value)}
+                    className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
+                      formData.serviceType === type.value
+                        ? "border-black"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    style={{
+                      backgroundColor:
+                        formData.serviceType === type.value
+                          ? "#1f2937"
+                          : "#ffffff",
+                      color:
+                        formData.serviceType === type.value
+                          ? "#ffffff"
+                          : "#374151",
+                    }}
+                  >
+                    <type.icon className="w-6 h-6 mx-auto mb-2" />
+                    <div className="font-semibold text-sm">{type.label}</div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Availability */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="space-y-2"
+            >
+              <label
+                className="flex items-center gap-2 text-sm font-semibold"
+                style={{ color: "#6b7280" }}
+              >
+                <Calendar size={16} style={{ color: "#9ca3af" }} />
+                Availability
+              </label>
+              <input
+                type="text"
+                value={formData.availability}
+                onChange={(e) =>
+                  handleInputChange("availability", e.target.value)
+                }
+                placeholder="e.g., Mon–Fri 9AM–6PM"
+                className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
+                style={{
+                  borderColor: "#d1d5db",
+                  backgroundColor: "#ffffff",
+                }}
+              />
+            </motion.div>
+
+            {/* Warranty and Cancellation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -593,27 +649,28 @@ const AddServiceProviderForm = () => {
                   className="flex items-center gap-2 text-sm font-semibold"
                   style={{ color: "#6b7280" }}
                 >
-                  <Calendar size={16} style={{ color: "#9ca3af" }} />
-                  Established Year
+                  <Shield size={16} style={{ color: "#9ca3af" }} />
+                  Warranty Period
                 </label>
-                <input
-                  type="number"
-                  value={formData.establishedYear}
+                <select
+                  value={formData.warrantyDays}
                   onChange={(e) =>
-                    handleInputChange("establishedYear", e.target.value)
+                    handleInputChange("warrantyDays", parseInt(e.target.value))
                   }
-                  placeholder="e.g., 2010"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none appearance-none cursor-pointer"
                   style={{
                     borderColor: "#d1d5db",
                     backgroundColor: "#ffffff",
                   }}
-                />
+                >
+                  {warrantyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </motion.div>
 
-              {/* Price Range */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -624,28 +681,34 @@ const AddServiceProviderForm = () => {
                   className="flex items-center gap-2 text-sm font-semibold"
                   style={{ color: "#6b7280" }}
                 >
-                  <Star size={16} style={{ color: "#9ca3af" }} />
-                  Price Range
+                  <XCircle size={16} style={{ color: "#9ca3af" }} />
+                  Cancellation Policy
                 </label>
-                <input
-                  type="text"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange("price", e.target.value)}
-                  placeholder="e.g., Starting from $99/hour"
-                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
+                <select
+                  value={formData.cancellationPolicy}
+                  onChange={(e) =>
+                    handleInputChange("cancellationPolicy", e.target.value)
+                  }
+                  className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none appearance-none cursor-pointer"
                   style={{
                     borderColor: "#d1d5db",
                     backgroundColor: "#ffffff",
                   }}
-                />
+                >
+                  {cancellationPolicies.map((policy) => (
+                    <option key={policy.value} value={policy.value}>
+                      {policy.label}
+                    </option>
+                  ))}
+                </select>
               </motion.div>
             </div>
 
-            {/* Categories */}
+            {/* Tags */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55 }}
+              transition={{ delay: 0.5 }}
               className="space-y-4"
             >
               <label
@@ -653,18 +716,18 @@ const AddServiceProviderForm = () => {
                 style={{ color: "#6b7280" }}
               >
                 <Tag size={16} style={{ color: "#9ca3af" }} />
-                Service Categories Tags
+                Service Tags
               </label>
 
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
-                  value={currentCategory}
-                  onChange={(e) => setCurrentCategory(e.target.value)}
+                  value={currentTag}
+                  onChange={(e) => setCurrentTag(e.target.value)}
                   onKeyPress={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), addCategory())
+                    e.key === "Enter" && (e.preventDefault(), addTag())
                   }
-                  placeholder="e.g., Wedding Photography, Portraits"
+                  placeholder="e.g., Professional, Quick, Affordable"
                   className="flex-1 px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
                   style={{
                     borderColor: "#d1d5db",
@@ -675,28 +738,28 @@ const AddServiceProviderForm = () => {
                   type="button"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={addCategory}
+                  onClick={addTag}
                   className="px-4 py-3 rounded-xl transition-all duration-300 sm:w-auto w-full flex items-center justify-center gap-2"
                   style={{ backgroundColor: "#1f2937", color: "#ffffff" }}
                 >
                   <Plus size={20} />
-                  <span className="sm:hidden">Add Category</span>
+                  <span className="sm:hidden">Add Tag</span>
                 </motion.button>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {formData.categories.map((category) => (
+                {formData.tags.map((tag) => (
                   <motion.span
-                    key={category}
+                    key={tag}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
                     style={{ backgroundColor: "#374151", color: "#ffffff" }}
                   >
-                    {category}
+                    {tag}
                     <button
                       type="button"
-                      onClick={() => removeCategory(category)}
+                      onClick={() => removeTag(tag)}
                       className="hover:bg-red-500 rounded-full p-1 transition-colors"
                     >
                       <X size={12} />
@@ -706,11 +769,11 @@ const AddServiceProviderForm = () => {
               </div>
             </motion.div>
 
-            {/* Business Images */}
+            {/* Service Images */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.55 }}
               className="space-y-4"
             >
               <label
@@ -718,7 +781,7 @@ const AddServiceProviderForm = () => {
                 style={{ color: "#6b7280" }}
               >
                 <Image size={16} style={{ color: "#9ca3af" }} />
-                Business Images *
+                Service Images *
               </label>
 
               {/* Image Method Selection */}
@@ -745,30 +808,7 @@ const AddServiceProviderForm = () => {
                   <div className="text-xs opacity-75">From device</div>
                 </motion.button>
 
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    handleInputChange("imageMethod", "camera");
-                    startCamera();
-                  }}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
-                    formData.imageMethod === "camera"
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      formData.imageMethod === "camera" ? "#1f2937" : "#ffffff",
-                    color:
-                      formData.imageMethod === "camera" ? "#ffffff" : "#374151",
-                  }}
-                >
-                  <Camera className="w-8 h-8 mx-auto mb-2" />
-                  <div className="font-semibold">Capture Image</div>
-                  <div className="text-xs opacity-75">Use camera</div>
-                </motion.button>
+              
               </div>
 
               {errors.imageMethod && (
@@ -803,7 +843,7 @@ const AddServiceProviderForm = () => {
                         className="font-semibold mb-1"
                         style={{ color: "#374151" }}
                       >
-                        Click to upload business image
+                        Click to upload service image
                       </p>
                       <p className="text-sm" style={{ color: "#9ca3af" }}>
                         JPG, PNG, or WEBP. Max 5MB.
@@ -839,7 +879,7 @@ const AddServiceProviderForm = () => {
                           className="text-lg font-semibold"
                           style={{ color: "#1f2937" }}
                         >
-                          Capture Business Photo
+                          Capture Service Photo
                         </h3>
                       </div>
 
@@ -879,45 +919,44 @@ const AddServiceProviderForm = () => {
                 )}
               </AnimatePresence>
 
-              {/* Image Preview Grid */}
-              {formData.images.length > 0 && (
+              {/* 🖼️ Image Preview Grid */}
+              {imagePreviews.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-3"
                 >
-                  {formData.images.map((image, index) => (
+                  {imagePreviews.map((src, index) => (
                     <motion.div
-                      key={image.id}
+                      key={index}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="relative group"
                     >
                       <img
-                        src={image.preview}
-                        alt={`Business ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-xl shadow-md"
+                        src={src}
+                        alt={`preview-${index}`}
+                        className="w-24 h-24 object-cover rounded-lg border shadow-sm"
                       />
+
+                      {/* ❌ Delete button */}
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => removeImage(image.id)}
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ backgroundColor: "#ef4444" }}
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                       >
                         <X size={12} />
                       </motion.button>
-                      <div
-                        className="absolute bottom-1 left-1 px-1 py-0.5 rounded text-xs text-white"
-                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-                      >
-                        {image.method === "upload" ? "Upload" : "Camera"}
+
+                      {/* 📸 Image method label */}
+                      <div className="absolute bottom-1 left-1 px-2 py-0.5 rounded text-xs text-white bg-black bg-opacity-60 capitalize">
+                        {formData.imageMethod || "upload"}
                       </div>
                     </motion.div>
                   ))}
                 </motion.div>
               )}
-
               {errors.images && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -931,217 +970,11 @@ const AddServiceProviderForm = () => {
               )}
             </motion.div>
 
-            {/* Social Media */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65 }}
-              className="space-y-4"
-            >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <Users size={16} style={{ color: "#9ca3af" }} />
-                Social Media Links
-              </label>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Facebook size={16} style={{ color: "#1877F2" }} />
-                    <label
-                      className="text-sm font-medium"
-                      style={{ color: "#6b7280" }}
-                    >
-                      Facebook
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={formData.socialMedia.facebook}
-                    onChange={(e) =>
-                      handleSocialMediaChange("facebook", e.target.value)
-                    }
-                    placeholder="https://facebook.com/yourpage"
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                    style={{
-                      borderColor: "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Instagram size={16} style={{ color: "#E4405F" }} />
-                    <label
-                      className="text-sm font-medium"
-                      style={{ color: "#6b7280" }}
-                    >
-                      Instagram
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={formData.socialMedia.instagram}
-                    onChange={(e) =>
-                      handleSocialMediaChange("instagram", e.target.value)
-                    }
-                    placeholder="https://instagram.com/yourpage"
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                    style={{
-                      borderColor: "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Twitter size={16} style={{ color: "#1DA1F2" }} />
-                    <label
-                      className="text-sm font-medium"
-                      style={{ color: "#6b7280" }}
-                    >
-                      Twitter
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={formData.socialMedia.twitter}
-                    onChange={(e) =>
-                      handleSocialMediaChange("twitter", e.target.value)
-                    }
-                    placeholder="https://twitter.com/yourpage"
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                    style={{
-                      borderColor: "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Youtube size={16} style={{ color: "#FF0000" }} />
-                    <label
-                      className="text-sm font-medium"
-                      style={{ color: "#6b7280" }}
-                    >
-                      YouTube
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={formData.socialMedia.youtube}
-                    onChange={(e) =>
-                      handleSocialMediaChange("youtube", e.target.value)
-                    }
-                    placeholder="https://youtube.com/yourchannel"
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                    style={{
-                      borderColor: "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Linkedin size={16} style={{ color: "#0077B5" }} />
-                    <label
-                      className="text-sm font-medium"
-                      style={{ color: "#6b7280" }}
-                    >
-                      LinkedIn
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={formData.socialMedia.linkedin}
-                    onChange={(e) =>
-                      handleSocialMediaChange("linkedin", e.target.value)
-                    }
-                    placeholder="https://linkedin.com/company/yourcompany"
-                    className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                    style={{
-                      borderColor: "#d1d5db",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Awards */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="space-y-4"
-            >
-              <label
-                className="flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "#6b7280" }}
-              >
-                <Award size={16} style={{ color: "#9ca3af" }} />
-                Awards & Recognition
-              </label>
-
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="text"
-                  value={currentAward}
-                  onChange={(e) => setCurrentAward(e.target.value)}
-                  onKeyPress={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), addAward())
-                  }
-                  placeholder="e.g., Best Service Provider 2023"
-                  className="flex-1 px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none"
-                  style={{ borderColor: "#d1d5db", backgroundColor: "#ffffff" }}
-                />
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={addAward}
-                  className="px-4 py-3 rounded-xl transition-all duration-300 sm:w-auto w-full flex items-center justify-center gap-2"
-                  style={{ backgroundColor: "#1f2937", color: "#ffffff" }}
-                >
-                  <Plus size={20} />
-                  <span className="sm:hidden">Add Award</span>
-                </motion.button>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {formData.awards.map((award) => (
-                  <motion.span
-                    key={award}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
-                    style={{ backgroundColor: "#fef3c7", color: "#92400e" }}
-                  >
-                    <Award size={14} />
-                    {award}
-                    <button
-                      type="button"
-                      onClick={() => removeAward(award)}
-                      className="hover:bg-red-500 hover:text-white rounded-full p-1 transition-colors"
-                    >
-                      <X size={12} />
-                    </button>
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-
             {/* Description */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.75 }}
+              transition={{ delay: 0.6 }}
               className="space-y-2"
             >
               <label
@@ -1149,14 +982,14 @@ const AddServiceProviderForm = () => {
                 style={{ color: "#6b7280" }}
               >
                 <FileText size={16} style={{ color: "#9ca3af" }} />
-                Business Description *
+                Service Description *
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
-                placeholder="Describe your services, expertise, what makes your business unique..."
+                placeholder="Describe your service, what's included, benefits, and what makes it unique..."
                 rows={6}
                 className="w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none resize-none"
                 style={{
@@ -1168,13 +1001,13 @@ const AddServiceProviderForm = () => {
                 <span
                   style={{
                     color:
-                      formData.description.length < 50 ? "#ef4444" : "#10b981",
+                      formData.description.length < 20 ? "#ef4444" : "#10b981",
                   }}
                 >
-                  {formData.description.length}/50 minimum characters
+                  {formData.description.length}/20 minimum characters
                 </span>
                 <span style={{ color: "#9ca3af" }}>
-                  {formData.description.length}/2000
+                  {formData.description.length} characters
                 </span>
               </div>
               {errors.description && (
@@ -1201,17 +1034,17 @@ const AddServiceProviderForm = () => {
               style={{ backgroundColor: loading ? "#6b7280" : "#1f2937" }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 0.65 }}
             >
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  Creating Listing...
+                  Creating Service...
                 </>
               ) : (
                 <>
                   <Building2 size={20} />
-                  Create Service Provider
+                  Create Service
                 </>
               )}
             </motion.button>
@@ -1222,4 +1055,4 @@ const AddServiceProviderForm = () => {
   );
 };
 
-export default AddServiceProviderForm;
+export default AddServiceForm;

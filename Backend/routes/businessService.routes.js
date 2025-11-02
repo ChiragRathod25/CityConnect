@@ -8,12 +8,14 @@ import {
   deleteServiceById,
 } from "../controllers/businessService.controller.js";
 
+import { upload } from "../middlewares/multer.middleware.js";
+
 const router = Router();
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 router.use(verifyJWT);
-router.post("/:businessId", addService);
+router.post("/:businessId", upload.array("images"), addService);
 router.get("/:businessId", getAllServices);
 router.get("/service/:serviceId", getServiceById);
 router.put("/service/:serviceId", updateServiceById);

@@ -3,9 +3,7 @@ import { handleApiRequest } from "../utils/apiHelper.js";
 import toast from "react-hot-toast";
 
 export class DatabaseService {
-
   async createTempContactSession({ userId, newContact, type }) {
-    
     return toast.promise(
       handleApiRequest(
         () =>
@@ -23,7 +21,6 @@ export class DatabaseService {
       }
     );
   }
-  
 
   async InitialUserRegister({ username, email, password, phoneNumber, role }) {
     return toast.promise(
@@ -215,10 +212,8 @@ export class DatabaseService {
     );
   }
 
-
-
   //business registration services can be added here
- async registerBusinessBasicInfo(businessData) {
+  async registerBusinessBasicInfo(businessData) {
     return toast.promise(
       handleApiRequest(
         () => axiosInstace.post("/api/v1/business/register", businessData),
@@ -272,10 +267,7 @@ export class DatabaseService {
     return toast.promise(
       handleApiRequest(
         () =>
-          axiosInstace.post(
-            `/api/v1/business-hours/${businessId}`,
-            hoursData
-          ),
+          axiosInstace.post(`/api/v1/business-hours/${businessId}`, hoursData),
         "Register Business Hours Info"
       ),
       {
@@ -286,50 +278,85 @@ export class DatabaseService {
     );
   }
 
-
   //business products
-  
+
   async addBusinessProduct(businessId, productData) {
-  const formData = new FormData();
+    const formData = new FormData();
 
-  // append non-file fields
-  for (const [key, value] of Object.entries(productData)) {
-    if (key === "images") continue; // handle separately below
+    // append non-file fields
+    for (const [key, value] of Object.entries(productData)) {
+      if (key === "images") continue; // handle separately below
 
-    if (Array.isArray(value)) {
-      formData.append(key, JSON.stringify(value)); // handle tags, etc.
-    } else {
-      formData.append(key, value);
-    }
-  }
-
-  // append actual files
-  if (Array.isArray(productData.images)) {
-    productData.images.forEach((file) => {
-      if (file instanceof File || file instanceof Blob) {
-        formData.append("images", file); // 'images' must match multer field
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value)); // handle tags, etc.
+      } else {
+        formData.append(key, value);
       }
-    });
+    }
+
+    // append actual files
+    if (Array.isArray(productData.images)) {
+      productData.images.forEach((file) => {
+        if (file instanceof File || file instanceof Blob) {
+          formData.append("images", file); // 'images' must match multer field
+        }
+      });
+    }
+
+    console.log("FormData images:", formData.getAll("images"));
+
+    return toast.promise(
+      handleApiRequest(() =>
+        axiosInstace.post(`/api/v1/business-product/${businessId}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      ),
+      {
+        loading: "Adding product...",
+        success: "Product added successfully!",
+        error: "Failed to add product. Please try again.",
+      }
+    );
   }
 
-  console.log("FormData images:", formData.getAll("images"));
+  async addBusinessService(businessId, serviceData) {
+    const formData = new FormData();
 
-  return toast.promise(
-    handleApiRequest(() =>
-      axiosInstace.post(`/api/v1/business-product/${businessId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-    ),
-    {
-      loading: "Adding product...",
-      success: "Product added successfully!",
-      error: "Failed to add product. Please try again.",
+    // append non-file fields
+    for (const [key, value] of Object.entries(serviceData)) {
+      if (key === "images") continue; // handle separately below
+
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value)); // handle tags, etc.
+      } else {
+        formData.append(key, value);
+      }
     }
-  );
-}
 
+    // append actual files
+    if (Array.isArray(serviceData.images)) {
+      serviceData.images.forEach((file) => {
+        if (file instanceof File || file instanceof Blob) {
+          formData.append("images", file); // 'images' must match multer field
+        }
+      });
+    }
 
-  
+    console.log("FormData images:", formData.getAll("images"));
+
+    return toast.promise(
+      handleApiRequest(() =>
+        axiosInstace.post(`/api/v1/business-service/${businessId}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      ),
+      {
+        loading: "Adding service...",
+        success: "Service added successfully!",
+        error: "Failed to add service. Please try again.",
+      }
+    );
+  }
 }
 const databaseService = new DatabaseService();
 export default databaseService;
