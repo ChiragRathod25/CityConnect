@@ -49,6 +49,7 @@ import { AuthLayout } from "./components";
 import ContactUsForAdmin from "./Pages/AdminContactUs";
 import FeedbackComponent from "./components/Feedback";
 import AboutPageUi from "./Pages/About";
+import OrderHistoryForProductUI from "./Pages/HistoryForProduct";
 
 const router = createBrowserRouter([
   {
@@ -154,6 +155,10 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPageUI />,
+      },
+      {
+        path: "/history",
+        element: <OrderHistoryForProductUI />,
       },
 
       ///admin side
