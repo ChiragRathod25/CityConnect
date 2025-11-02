@@ -14,6 +14,7 @@ import LoginPageUI from "./Pages/Login";
 import PasswordResetPage from "./Pages/ResetPassWord/ResetPassword";
 
 import ModernSellerForm from "./components/BusinessForm";
+import AllBusinesses from "./components/businessmanProfile/AllBusinesses";
 import CategoryPageUi from "./Pages/Category";
 import CityConnectLanding from "./components/LandingPage";
 import BusinessmanProfileDashboard from "./Pages/BusinessmanProfile/BusinessmanProfile";
@@ -91,7 +92,6 @@ const router = createBrowserRouter([
         element: <ProfilePage />,
       },
 
-      
       //on the user side
       {
         path: "/category",
@@ -107,28 +107,28 @@ const router = createBrowserRouter([
         path: "/register-business",
         element: <ModernSellerForm />,
       },
-      
+
       {
-        path: "/businesses", //list all the businesses of the user
-        element:
-        (
+        path: "/dashboard/businesses", //list all the businesses of the user
+        element: (
           <>
+            <AllBusinesses />
           </>
-        )
+        ),
       },
       {
-        path: "/businessman-profile",
+        path: "/dashboard/business/:businessId",
         element: <BusinessmanProfileDashboard />,
       },
       {
-        path: "/businessman-profile/:itemId",
+        path: "/dashboard/business/:businessId/:itemId",
         element: <ProfilePage />,
       },
       {
-        path: "/businessman-profile/profile-info/edit-profile",
+        path: "/dashboard/business/:businessId/edit",
         element: <EditBusinessmanProfileNavigation />,
       },
-      
+
       {
         // path: "/add-productcard", //used to add product of business
         path: "/:businessId/product/add",
@@ -187,9 +187,6 @@ const router = createBrowserRouter([
         path: "/add",
         element: <AddBusinessCard />,
       },
-      
-
-
 
       {
         path: "/payment",
@@ -231,8 +228,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
   // </StrictMode>
 );

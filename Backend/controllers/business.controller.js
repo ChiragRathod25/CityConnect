@@ -6,6 +6,8 @@ import {
   deleteFromCloudinary,
   uploadOnCloudinary,
 } from "../utils/cloudinary.js";
+import { BusinessReview } from "../models/businessReview.model.js";
+import mongoose from "mongoose";
 
 const registerBusiness = asyncHandler(async (req, res, next) => {
   const { name, type, category, description } = req.body;
@@ -47,7 +49,76 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "Business ID is required");
   }
 
-  const business = await Business.findById(businessId);
+  const business = await Business.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(businessId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "ownerId",
+        foreignField: "_id",
+        as: "ownerDetails",
+      },
+    },
+    { $unwind: "$ownerDetails" },
+    {
+      $lookup: {
+        from: "businesslocations",
+        localField: "_id",
+        foreignField: "businessId",
+        as: "locationDetails",
+      },
+    },
+    { $unwind: "$locationDetails" },
+    {
+      $lookup: {
+        from: "businesscontacts",
+        localField: "_id",
+        foreignField: "businessId",
+        as: "contactDetails",
+      },
+    },
+    { $unwind: "$contactDetails" },
+    {
+      $lookup: {
+        from: "businesshours",
+        localField: "_id",
+        foreignField: "businessId",
+        as: "workingHoursDetails",
+      },
+    },
+    { $unwind: "$workingHoursDetails" },
+  ]);
+
+  const allreviews=await BusinessReview.find({businessId:businessId});
+  console.log("All Reviews:", allreviews);
+  const ratings = await BusinessReview.aggregate([
+    ({
+      $match: {
+        businessId: new mongoose.Types.ObjectId(businessId),
+      },
+    },
+    {
+      $group: {
+        _id: "$business",
+        averageRating: { $avg: "$rating" },
+        reviewCount: { $sum: 1 },
+      },
+    })
+  ]);
+  console.log("Ratings:", ratings);
+  if (ratings.length > 0) {
+    business[0].averageRating = ratings[0].averageRating;
+    business[0].reviewCount = ratings[0].reviewCount;
+  } else {
+    business[0].averageRating = 0;
+    business[0].reviewCount = 0;
+  }
+
+  const businessProfile = business[0];
 
   if (!business) {
     throw new ApiError(404, "Business profile not found");
@@ -55,7 +126,11 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, "Business profile fetched successfully", business)
+      new ApiResponse(
+        200,
+        "Business profile fetched successfully",
+        businessProfile
+      )
     );
 });
 
@@ -119,22 +194,20 @@ const deleteBusinessProfileById = asyncHandler(async (req, res, next) => {
 
 const getAllBusinessProfiles = asyncHandler(async (req, res, next) => {
   //use agregation pipeline to include the details of the owner and other business related information from the other models
-  //look up for user details, location details, 
-  const businesses=await Business.aggregate([
+  //look up for user details, location details,
+  const businesses = await Business.aggregate([
     {
-      $match: { status: "active" } 
+      $match: { status: "active" },
     },
     {
       $lookup: {
         from: "users",
         localField: "ownerId",
         foreignField: "_id",
-        as: "ownerDetails"
-      }
+        as: "ownerDetails",
+      },
     },
-   
   ]);
-  
 
   res
     .status(200)
@@ -385,22 +458,38 @@ const getBusinessByCategory = asyncHandler(async (req, res, next) => {
   //include owner details from user model
 
   const businesses = await Business.aggregate([
-  {
-    $match: { category: "restaurant" }
-  },
-  {
-    $lookup: {
-      from: "businesslocations",
-      localField: "_id",
-      foreignField: "businessId",
-      as: "locationDetails"
-    }
-  },
-  { $unwind: "$locationDetails" }
-]);
+    {
+      $match: { category: "restaurant" },
+    },
+    {
+      $lookup: {
+        from: "businesslocations",
+        localField: "_id",
+        foreignField: "businessId",
+        as: "locationDetails",
+      },
+    },
+    { $unwind: "$locationDetails" },
+  ]);
 
   if (!businesses || businesses.length === 0) {
     throw new ApiError(404, "No business profiles found in this category");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Business profiles fetched successfully", businesses)
+    );
+});
+
+const getAllBusinessesByUserId = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const businesses = await Business.find({ ownerId: userId });
+
+  if (!businesses || businesses.length === 0) {
+    throw new ApiError(404, "No business profiles found for this user");
   }
 
   res
@@ -424,4 +513,5 @@ export {
   addBusinessImages,
   removeBusinessImage,
   getBusinessByCategory,
+  getAllBusinessesByUserId,
 };

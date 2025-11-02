@@ -1,6 +1,7 @@
+import mongoose from "mongoose";
 const businessReviewSchema = new mongoose.Schema(
   {
-    business: {
+    businessId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Business",
       required: true,
@@ -9,7 +10,6 @@ const businessReviewSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     rating: {
       type: Number,
@@ -21,11 +21,9 @@ const businessReviewSchema = new mongoose.Schema(
       type: String,
       maxlength: 1000,
     },
-    images: [
-      {
-        type: String,
-      },
-    ]
+    images:{
+      type: [String],
+    }
   },
   { timestamps: true }
 );

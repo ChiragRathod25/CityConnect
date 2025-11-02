@@ -25,51 +25,56 @@ import {
   Users,
   Award,
   Target,
+  MapPin,
+  Globe,
+  Clock,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import databaseService from "@/services/database.services";
 
 const BusinessmanProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const headerRef = useRef(null);
   const menuGridRef = useRef(null);
   const logoutSectionRef = useRef(null);
+  const { businessId } = useParams();
 
   const navigate = useNavigate();
-
   
-  const [businessmanProfile] = useState({
-    name: "Alex Rodriguez",
-    email: "alex.rodriguez@business.com",
-    phone: "+1 234 567 8900",
-    isEmailVerified: true,
-    isPhoneVerified: true,
-    isBusinessVerified: true,
-    status: "active",
-    avatar: "/api/placeholder/120/120",
-    joinDate: "2022-08-15",
-    completedOrders: 23,
-    sellerStats: {
-      totalProducts: 24,
-      totalServices: 8,
-      totalSales: 156,
-      revenue: 12450,
-      rating: 4.8,
-      reviews: 89,
-      views: 2340,
-      activeListings: 18,
-    },
-  });
-
+  const [businessProfile, setBusinessProfile] = useState(null);
 
   useEffect(() => {
+    const fetchBusinessProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await databaseService.getBusinessProfileById(businessId);
+        console.log("Business profile fetched:", response.data);
+        setBusinessProfile(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching business profile:", error);
+        setError(error.message || "Failed to fetch business profile");
+        setLoading(false);
+      }
+    };
+
+    if (businessId) {
+      fetchBusinessProfile();
+    }
+  }, [businessId]);
+
+  useEffect(() => {
+    if (!businessProfile) return;
+    
     const timer = setTimeout(() => {
       setIsLoaded(true);
       animateElements();
     }, 300);
     return () => clearTimeout(timer);
-  }, []);
-
+  }, [businessProfile]);
 
   const animateElements = () => {
     if (headerRef.current) {
@@ -92,8 +97,44 @@ const BusinessmanProfileDashboard = () => {
     }
   };
 
+  const getOwnerName = () => {
+    if (!businessProfile) return "";
+    const { ownerDetails } = businessProfile;
+    if (ownerDetails.firstName && ownerDetails.lastName) {
+      return `${ownerDetails.firstName} ${ownerDetails.lastName}`;
+    }
+    return ownerDetails.username || "Business Owner";
+  };
 
-  const menuItems = [
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getStatusBadge = () => {
+    if (!businessProfile) return "bg-gray-600 text-gray-100";
+    const statusColors = {
+      active: "bg-green-600 text-green-100",
+      pending: "bg-yellow-600 text-yellow-100",
+      rejected: "bg-red-600 text-red-100",
+      inactive: "bg-gray-600 text-gray-100",
+    };
+    return statusColors[businessProfile.status] || statusColors.pending;
+  };
+
+  const menuItems = businessProfile ? [
+    {
+      id: "business-info",
+      label: "Business Information",
+      icon: Store,
+      description: `Manage ${businessProfile.name} details and settings`,
+      badge: businessProfile.type,
+      priority: "high",
+    },
     {
       id: "profile-info",
       label: "Profile Info",
@@ -103,22 +144,46 @@ const BusinessmanProfileDashboard = () => {
       priority: "high",
     },
     {
+      id: "location",
+      label: "Business Location",
+      icon: MapPin,
+      description: businessProfile.locationDetails?.address || "Set your business location",
+      badge: businessProfile.locationDetails?.city || null,
+      priority: "high",
+    },
+    {
+      id: "contact",
+      label: "Contact Information",
+      icon: Phone,
+      description: "Manage business contact details",
+      badge: businessProfile.contactDetails?.phone || null,
+      priority: "high",
+    },
+    {
+      id: "working-hours",
+      label: "Working Hours",
+      icon: Clock,
+      description: businessProfile.workingHoursDetails 
+        ? `${businessProfile.workingHoursDetails.openTime} - ${businessProfile.workingHoursDetails.closeTime}` 
+        : "Set your business operating hours",
+      badge: businessProfile.workingHoursDetails?.isClosed ? "Closed" : "Open",
+      priority: "medium",
+    },
+    {
       id: "change-email",
       label: "Update Email Address",
       icon: Mail,
       description: "Update and secure your email address",
-      // badge: businessmanProfile.isEmailVerified
-      //   ? "Verified"
-      //   : "Action Required",
-      priority: businessmanProfile.isEmailVerified ? "low" : "high",
+      badge: businessProfile.ownerDetails.isEmailVerified ? "Verified" : "Unverified",
+      priority: businessProfile.ownerDetails.isEmailVerified ? "low" : "high",
     },
     {
       id: "change-phone",
       label: "Update Phone Number",
       icon: Phone,
       description: "Update and secure your phone number",
-      // badge: businessmanProfile.isPhoneVerified ? "Verified" : "Pending",
-      priority: businessmanProfile.isPhoneVerified ? "low" : "medium",
+      badge: businessProfile.ownerDetails.isPhoneVerified ? "Verified" : "Unverified",
+      priority: businessProfile.ownerDetails.isPhoneVerified ? "low" : "medium",
     },
     {
       id: "password-update",
@@ -133,15 +198,23 @@ const BusinessmanProfileDashboard = () => {
       label: "Account Status",
       icon: Activity,
       description: "Monitor your account health and activity",
-      badge: "Seller Account",
+      badge: businessProfile.status.charAt(0).toUpperCase() + businessProfile.status.slice(1),
       priority: "medium",
+    },
+    {
+      id: "verification",
+      label: "Business Verification",
+      icon: Award,
+      description: businessProfile.isVerified ? "Your business is verified" : "Complete verification process",
+      badge: businessProfile.isVerified ? "Verified" : "Pending",
+      priority: businessProfile.isVerified ? "low" : "high",
     },
     {
       id: "orders",
       label: "Order History",
       icon: ShoppingBag,
       description: "Track and manage your purchases",
-      badge: `${businessmanProfile.completedOrders} Orders`,
+      badge: "View All",
       priority: "high",
     },
     {
@@ -149,7 +222,7 @@ const BusinessmanProfileDashboard = () => {
       label: "Notifications",
       icon: Bell,
       description: "Manage your alerts and preferences",
-      badge: "5 New",
+      badge: null,
       priority: "medium",
     },
     {
@@ -165,7 +238,7 @@ const BusinessmanProfileDashboard = () => {
       label: "Your Products",
       icon: Package,
       description: "Manage your product listings and inventory",
-      badge: `${businessmanProfile.sellerStats.totalProducts} Items`,
+      badge: businessProfile.type === "product" ? "Active" : null,
       priority: "high",
     },
     {
@@ -173,7 +246,7 @@ const BusinessmanProfileDashboard = () => {
       label: "Your Services",
       icon: Briefcase,
       description: "Showcase your skills and expertise",
-      badge: `${businessmanProfile.sellerStats.totalServices} Services`,
+      badge: businessProfile.type === "service" ? "Active" : null,
       priority: "high",
     },
     {
@@ -181,7 +254,7 @@ const BusinessmanProfileDashboard = () => {
       label: "Sales History",
       icon: TrendingUp,
       description: "Track your sales and revenue",
-      badge: `$${businessmanProfile.sellerStats.revenue.toLocaleString()}`,
+      badge: null,
       priority: "high",
     },
     {
@@ -189,7 +262,9 @@ const BusinessmanProfileDashboard = () => {
       label: "Reviews & Ratings",
       icon: Star,
       description: "Manage customer feedback and ratings",
-      badge: `${businessmanProfile.sellerStats.rating}★ (${businessmanProfile.sellerStats.reviews})`,
+      badge: businessProfile.averageRating 
+        ? `${businessProfile.averageRating.toFixed(1)}★ (${businessProfile.reviewCount})` 
+        : null,
       priority: "medium",
     },
     {
@@ -205,7 +280,7 @@ const BusinessmanProfileDashboard = () => {
       label: "Performance Analytics",
       icon: Eye,
       description: "Detailed insights and performance metrics",
-      badge: `${businessmanProfile.sellerStats.views} Views`,
+      badge: null,
       priority: "medium",
     },
     {
@@ -213,7 +288,15 @@ const BusinessmanProfileDashboard = () => {
       label: "Promotions & Deals",
       icon: Target,
       description: "Create and manage promotional campaigns",
-      badge: "2 Active",
+      badge: null,
+      priority: "medium",
+    },
+    {
+      id: "social-media",
+      label: "Social Media",
+      icon: Globe,
+      description: "Manage your social media presence",
+      badge: businessProfile.contactDetails?.website ? "Connected" : null,
       priority: "medium",
     },
     {
@@ -232,13 +315,11 @@ const BusinessmanProfileDashboard = () => {
       badge: null,
       priority: "low",
     },
-  ];
-
+  ] : [];
 
   const handleMenuClick = (itemId) => {
     navigate(itemId);   
   };
-
 
   const handleLogout = (logoutAll = false) => {
     console.log(
@@ -247,29 +328,61 @@ const BusinessmanProfileDashboard = () => {
     setLogoutModal(false);
   };
 
-  const headerStats = [
+  const headerStats = businessProfile ? [
     {
-      label: "Products",
-      value: businessmanProfile.sellerStats.totalProducts,
+      label: "Reviews",
+      value: businessProfile.reviewCount || 0,
       suffix: "",
-    },
-    {
-      label: "Services",
-      value: businessmanProfile.sellerStats.totalServices,
-      suffix: "",
-    },
-    {
-      label: "Revenue",
-      value: `$${(businessmanProfile.sellerStats.revenue / 1000).toFixed(1)}`,
-      suffix: "k",
     },
     {
       label: "Rating",
-      value: businessmanProfile.sellerStats.rating,
+      value: businessProfile.averageRating ? businessProfile.averageRating.toFixed(1) : "N/A",
       suffix: " ★",
     },
-  ];
+    {
+      label: "Type",
+      value: businessProfile.type.charAt(0).toUpperCase() + businessProfile.type.slice(1),
+      suffix: "",
+    },
+    {
+      label: "Category",
+      value: businessProfile.category.charAt(0).toUpperCase() + businessProfile.category.slice(1),
+      suffix: "",
+    },
+  ] : [];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-medium">Loading business profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <XCircle size={32} className="text-red-600" />
+          </div>
+          <h3 className="text-2xl font-bold mb-2 text-gray-800">Error Loading Profile</h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-gray-800 text-white rounded-xl font-semibold hover:bg-gray-700 transition-all"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!businessProfile) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
@@ -294,8 +407,8 @@ const BusinessmanProfileDashboard = () => {
               <div className="relative group">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full p-1 bg-gray-600 shadow-2xl">
                   <img
-                    src={businessmanProfile.avatar}
-                    alt={businessmanProfile.name}
+                    src={businessProfile.ownerDetails.avatar || "/api/placeholder/120/120"}
+                    alt={getOwnerName()}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -305,42 +418,53 @@ const BusinessmanProfileDashboard = () => {
 
                 {/* Status Indicator */}
                 <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full border-2 sm:border-4 border-white shadow-lg animate-pulse"></div>
+                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 sm:border-4 border-white shadow-lg ${
+                    businessProfile.status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'
+                  }`}></div>
                 </div>
               </div>
               {/* Profile Info */}
               <div className="flex-1 text-center lg:text-left w-full">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 mb-4">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
-                    {businessmanProfile.name}
+                    {getOwnerName()}
                   </h1>
                   <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
-                    <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
-                      <Store size={12} className="sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Seller</span>
-                      <span className="sm:hidden">Seller</span>
+                    <span className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 ${getStatusBadge()} transform hover:scale-105 transition-transform duration-300`}>
+                      <Activity size={12} className="sm:w-4 sm:h-4" />
+                      <span>{businessProfile.status.charAt(0).toUpperCase() + businessProfile.status.slice(1)}</span>
                     </span>
-                    <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
-                      <Award size={12} className="sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Top Rated</span>
-                      <span className="sm:hidden">★</span>
-                    </span>
+                    {businessProfile.isVerified && (
+                      <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-blue-600 text-white transform hover:scale-105 transition-transform duration-300">
+                        <Award size={12} className="sm:w-4 sm:h-4" />
+                        <span>Verified</span>
+                      </span>
+                    )}
                   </div>
                 </div>
+
+                {/* Business Name */}
+                <div className="mb-3 sm:mb-4">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 flex items-center justify-center lg:justify-start gap-2">
+                    <Store size={20} className="sm:w-6 sm:h-6" />
+                    {businessProfile.name}
+                  </h2>
+                  <p className="text-gray-300 text-sm sm:text-base capitalize">
+                    {businessProfile.category} • {businessProfile.type}
+                  </p>
+                </div>
+
                 <p className="text-base sm:text-lg lg:text-xl mb-3 sm:mb-4 text-gray-300 font-medium">
-                  {businessmanProfile.email}
+                  {businessProfile.ownerDetails.email}
                 </p>
-                <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
-                  Seller since{" "}
-                  {new Date(businessmanProfile.joinDate).toLocaleDateString(
-                    "en-US",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )}
-                </p>
+
+                {/* Business Description */}
+                {businessProfile.description && (
+                  <p className="text-gray-400 text-sm sm:text-base mb-4 sm:mb-6 max-w-2xl mx-auto lg:mx-0">
+                    {businessProfile.description}
+                  </p>
+                )}
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
                   {headerStats.map((stat, index) => (
@@ -358,78 +482,86 @@ const BusinessmanProfileDashboard = () => {
                     </div>
                   ))}
                 </div>
+
+                <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
+                  Member since {formatDate(businessProfile.createdAt)}
+                </p>
+
+                {/* Location Info */}
+                {businessProfile.locationDetails && (
+                  <div className="bg-gray-700 bg-opacity-50 rounded-xl p-3 sm:p-4 mb-4 border border-gray-600 inline-block">
+                    <div className="flex items-start gap-2 text-left">
+                      <MapPin size={16} className="text-gray-300 mt-1 sm:w-5 sm:h-5 flex-shrink-0" />
+                      <div>
+                        <p className="text-white font-medium text-sm sm:text-base">
+                          {businessProfile.locationDetails.address}
+                        </p>
+                        <p className="text-gray-400 text-xs sm:text-sm">
+                          {businessProfile.locationDetails.city}, {businessProfile.locationDetails.state} {businessProfile.locationDetails.postalCode}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Verification Status */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
                   <div
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessmanProfile.isEmailVerified
+                      businessProfile.ownerDetails.isEmailVerified
                         ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
                         : "bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30"
                     } shadow-lg`}
                   >
-                    {businessmanProfile.isEmailVerified ? (
+                    {businessProfile.ownerDetails.isEmailVerified ? (
                       <CheckCircle size={14} className="sm:w-4 sm:h-4" />
                     ) : (
                       <XCircle size={14} className="sm:w-4 sm:h-4" />
                     )}
                     <span className="font-semibold text-xs sm:text-sm">
                       <span className="hidden sm:inline">
-                        Email{" "}
-                        {businessmanProfile.isEmailVerified
-                          ? "Verified"
-                          : "Unverified"}
+                        Email {businessProfile.ownerDetails.isEmailVerified ? "Verified" : "Unverified"}
                       </span>
                       <span className="sm:hidden">
-                        {businessmanProfile.isEmailVerified
-                          ? "Email ✓"
-                          : "Email ✗"}
+                        Email {businessProfile.ownerDetails.isEmailVerified ? "✓" : "✗"}
                       </span>
                     </span>
                   </div>
                   <div
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessmanProfile.isPhoneVerified
+                      businessProfile.ownerDetails.isPhoneVerified
                         ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
                         : "bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30"
                     } shadow-lg`}
                   >
-                    {businessmanProfile.isPhoneVerified ? (
+                    {businessProfile.ownerDetails.isPhoneVerified ? (
                       <CheckCircle size={14} className="sm:w-4 sm:h-4" />
                     ) : (
                       <XCircle size={14} className="sm:w-4 sm:h-4" />
                     )}
                     <span className="font-semibold text-xs sm:text-sm">
                       <span className="hidden sm:inline">
-                        Phone{" "}
-                        {businessmanProfile.isPhoneVerified
-                          ? "Verified"
-                          : "Unverified"}
+                        Phone {businessProfile.ownerDetails.isPhoneVerified ? "Verified" : "Unverified"}
                       </span>
                       <span className="sm:hidden">
-                        {businessmanProfile.isPhoneVerified
-                          ? "Phone ✓"
-                          : "Phone ✗"}
+                        Phone {businessProfile.ownerDetails.isPhoneVerified ? "✓" : "✗"}
                       </span>
                     </span>
                   </div>
                   <div
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessmanProfile.isBusinessVerified
+                      businessProfile.isVerified
                         ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
-                        : "bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30"
+                        : "bg-yellow-600 bg-opacity-20 text-yellow-300 border-yellow-500 border-opacity-30"
                     } shadow-lg`}
                   >
                     <Store size={14} className="sm:w-4 sm:h-4" />
                     <span className="font-semibold text-xs sm:text-sm">
                       <span className="hidden sm:inline">
-                        Business{" "}
-                        {businessmanProfile.isBusinessVerified
-                          ? "Verified"
-                          : "Unverified"}
+                        Business {businessProfile.isVerified ? "Verified" : "Pending"}
                       </span>
                       <span className="sm:hidden">
-                        Business{" "}
-                        {businessmanProfile.isBusinessVerified ? "✓" : "✗"}
+                        Business {businessProfile.isVerified ? "✓" : "Pending"}
                       </span>
                     </span>
                   </div>
@@ -696,4 +828,5 @@ const BusinessmanProfileDashboard = () => {
     </div>
   );
 };
+
 export default BusinessmanProfileDashboard;

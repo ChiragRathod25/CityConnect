@@ -292,8 +292,35 @@ export class DatabaseService {
     );
   }
 
-  //business products
+  async getAllBusinesses() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business/user/me`),
+        "Get All Businesses by User ID"
+      ),
+      {
+        loading: "Fetching your businesses...",
+        success: "Businesses fetched successfully!",
+        error: "Failed to fetch businesses. Please try again.",
+      }
+    );
+  }
 
+  async getBusinessProfileById(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business/${businessId}`),
+        "Get Business Profile by ID"
+      ),
+      {
+        loading: "Fetching business profile...",
+        success: "Business profile fetched successfully!",
+        error: "Failed to fetch business profile. Please try again.",
+      }
+    );
+  }
+
+  //business products
   async addBusinessProduct(businessId, productData) {
     const formData = new FormData();
 
@@ -371,7 +398,6 @@ export class DatabaseService {
       }
     );
   }
-
 }
 const databaseService = new DatabaseService();
 export default databaseService;
