@@ -4,41 +4,44 @@ import { useEffect, useState } from "react";
 import { login, logout } from "./slices/userSlice/authSlices.js";
 import databaseService from "./services/database.services.js";
 import { Outlet } from "react-router-dom";
-import { 
-  setDeferredPrompt, 
-  clearDeferredPrompt, 
+import {
+  setDeferredPrompt,
+  clearDeferredPrompt,
   isPWAInstalled,
-  markPWAInstalled 
-} from './utils/installPromptStore.js';
+  markPWAInstalled,
+} from "./utils/installPromptStore.js";
 import MyToaster from "./MyToaster";
 import LoadingComponent from "./components/LoadingComponent";
+import useScrollToTop from "./utils/useScrollToTop";
 
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  
-  
+  useScrollToTop();
+
   useEffect(() => {
-  const handleBeforeInstallPrompt = (event) => {
-    event.preventDefault();
-    console.log("beforeinstallprompt fired", event);
-    setDeferredPrompt(event); // Always set it, let the InstallApp component handle the logic
-  };
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      console.log("beforeinstallprompt fired", event);
+      setDeferredPrompt(event); // Always set it, let the InstallApp component handle the logic
+    };
 
-  const handleAppInstalled = () => {
-    console.log("PWA was installed");
-    clearDeferredPrompt();
-  };
+    const handleAppInstalled = () => {
+      console.log("PWA was installed");
+      clearDeferredPrompt();
+    };
 
-  window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-  window.addEventListener("appinstalled", handleAppInstalled);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
-  return () => {
-    window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.removeEventListener("appinstalled", handleAppInstalled);
-  };
-}, []);
-
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
 
   useEffect(() => {
     // Register the service worker
@@ -72,9 +75,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return (
-      <LoadingComponent/>
-    );
+    return <LoadingComponent />;
   }
   return (
     <div className="bg-gray-0 min-h-screen">

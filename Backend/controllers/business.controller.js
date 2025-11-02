@@ -374,6 +374,42 @@ const removeBusinessImage = asyncHandler(async (req, res, next) => {
     );
 });
 
+const getBusinessByCategory = asyncHandler(async (req, res, next) => {
+  const { category } = req.params;
+
+  if (!category) {
+    throw new ApiError(400, "Category is required");
+  }
+
+  //include city, state from location model using aggregation pipeline
+  //include owner details from user model
+
+  const businesses = await Business.aggregate([
+  {
+    $match: { category: "restaurant" }
+  },
+  {
+    $lookup: {
+      from: "businesslocations",
+      localField: "_id",
+      foreignField: "businessId",
+      as: "locationDetails"
+    }
+  },
+  { $unwind: "$locationDetails" }
+]);
+
+  if (!businesses || businesses.length === 0) {
+    throw new ApiError(404, "No business profiles found in this category");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Business profiles fetched successfully", businesses)
+    );
+});
+
 export {
   registerBusiness,
   getBusinessProfileById,
@@ -386,5 +422,6 @@ export {
   updateBusinessLogo,
   removeBusinessLogo,
   addBusinessImages,
-  removeBusinessImage
+  removeBusinessImage,
+  getBusinessByCategory,
 };

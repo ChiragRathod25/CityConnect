@@ -12,6 +12,7 @@ import {
   updateBusinessLogo,
   addBusinessImages,
   removeBusinessImage,
+  getBusinessByCategory
 } from "../controllers/business.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -31,5 +32,6 @@ router.put("/status/:id", updateBusinessStatus);
 router.put("/logo/:id", updateBusinessLogo);
 router.post("/images/:id", addBusinessImages);
 router.delete("/images/:id", removeBusinessImage);
+router.get("/category/:category", getBusinessByCategory);
 
 export default router;

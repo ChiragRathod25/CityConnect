@@ -278,6 +278,20 @@ export class DatabaseService {
     );
   }
 
+  async getBusinessByCategory(category) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business/category/${category}`),
+        "Get Businesses by Category"
+      ),
+      {
+        loading: "Fetching businesses...",
+        success: "Businesses fetched successfully!",
+        error: "Failed to fetch businesses. Please try again.",
+      }
+    );
+  }
+
   //business products
 
   async addBusinessProduct(businessId, productData) {
@@ -357,6 +371,7 @@ export class DatabaseService {
       }
     );
   }
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;
