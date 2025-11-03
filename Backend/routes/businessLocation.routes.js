@@ -16,9 +16,9 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 router.use(verifyJWT);
 router.post("/:businessId", addLocation);
 router.get("/:businessId", getAllLocationsByBusinessId);
-router.get("/location/:locationId", getLocationById);
-router.put("/location/:locationId", updateLocationById);
-router.delete("/location/:locationId", deleteLocationById);
+router.get("/get/:locationId", getLocationById);
+router.put("/update/:locationId", updateLocationById);
+router.delete("/delete/:locationId", deleteLocationById);
 router.get("/nearby", findNearbyBusinesses);
 
 export default router;

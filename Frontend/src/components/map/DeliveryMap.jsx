@@ -83,11 +83,16 @@ const DeliveryMap = ({
   height = 60, 
   width = 100, 
   businessName = "Business Location",
-  onLocationSelect = null
+  onLocationSelect = null,
+  initialLocation = null
 }) => {
   const defaultPosition = [22.3072, 73.1812]; // Vadodara, Gujarat
   const [userPosition, setUserPosition] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState( initialLocation ? {
+    coordinates: [initialLocation.lat, initialLocation.lng],
+    lat: initialLocation.lat,
+    lng: initialLocation.lng
+  } : null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [locationError, setLocationError] = useState(null);
 

@@ -166,7 +166,6 @@ const router = createBrowserRouter([
         path: "/admin",
         element: <AdminProfilePageUI />,
       },
-
       {
         path: "/admin/manage-category",
         element: <ManageCategoryUI />,

@@ -398,6 +398,40 @@ export class DatabaseService {
       }
     );
   }
+
+
+  //location services
+  async getBusinessLocation(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-location/${businessId}`),
+        "Get Business Location by Business ID"
+      ),
+      {
+        loading: "Fetching business location...",
+        success: "Business location fetched successfully!",
+        error: "Failed to fetch business location. Please try again.",
+      }
+    );
+  }
+
+  async updateBusinessLocationById(locationId, locationData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(
+            `/api/v1/business-location/update/${locationId}`,
+            locationData
+          ),
+        "Update Business Location by ID"
+      ),
+      {
+        loading: "Updating business location...",
+        success: "Business location updated successfully!",
+        error: "Failed to update business location. Please try again.",
+      }
+    );
+  }
 }
 const databaseService = new DatabaseService();
 export default databaseService;

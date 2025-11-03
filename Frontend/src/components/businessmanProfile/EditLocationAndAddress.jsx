@@ -10,72 +10,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import MoveBackButton from "../ui/MoveBackButton";
-
-// Mock Modal Component
-const Modal = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
-      >
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-          {children}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-// Mock DeliveryMap Component
-const DeliveryMap = ({ mode, onLocationSelect, initialLocation }) => {
-  const [selectedCoords, setSelectedCoords] = useState(
-    initialLocation || { lat: 22.3072, lng: 73.1812 }
-  );
-
-  const handleMapClick = () => {
-    // Simulate map click
-    const newCoords = {
-      lat: 22.3072 + (Math.random() - 0.5) * 0.1,
-      lng: 73.1812 + (Math.random() - 0.5) * 0.1,
-    };
-    setSelectedCoords(newCoords);
-    onLocationSelect(newCoords);
-  };
-
-  return (
-    <div className="w-full h-[400px] bg-gradient-to-br from-blue-100 to-green-100 rounded-xl flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
-      <div className="text-center z-10">
-        <MapPin className="mx-auto mb-4 text-blue-600" size={48} />
-        <p className="text-gray-700 mb-4">Click anywhere to select location</p>
-        <button
-          onClick={handleMapClick}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Select Location
-        </button>
-        <p className="text-sm text-gray-600 mt-4">
-          Selected: {selectedCoords.lat.toFixed(6)},{" "}
-          {selectedCoords.lng.toFixed(6)}
-        </p>
-      </div>
-    </div>
-  );
-};
+import Modal from "../Modal";
+import DeliveryMap from "../map/DeliveryMap";
+import databaseService from "@/services/database.services";
+import { useParams } from "react-router-dom";
 
 const EditLocationComponent = ({
   currentLocation,
@@ -164,8 +102,9 @@ const EditLocationComponent = ({
     };
 
     onLocationUpdate(updatedLocation);
-    setError("");
+    
     setIsModified(false);
+    setError("");
   };
 
   return (
@@ -448,22 +387,25 @@ const EditLocationComponent = ({
 };
 
 // Demo Implementation
-const EditLocationAndAddress = ({onBack}) => {
+const EditLocationAndAddress = ({ onBack }) => {
   const [currentLocation, setCurrentLocation] = useState({
-    address: "123 Business Street, Commercial Area",
-    street: "MG Road",
-    city: "Surat",
-    district: "Surat",
-    state: "Gujarat",
-    postalCode: "395001",
-    lat: 21.1702,
-    lng: 72.8311,
-    country: "India",
+    address: "",
+    street: "",
+    city: "",
+    district: "",
+    state: "",
+    postalCode: "",
+    lat: "",
+    lng: "",
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleLocationUpdate = (updatedLocation) => {
-    setCurrentLocation(updatedLocation);
+  const handleLocationUpdate = async (updatedLocation) => {
+    const updatedLocationResponce = await databaseService.updateBusinessLocationById(currentLocation._id, updatedLocation);
+
+    console.log("updated location response",updatedLocationResponce?.data)
+
+    setCurrentLocation(updatedLocationResponce.data);
     setIsEditing(false);
     alert("Location updated successfully!");
   };
@@ -471,7 +413,17 @@ const EditLocationAndAddress = ({onBack}) => {
   const handleCancel = () => {
     setIsEditing(false);
   };
+  const { businessId } = useParams();
 
+  useEffect(() => {
+    const fetchLocation = async () => {
+      //fetch the current location from API
+      const location = await databaseService.getBusinessLocation(businessId);
+      console.log("Updated current location",location?.data)
+      setCurrentLocation(location?.data);
+    };
+    fetchLocation();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50  px-4 pt-4 pb-20">
