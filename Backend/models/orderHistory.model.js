@@ -47,8 +47,6 @@ const orderSchema = new Schema(
       index: true,
     },
     items: [orderItemSchema],
-
-    // Pricing
     subtotal: {
       type: Number,
       required: true,
@@ -69,16 +67,12 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
-
-    // Status
     status: {
       type: String,
       enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
       default: "pending",
       index: true,
     },
-
-    // Delivery
     deliveryAddress: {
       street: String,
       city: String,
@@ -86,8 +80,6 @@ const orderSchema = new Schema(
       pincode: String,
       fullAddress: String,
     },
-
-    // Payment
     paymentMethod: {
       type: String,
       enum: [
@@ -105,8 +97,6 @@ const orderSchema = new Schema(
       default: "pending",
     },
     transactionId: String,
-
-    // Dates
     orderDate: {
       type: Date,
       default: Date.now,
@@ -119,7 +109,7 @@ const orderSchema = new Schema(
   }
 );
 
-// Index for faster queries
+
 orderSchema.index({ userId: 1, orderDate: -1 });
 orderSchema.index({ orderId: 1 });
 orderSchema.index({ status: 1, orderDate: -1 });
