@@ -1299,12 +1299,14 @@ const AdminVerificationPanel = () => {
       }}
     >
       <div className="container mx-auto px-4 pb-16  max-w-7xl">
-        <div className="relative mb-5 sm:mb-0  z-50">
+         <div className="relative z-10">
+        <div className="relative mb-5 sm:mb-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <MoveBackButton onClick={handleBackToProfile} />
             </div>
           </div>
+        </div>
         </div>
         <motion.div
           initial={{ opacity: 0, y: -30 }}
