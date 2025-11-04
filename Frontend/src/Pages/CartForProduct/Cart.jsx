@@ -16,6 +16,7 @@ import {
   Heart,
   Gift,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const initialCartItems = [
   {
@@ -454,7 +455,7 @@ const EmptyCart = () => (
 
 const ShoppingCartApp = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
-
+  const navigate = useNavigate();
   const updateQuantity = (id, newQuantity) => {
     setCartItems((items) =>
       items.map((item) =>
@@ -468,7 +469,7 @@ const ShoppingCartApp = () => {
   };
 
   const handleCheckout = () => {
-    alert("Redirecting to checkout...");
+    navigate('/payment');
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);

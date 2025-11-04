@@ -1,10 +1,8 @@
-import React from 'react'
-import App from './ProductCard'
+import React from "react";
+import ProductCardComponent from "./ProductCard";
 
 const ProductCardUI = () => {
-  return (
-    <div><App/></div>
-  )
-}
+  return <ProductCardComponent />;
+};
 
-export default ProductCardUI
+export default ProductCardUI;
