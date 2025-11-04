@@ -7,14 +7,14 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/all-doctors");
+      navigate("/payment");
     }, 10000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
 
   const handleClick = () => {
-    navigate("/all-doctors");
+    navigate("/payment");
   };
 
   return (

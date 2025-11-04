@@ -113,12 +113,6 @@ const orderSchema = new Schema(
       index: true,
     },
     deliveryDate: Date,
-    estimatedDeliveryDate: Date,
-
-    // Additional
-    notes: String,
-    cancelReason: String,
-    invoiceUrl: String,
   },
   {
     timestamps: true, 

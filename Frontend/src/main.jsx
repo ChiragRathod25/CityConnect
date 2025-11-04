@@ -50,6 +50,7 @@ import ContactUsForAdmin from "./Pages/AdminContactUs";
 import FeedbackComponent from "./components/Feedback";
 import AboutPageUi from "./Pages/About";
 import OrderHistoryForProductUI from "./Pages/HistoryForProduct";
+import ProductDetailView from "./Pages/ProductCard/ProductDetailView";
 
 const router = createBrowserRouter([
   {
@@ -147,6 +148,10 @@ const router = createBrowserRouter([
       {
         path: "/card", //get information about the products of the business
         element: <ProductCardUI />,
+      },
+      {
+        path: "/card/:id", 
+        element: <ProductDetailView/>,
       },
       // {
       //   path: "/edit-operating-hours", //of business , TODO: needs improvement

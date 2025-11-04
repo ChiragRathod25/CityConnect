@@ -1,218 +1,202 @@
-// models/Cart.js
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const cartItemSchema = new mongoose.Schema({
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
+const cartItemSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BusinessProduct",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 1,
+    },
   },
-  name: {
-    type: String,
-    required: true
-  },
-  category: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  originalPrice: {
-    type: Number,
-    min: 0
-  },
-  discount: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 100
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1,
-    default: 1
-  },
-  image: {
-    type: String,
-    required: true
-  },
-  weight: String,
-  brand: String,
-  rating: {
-    type: Number,
-    min: 0,
-    max: 5
-  },
-  reviewCount: {
-    type: Number,
-    default: 0
-  },
-  distance: String, // For local business (e.g., "0.5 km")
-  inStock: {
-    type: Boolean,
-    default: true
+  {
+    _id: false,
   }
-}, {
-  _id: false // No separate _id for cart items
-});
+);
 
-const cartSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true, // One cart per user
-    index: true
+const cartSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+      index: true,
+    },
+    items: {
+      type: [cartItemSchema],
+      default: [],
+    },
+    lastUpdated: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  items: {
-    type: [cartItemSchema],
-    default: []
-  },
-  // Calculated fields (can be computed on-the-fly too)
-  subtotal: {
-    type: Number,
-    default: 0
-  },
-  totalSavings: {
-    type: Number,
-    default: 0
-  },
-  itemCount: {
-    type: Number,
-    default: 0
-  },
-  lastUpdated: {
-    type: Date,
-    default: Date.now
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true // Adds createdAt and updatedAt
-});
+);
 
-// ============================================
-// MIDDLEWARE - Update totals before saving
-// ============================================
-cartSchema.pre('save', function(next) {
-  if (this.items && this.items.length > 0) {
-    // Calculate subtotal
-    this.subtotal = this.items.reduce((sum, item) => {
-      return sum + (item.price * item.quantity);
-    }, 0);
-
-    // Calculate total savings
-    this.totalSavings = this.items.reduce((sum, item) => {
-      const originalPrice = item.originalPrice || item.price;
-      const savings = (originalPrice - item.price) * item.quantity;
-      return sum + savings;
-    }, 0);
-
-    // Calculate item count
-    this.itemCount = this.items.reduce((sum, item) => {
-      return sum + item.quantity;
-    }, 0);
-  } else {
-    this.subtotal = 0;
-    this.totalSavings = 0;
-    this.itemCount = 0;
-  }
-
+cartSchema.pre("save", function (next) {
   this.lastUpdated = Date.now();
   next();
 });
 
-// ============================================
-// INSTANCE METHODS
-// ============================================
-
-// Get cart summary with delivery and tax
-cartSchema.methods.getCartSummary = function() {
-  const deliveryCharge = this.subtotal > 500 ? 0 : 50;
-  const tax = Math.round(this.subtotal * 0.12); // 12% GST
-  const grandTotal = this.subtotal + deliveryCharge + tax;
-
-  return {
-    subtotal: this.subtotal,
-    totalSavings: this.totalSavings,
-    deliveryCharge,
-    tax,
-    grandTotal,
-    itemCount: this.itemCount,
-    freeDeliveryEligible: this.subtotal > 500
-  };
-};
-
 // Check if product exists in cart
-cartSchema.methods.hasProduct = function(productId) {
-  return this.items.some(item => 
-    item.productId.toString() === productId.toString()
+cartSchema.methods.hasProduct = function (productId) {
+  return this.items.some(
+    (item) => item.productId.toString() === productId.toString()
   );
 };
 
 // Get item by productId
-cartSchema.methods.getItem = function(productId) {
-  return this.items.find(item => 
-    item.productId.toString() === productId.toString()
+cartSchema.methods.getItem = function (productId) {
+  return this.items.find(
+    (item) => item.productId.toString() === productId.toString()
   );
 };
 
-// ============================================
-// STATIC METHODS
-// ============================================
+// Add or update item in cart
+cartSchema.methods.addItem = async function (productId, quantity = 1) {
+  const existingItem = this.getItem(productId);
 
-// Find or create cart for user
-cartSchema.statics.findOrCreate = async function(userId) {
-  let cart = await this.findOne({ userId });
-  
-  if (!cart) {
-    cart = await this.create({ 
-      userId, 
-      items: [] 
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    this.items.push({
+      productId,
+      quantity,
     });
   }
-  
+
+  return await this.save();
+};
+
+// Update item quantity
+cartSchema.methods.updateQuantity = async function (productId, quantity) {
+  const item = this.getItem(productId);
+
+  if (!item) {
+    throw new Error("Item not found in cart");
+  }
+
+  if (quantity <= 0) {
+    this.items = this.items.filter(
+      (i) => i.productId.toString() !== productId.toString()
+    );
+  } else {
+    item.quantity = quantity;
+  }
+
+  return await this.save();
+};
+
+// Remove item from cart
+cartSchema.methods.removeItem = async function (productId) {
+  this.items = this.items.filter(
+    (item) => item.productId.toString() !== productId.toString()
+  );
+  return await this.save();
+};
+
+// Clear cart
+cartSchema.methods.clearCart = async function () {
+  this.items = [];
+  return await this.save();
+};
+
+// Get cart with all calculations
+cartSchema.methods.getCartSummary = async function () {
+  await this.populate({
+    path: "items.productId",
+    select: "name price stock category images deliveryCharge brand weight",
+  });
+
+  let subtotal = 0;
+  let totalDeliveryCharge = 0;
+  let itemCount = 0;
+  let outOfStockItems = [];
+
+  this.items.forEach((item) => {
+    if (item.productId) {
+      const product = item.productId;
+      subtotal += product.price * item.quantity;
+      totalDeliveryCharge += product.deliveryCharge || 0;
+      itemCount += item.quantity;
+
+      if (item.quantity > product.stock) {
+        outOfStockItems.push({
+          productId: product._id,
+          name: product.name,
+          requested: item.quantity,
+          available: product.stock,
+        });
+      }
+    }
+  });
+
+  const tax = Math.round(subtotal * 0.12); // 12% GST
+  const grandTotal = subtotal + totalDeliveryCharge + tax;
+
+  return {
+    items: this.items,
+    subtotal,
+    deliveryCharge: totalDeliveryCharge,
+    tax,
+    grandTotal,
+    itemCount,
+    outOfStockItems,
+    isEmpty: this.items.length === 0,
+  };
+};
+
+// Find or create cart for user
+cartSchema.statics.findOrCreate = async function (userId) {
+  let cart = await this.findOne({ userId });
+
+  if (!cart) {
+    cart = await this.create({
+      userId,
+      items: [],
+    });
+  }
+
   return cart;
 };
 
-// Get cart with populated product details
-cartSchema.statics.getCartWithProducts = async function(userId) {
-  return await this.findOne({ userId })
-    .populate({
-      path: 'items.productId',
-      select: 'name price originalPrice inStock category images'
-    });
+// Get cart with populated products
+cartSchema.statics.getCartWithProducts = async function (userId) {
+  return await this.findOne({ userId }).populate({
+    path: "items.productId",
+    select:
+      "name price stock category images deliveryCharge brand weight dimensions sku warranty returnPolicyDays",
+  });
 };
 
-// ============================================
-// INDEXES
-// ============================================
 cartSchema.index({ userId: 1 });
 cartSchema.index({ lastUpdated: 1 });
 
-// Auto-delete cart after 90 days of inactivity (optional)
-cartSchema.index({ lastUpdated: 1 }, { 
-  expireAfterSeconds: 7776000 // 90 days
-});
+// Auto-delete cart after 90 days of inactivity
+cartSchema.index(
+  { lastUpdated: 1 },
+  {
+    expireAfterSeconds: 7776000, // 90 days
+  }
+);
 
-// ============================================
-// VIRTUAL FIELDS
-// ============================================
-
-// Virtual to check if cart is empty
-cartSchema.virtual('isEmpty').get(function() {
+// Check if cart is empty
+cartSchema.virtual("isEmpty").get(function () {
   return this.items.length === 0;
 });
 
-// Virtual to get out of stock items
-cartSchema.virtual('outOfStockItems').get(function() {
-  return this.items.filter(item => !item.inStock);
-});
-
 // Ensure virtuals are included in JSON
-cartSchema.set('toJSON', { virtuals: true });
-cartSchema.set('toObject', { virtuals: true });
+cartSchema.set("toJSON", { virtuals: true });
+cartSchema.set("toObject", { virtuals: true });
 
-export default mongoose.model('Cart', cartSchema);
+export const Cart = mongoose.model("Cart", cartSchema);
+

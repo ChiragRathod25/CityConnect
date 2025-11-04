@@ -292,10 +292,12 @@ const CategoryManagement = () => {
     <div className="min-h-screen bg-zinc-50 p-3 sm:p-6">
       <div className="max-w-7xl mb-20 mx-auto">
         {/* Header */}
-        <div className="relative mb-5 sm:mb-0  z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <MoveBackButton onClick={handleBackToProfile} />
+        <div className="relative z-10">
+          <div className="relative mb-5 sm:mb-0">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <MoveBackButton onClick={handleBackToProfile} />
+              </div>
             </div>
           </div>
         </div>

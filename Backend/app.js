@@ -48,6 +48,8 @@ import businessProductRoutes from "./routes/businessProduct.routes.js";
 import businessServiceRoutes from "./routes/businessService.routes.js";
 // import reviewRoutes from "./routes/review.routes.js";
 
+import cartRoutes from './routes/orderCart.routes.js';
+
 import { errorHandler } from "./utils/errorHandler.js";
 
 app.use("/api/v1/user", userRoutes);
@@ -59,6 +61,7 @@ app.use("/api/v1/business-product", businessProductRoutes);
 app.use("/api/v1/business-service", businessServiceRoutes);
 // app.use("/api/v1/review", reviewRoutes);
 
+app.use('/api/cart', cartRoutes);
 
 app.use(errorHandler);
 export { app };
