@@ -14,13 +14,14 @@ import {
   Truck,
   Shield,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MoveBackButton from "../ui/MoveBackButton";
 import EditLocationAndAddress from "./EditLocationAndAddress";
 import EditBusinessDetails from "./EditBusinessDetails";
 import BusinessHoursEditor from "./EditOperatingHours";
 import MediaUploadEditor from "./EditBusinessMedia";
 import PaymentMethodsEditor from "./EditPaymentMethods";
+import databaseService from "@/services/database.services";
 
 const EditBusinessmanProfileNavigation = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,10 +31,10 @@ const EditBusinessmanProfileNavigation = () => {
 
   useEffect(() => {
     setIsVisible(true);
-    
+
     // Read query parameter on component mount
     const params = new URLSearchParams(window.location.search);
-    const editParam = params.get('edit');
+    const editParam = params.get("edit");
     if (editParam) {
       setCurrentEdit(editParam);
     }
@@ -43,12 +44,12 @@ const EditBusinessmanProfileNavigation = () => {
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
-      const editParam = params.get('edit');
+      const editParam = params.get("edit");
       setCurrentEdit(editParam);
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   const editOptions = [
@@ -118,21 +119,22 @@ const EditBusinessmanProfileNavigation = () => {
     //   hoverColor: "hover:bg-gray-100",
     //   route: "/edit/services-edit",
     // },
-    {
-      id: "documents",
-      title: "Document Upload",
-      description: "Upload and manage your documents",
-      icon: FileText,
-      color: "bg-gray-700",
-      bgColor: "bg-gray-50",
-      borderColor: "border-gray-200",
-      hoverColor: "hover:bg-gray-100",
-      route: "/edit/documents-edit",
-    },
+    // {
+    //   id: "documents",
+    //   title: "Document Upload", 
+    //   description: "Upload and manage your documents",
+    //   icon: FileText,
+    //   color: "bg-gray-700",
+    //   bgColor: "bg-gray-50",
+    //   borderColor: "border-gray-200",
+    //   hoverColor: "hover:bg-gray-100",
+    //   route: "/edit/documents-edit",
+    // },
   ];
 
+  const { businessId } = useParams();
   const handleMoveBackTo = () => {
-    navigate("/businessman-profile/profile-info");
+    navigate(`/dashboard/business/${businessId}`);
   };
 
   const handleBackToOptions = () => {
@@ -147,7 +149,7 @@ const EditBusinessmanProfileNavigation = () => {
     const currentUrl = window.location.pathname;
     const newUrl = `${currentUrl}?edit=${editType}`;
     window.history.pushState({}, "", newUrl);
-    
+
     // Update state to trigger re-render
     setCurrentEdit(editType);
   };
@@ -156,7 +158,7 @@ const EditBusinessmanProfileNavigation = () => {
   const renderEditSection = () => {
     switch (currentEdit) {
       // case "personal-info":
-        // return <PersonalInfoEdit onBack={handleBackToOptions} />;
+      // return <PersonalInfoEdit onBack={handleBackToOptions} />;
       case "location":
         return <EditLocationAndAddress onBack={handleBackToOptions} />;
       case "business-info":
@@ -164,11 +166,17 @@ const EditBusinessmanProfileNavigation = () => {
       case "payment-methods":
         return <PaymentMethodsEditor onBack={handleBackToOptions} />;
       case "business-hours":
-        return <BusinessHoursEditor onBack={handleBackToOptions} />;
+        return (
+          <BusinessHoursEditor
+            onBack={handleBackToOptions}
+            businessId={businessId}
+            databaseService={databaseService}
+          />
+        );
       // case "services":
-        // return <ServicesEdit onBack={handleBackToOptions} />;
-      case "documents":
-        return <MediaUploadEditor onBack={handleBackToOptions} />;
+      // return <ServicesEdit onBack={handleBackToOptions} />;
+      // case "documents":
+      //   return <MediaUploadEditor onBack={handleBackToOptions} />;
       default:
         return null; // Show the main navigation
     }
@@ -177,9 +185,7 @@ const EditBusinessmanProfileNavigation = () => {
   // If an edit section is active, render it
   if (currentEdit) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        {renderEditSection()}
-      </div>
+      <div className="min-h-screen bg-gray-100">{renderEditSection()}</div>
     );
   }
 
@@ -224,7 +230,7 @@ const EditBusinessmanProfileNavigation = () => {
         <div className="mb-4 mt-2 md:mb-6">
           <MoveBackButton onClick={handleMoveBackTo} />
         </div>
-        
+
         {/* Header */}
         <div
           className={`bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 overflow-hidden mb-6 sm:mb-8 transition-all duration-700 ${

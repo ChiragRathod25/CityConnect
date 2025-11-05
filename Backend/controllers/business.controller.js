@@ -119,6 +119,7 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
   }
 
   const businessProfile = business[0];
+  console.log("Business Profile:", businessProfile);
 
   if (!business) {
     throw new ApiError(404, "Business profile not found");

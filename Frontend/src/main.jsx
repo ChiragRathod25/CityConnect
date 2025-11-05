@@ -133,16 +133,16 @@ const router = createBrowserRouter([
 
       {
         // path: "/add-productcard", //used to add product of business
-        path: "/:businessId/product/add",
+        path: "/dashboard/business/:businessId/product/add",
         element: <AddProductCard />,
       },
       {
         // path: "/add-productcard",  //used to add service of business
-        path: "/:businessId/service/add",
+        path: "/dashboard/business/:businessId/service/add",
         element: <AddServiceProviderForm />,
       },
       {
-        path: "/:businessId/service", //get information about the service of the business
+        path: "/dashboard/business/:businessId/service",
         element: <ServiceProviderCardUI />,
       },
       {

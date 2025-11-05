@@ -5,8 +5,6 @@ import {
   Store,
   Target,
   Calendar,
-  Users,
-  DollarSign,
   FileText,
   Phone,
   Mail,
@@ -23,6 +21,7 @@ import {
   Edit3,
   ChevronDown,
 } from "lucide-react";
+import databaseService from "@/services/database.services";
 import MoveBackButton from "../ui/MoveBackButton";
 
 const FormInput = ({ label, icon: Icon, error, className = "", ...props }) => (
@@ -174,58 +173,81 @@ export default function EditBusinessDetails({onBack}) {
   const [activeSection, setActiveSection] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Simulated businessId - replace with actual useParams() in your app
+  const businessId = "690649b2b7f1561d678bcc62";
 
   const [formData, setFormData] = useState({
-    businessName: "Tech Solutions Inc",
-    businessType: "Private Limited",
-    businessCategory: "Technology",
-    establishedYear: "2020",
-    numberOfEmployees: "11-50",
-    annualRevenue: "5000000",
-    businessDescription:
-      "Leading provider of innovative technology solutions for businesses across various industries.",
-    phone: "9876543210",
-    email: "contact@techsolutions.com",
-    website: "https://www.techsolutions.com",
+    name: "",
+    type: "",
+    category: "",
+    description: "",
+    phone: "",
+    email: "",
+    website: "",
     socialMedia: {
-      facebook: "https://facebook.com/techsolutions",
-      instagram: "https://instagram.com/techsolutions",
-      twitter: "https://twitter.com/techsolutions",
-      linkedin: "https://linkedin.com/company/techsolutions",
-      youtube: "https://youtube.com/techsolutions",
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      linkedin: "",
+      youtube: "",
     },
   });
 
+  const fetchFormData = async () => {
+    try {
+      setLoading(true);
+      const responseData = await databaseService.getBusinessProfileById(
+        businessId
+      );
+
+      // Map backend response to form structure
+      const businessData = responseData.data;
+      setFormData({
+        name: businessData.name || "",
+        type: businessData.type || "",
+        category: businessData.category || "",
+        description: businessData.description || "",
+        phone: businessData.contactDetails?.phone || "",
+        email: businessData.contactDetails?.email || "",
+        website: businessData.contactDetails?.website || "",
+        socialMedia: {
+          facebook: businessData.contactDetails?.socialMedia?.facebook || "",
+          instagram: businessData.contactDetails?.socialMedia?.instagram || "",
+          twitter: businessData.contactDetails?.socialMedia?.twitter || "",
+          linkedin: businessData.contactDetails?.socialMedia?.linkedin || "",
+          youtube: businessData.contactDetails?.socialMedia?.youtube || "",
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching business data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFormData();
+  }, [businessId]);
+
   const businessTypes = [
-    { value: "Sole Proprietorship", label: "Sole Proprietorship" },
-    { value: "Partnership", label: "Partnership" },
-    { value: "Private Limited", label: "Private Limited" },
-    { value: "Public Limited", label: "Public Limited" },
-    { value: "LLP", label: "LLP" },
+    { value: "product", label: "Product" },
+    { value: "service", label: "Service" },
+    { value: "both", label: "Product & Service" },
   ];
 
   const businessCategories = [
-    { value: "Technology", label: "Technology" },
-    { value: "Retail", label: "Retail" },
-    { value: "Healthcare", label: "Healthcare" },
-    { value: "Education", label: "Education" },
-    { value: "Finance", label: "Finance" },
-    { value: "Manufacturing", label: "Manufacturing" },
-    { value: "Services", label: "Services" },
-    { value: "Other", label: "Other" },
-  ];
-
-  const yearsOptions = Array.from({ length: 50 }, (_, i) => {
-    const year = (new Date().getFullYear() - i).toString();
-    return { value: year, label: year };
-  });
-
-  const employeeOptions = [
-    { value: "1-10", label: "1-10" },
-    { value: "11-50", label: "11-50" },
-    { value: "51-200", label: "51-200" },
-    { value: "201-500", label: "201-500" },
-    { value: "500+", label: "500+" },
+    { value: "cafe", label: "Café" },
+    { value: "restaurant", label: "Restaurant" },
+    { value: "retail", label: "Retail" },
+    { value: "technology", label: "Technology" },
+    { value: "healthcare", label: "Healthcare" },
+    { value: "education", label: "Education" },
+    { value: "finance", label: "Finance" },
+    { value: "manufacturing", label: "Manufacturing" },
+    { value: "services", label: "Services" },
+    { value: "other", label: "Other" },
   ];
 
   const handleInputChange = (field, value) => {
@@ -239,43 +261,90 @@ export default function EditBusinessDetails({onBack}) {
     const newErrors = {};
 
     if (section === "business") {
-      if (!formData.businessName.trim())
-        newErrors.businessName = "Business name is required";
-      if (!formData.businessType)
-        newErrors.businessType = "Business type is required";
-      if (!formData.businessCategory)
-        newErrors.businessCategory = "Category is required";
-      if (!formData.establishedYear)
-        newErrors.establishedYear = "Year is required";
-      if (!formData.numberOfEmployees)
-        newErrors.numberOfEmployees = "Employee count is required";
-      if (!formData.businessDescription.trim())
-        newErrors.businessDescription = "Description is required";
+      if (!formData.name?.trim()) newErrors.name = "Business name is required";
+      if (!formData.type) newErrors.type = "Business type is required";
+      if (!formData.category) newErrors.category = "Category is required";
+      if (!formData.description?.trim())
+        newErrors.description = "Description is required";
     }
 
     if (section === "contact") {
-      if (!formData.phone || formData.phone.length !== 10)
-        newErrors.phone = "Valid 10-digit phone required";
-      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      // Phone validation - allow international format
+      if (!formData.phone?.trim()) {
+        newErrors.phone = "Phone number is required";
+      }
+
+      // Email validation
+      if (
+        !formData.email ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+      ) {
         newErrors.email = "Valid email required";
+      }
+
+      // URL validation for website
+      if (formData.website && !/^https?:\/\/.+/.test(formData.website)) {
+        newErrors.website =
+          "Valid URL required (must start with http:// or https://)";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = (section) => {
+  const handleSave = async (section) => {
     if (validateSection(section)) {
-      setShowSuccess(true);
-      setActiveSection(null);
-      setTimeout(() => setShowSuccess(false), 3000);
+      try {
+        // Prepare data for API call
+        if (section === "business") {
+          // Call API to update business details
+          const businessUpdateData = {
+            name: formData.name,
+            type: formData.type,
+            category: formData.category,
+            description: formData.description,
+          };
+          console.log("Updating business:", businessUpdateData);
+          await databaseService.updateBusinessProfile(businessId, businessUpdateData);
+        } else if (section === "contact") {
+          // Call API to update contact details
+          const contactUpdateData = {
+            phone: formData.phone,
+            email: formData.email,
+            website: formData.website,
+            socialMedia: formData.socialMedia,
+          };
+          console.log("Updating contact:", contactUpdateData);
+          await databaseService.updateBusinessContact(businessId, contactUpdateData);
+        }
+
+        setShowSuccess(true);
+        setActiveSection(null);
+        setTimeout(() => setShowSuccess(false), 3000);
+      } catch (error) {
+        console.error("Error saving data:", error);
+        // Handle error appropriately
+      }
     }
   };
 
   const handleCancel = () => {
     setActiveSection(null);
     setErrors({});
+    fetchFormData(); // Reload original data
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading business details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-6 px-4 sm:px-6 lg:px-8">
@@ -296,9 +365,9 @@ export default function EditBusinessDetails({onBack}) {
           className="text-center mb-8 sm:mb-12"
         >
           <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
-            <Edit3 className="text-white animate-bounce" size={30} />
+            <Edit3 className="text-white" size={30} />
           </div>
-          <h1 className="text-3xl  lg:text-4xl font-bold text-gray-800 mb-3">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-3">
             Edit Business Details
           </h1>
           <p className="text-gray-600 text-sm sm:text-base">
@@ -366,78 +435,36 @@ export default function EditBusinessDetails({onBack}) {
                 <FormInput
                   label="Business Name *"
                   icon={Store}
-                  name="businessName"
+                  name="name"
                   placeholder="Enter your business name"
-                  value={formData.businessName}
-                  onChange={(e) =>
-                    handleInputChange("businessName", e.target.value)
-                  }
-                  error={errors.businessName}
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  error={errors.name}
                 />
 
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormSelect
                     label="Business Type *"
                     icon={Building2}
-                    name="businessType"
+                    name="type"
                     options={businessTypes}
-                    value={formData.businessType}
-                    onChange={(e) =>
-                      handleInputChange("businessType", e.target.value)
-                    }
-                    error={errors.businessType}
+                    value={formData.type}
+                    onChange={(e) => handleInputChange("type", e.target.value)}
+                    error={errors.type}
                   />
 
                   <FormSelect
                     label="Business Category *"
                     icon={Target}
-                    name="businessCategory"
+                    name="category"
                     options={businessCategories}
-                    value={formData.businessCategory}
+                    value={formData.category}
                     onChange={(e) =>
-                      handleInputChange("businessCategory", e.target.value)
+                      handleInputChange("category", e.target.value)
                     }
-                    error={errors.businessCategory}
+                    error={errors.category}
                   />
                 </div>
-
-                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-                  <FormSelect
-                    label="Established Year *"
-                    icon={Calendar}
-                    name="establishedYear"
-                    options={yearsOptions}
-                    value={formData.establishedYear}
-                    onChange={(e) =>
-                      handleInputChange("establishedYear", e.target.value)
-                    }
-                    error={errors.establishedYear}
-                  />
-
-                  <FormSelect
-                    label="Number of Employees *"
-                    icon={Users}
-                    name="numberOfEmployees"
-                    options={employeeOptions}
-                    value={formData.numberOfEmployees}
-                    onChange={(e) =>
-                      handleInputChange("numberOfEmployees", e.target.value)
-                    }
-                    error={errors.numberOfEmployees}
-                  />
-                </div>
-
-                <FormInput
-                  label="Annual Revenue (Optional)"
-                  icon={DollarSign}
-                  name="annualRevenue"
-                  type="number"
-                  placeholder="Enter annual revenue in INR"
-                  value={formData.annualRevenue}
-                  onChange={(e) =>
-                    handleInputChange("annualRevenue", e.target.value)
-                  }
-                />
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -445,32 +472,32 @@ export default function EditBusinessDetails({onBack}) {
                     Business Description *
                   </label>
                   <textarea
-                    name="businessDescription"
+                    name="description"
                     placeholder="Describe your business, services, and what makes you unique"
                     rows={4}
-                    value={formData.businessDescription}
+                    value={formData.description}
                     onChange={(e) =>
-                      handleInputChange("businessDescription", e.target.value)
+                      handleInputChange("description", e.target.value)
                     }
                     maxLength={500}
                     className={`w-full px-4 py-3 bg-white border-2 rounded-xl transition-all duration-300 focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 hover:border-gray-400 resize-none ${
-                      errors.businessDescription
+                      errors.description
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
                         : "border-gray-200"
                     }`}
                   />
-                  {errors.businessDescription && (
+                  {errors.description && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="flex items-center gap-1 text-red-500 text-xs mt-1"
                     >
                       <AlertCircle size={12} />
-                      {errors.businessDescription}
+                      {errors.description}
                     </motion.div>
                   )}
                   <div className="text-xs text-gray-500 mt-1">
-                    {formData.businessDescription.length}/500 characters
+                    {formData.description?.length || 0}/500 characters
                   </div>
                 </div>
 
@@ -502,43 +529,25 @@ export default function EditBusinessDetails({onBack}) {
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Business Name</p>
                   <p className="text-gray-800 font-semibold">
-                    {formData.businessName}
+                    {formData.name || "Not set"}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Business Type</p>
-                  <p className="text-gray-800 font-semibold">
-                    {formData.businessType}
+                  <p className="text-gray-800 font-semibold capitalize">
+                    {formData.type || "Not set"}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Category</p>
-                  <p className="text-gray-800 font-semibold">
-                    {formData.businessCategory}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Established</p>
-                  <p className="text-gray-800 font-semibold">
-                    {formData.establishedYear}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Employees</p>
-                  <p className="text-gray-800 font-semibold">
-                    {formData.numberOfEmployees}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Annual Revenue</p>
-                  <p className="text-gray-800 font-semibold">
-                    ₹{parseInt(formData.annualRevenue).toLocaleString("en-IN")}
+                  <p className="text-gray-800 font-semibold capitalize">
+                    {formData.category || "Not set"}
                   </p>
                 </div>
                 <div className="sm:col-span-2">
                   <p className="text-xs text-gray-500 mb-1">Description</p>
                   <p className="text-gray-800">
-                    {formData.businessDescription}
+                    {formData.description || "No description provided"}
                   </p>
                 </div>
               </motion.div>
@@ -585,6 +594,30 @@ export default function EditBusinessDetails({onBack}) {
                 exit={{ opacity: 0 }}
                 className="space-y-6"
               >
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+                  <FormInput
+                    label="Phone Number *"
+                    icon={Phone}
+                    name="phone"
+                    type="tel"
+                    placeholder="+1 510 123 4567"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    error={errors.phone}
+                  />
+
+                  <FormInput
+                    label="Email Address *"
+                    icon={Mail}
+                    name="email"
+                    type="email"
+                    placeholder="contact@yourbusiness.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    error={errors.email}
+                  />
+                </div>
+
                 <FormInput
                   label="Website (Optional)"
                   icon={Globe}
@@ -593,6 +626,7 @@ export default function EditBusinessDetails({onBack}) {
                   placeholder="https://www.yourbusiness.com"
                   value={formData.website}
                   onChange={(e) => handleInputChange("website", e.target.value)}
+                  error={errors.website}
                 />
 
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 border border-blue-200">
@@ -605,7 +639,7 @@ export default function EditBusinessDetails({onBack}) {
                       label="Facebook"
                       icon={Facebook}
                       name="facebook"
-                      placeholder="Facebook page URL"
+                      placeholder="https://facebook.com/yourpage"
                       value={formData.socialMedia.facebook}
                       onChange={(e) =>
                         handleInputChange("socialMedia", {
@@ -619,7 +653,7 @@ export default function EditBusinessDetails({onBack}) {
                       label="Instagram"
                       icon={Instagram}
                       name="instagram"
-                      placeholder="Instagram profile URL"
+                      placeholder="https://instagram.com/yourprofile"
                       value={formData.socialMedia.instagram}
                       onChange={(e) =>
                         handleInputChange("socialMedia", {
@@ -633,7 +667,7 @@ export default function EditBusinessDetails({onBack}) {
                       label="Twitter"
                       icon={Twitter}
                       name="twitter"
-                      placeholder="Twitter profile URL"
+                      placeholder="https://twitter.com/yourprofile"
                       value={formData.socialMedia.twitter}
                       onChange={(e) =>
                         handleInputChange("socialMedia", {
@@ -647,7 +681,7 @@ export default function EditBusinessDetails({onBack}) {
                       label="LinkedIn"
                       icon={Linkedin}
                       name="linkedin"
-                      placeholder="LinkedIn page URL"
+                      placeholder="https://linkedin.com/company/yourcompany"
                       value={formData.socialMedia.linkedin}
                       onChange={(e) =>
                         handleInputChange("socialMedia", {
@@ -661,7 +695,7 @@ export default function EditBusinessDetails({onBack}) {
                       label="YouTube"
                       icon={Youtube}
                       name="youtube"
-                      placeholder="YouTube channel URL"
+                      placeholder="https://youtube.com/yourchannel"
                       value={formData.socialMedia.youtube}
                       onChange={(e) =>
                         handleInputChange("socialMedia", {
@@ -698,16 +732,35 @@ export default function EditBusinessDetails({onBack}) {
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <div className="sm:col-span-2">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Phone</p>
+                    <p className="text-gray-800 font-semibold">
+                      {formData.phone || "Not set"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Email</p>
+                    <p className="text-gray-800 font-semibold break-all">
+                      {formData.email || "Not set"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-2">
                   <p className="text-xs text-gray-500 mb-1">Website</p>
-                  <a
-                    href={formData.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline font-semibold break-all"
-                  >
-                    {formData.website}
-                  </a>
+                  {formData.website ? (
+                    <a
+                      href={formData.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline font-semibold break-all"
+                    >
+                      {formData.website}
+                    </a>
+                  ) : (
+                    <p className="text-gray-400">Not set</p>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t-2 border-gray-100">
@@ -715,63 +768,69 @@ export default function EditBusinessDetails({onBack}) {
                     <Globe size={16} className="text-blue-600" />
                     Social Media
                   </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                    {formData.socialMedia.facebook && (
-                      <a
-                        href={formData.socialMedia.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
-                      >
-                        <Facebook size={16} />
-                        <span className="hidden sm:inline">Facebook</span>
-                      </a>
-                    )}
-                    {formData.socialMedia.instagram && (
-                      <a
-                        href={formData.socialMedia.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-pink-600 hover:underline text-sm"
-                      >
-                        <Instagram size={16} />
-                        <span className="hidden sm:inline">Instagram</span>
-                      </a>
-                    )}
-                    {formData.socialMedia.twitter && (
-                      <a
-                        href={formData.socialMedia.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-400 hover:underline text-sm"
-                      >
-                        <Twitter size={16} />
-                        <span className="hidden sm:inline">Twitter</span>
-                      </a>
-                    )}
-                    {formData.socialMedia.linkedin && (
-                      <a
-                        href={formData.socialMedia.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-700 hover:underline text-sm"
-                      >
-                        <Linkedin size={16} />
-                        <span className="hidden sm:inline">LinkedIn</span>
-                      </a>
-                    )}
-                    {formData.socialMedia.youtube && (
-                      <a
-                        href={formData.socialMedia.youtube}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-red-600 hover:underline text-sm"
-                      >
-                        <Youtube size={16} />
-                        <span className="hidden sm:inline">YouTube</span>
-                      </a>
-                    )}
-                  </div>
+                  {Object.values(formData.socialMedia).some((url) => url) ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                      {formData.socialMedia.facebook && (
+                        <a
+                          href={formData.socialMedia.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                        >
+                          <Facebook size={16} />
+                          <span className="hidden sm:inline">Facebook</span>
+                        </a>
+                      )}
+                      {formData.socialMedia.instagram && (
+                        <a
+                          href={formData.socialMedia.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-pink-600 hover:underline text-sm"
+                        >
+                          <Instagram size={16} />
+                          <span className="hidden sm:inline">Instagram</span>
+                        </a>
+                      )}
+                      {formData.socialMedia.twitter && (
+                        <a
+                          href={formData.socialMedia.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-blue-400 hover:underline text-sm"
+                        >
+                          <Twitter size={16} />
+                          <span className="hidden sm:inline">Twitter</span>
+                        </a>
+                      )}
+                      {formData.socialMedia.linkedin && (
+                        <a
+                          href={formData.socialMedia.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-blue-700 hover:underline text-sm"
+                        >
+                          <Linkedin size={16} />
+                          <span className="hidden sm:inline">LinkedIn</span>
+                        </a>
+                      )}
+                      {formData.socialMedia.youtube && (
+                        <a
+                          href={formData.socialMedia.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-red-600 hover:underline text-sm"
+                        >
+                          <Youtube size={16} />
+                          <span className="hidden sm:inline">YouTube</span>
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-sm">
+                      No social media links added
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}

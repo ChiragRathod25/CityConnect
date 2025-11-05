@@ -320,6 +320,43 @@ export class DatabaseService {
     );
   }
 
+  async updateBusinessProfile(businessId, businessData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(
+            `/api/v1/business/${businessId}`,
+            businessData
+          ),
+        "Update Business Profile by ID"
+      ),
+      {
+        loading: "Updating business profile...",
+        success: "Business profile updated successfully!",
+        error: "Failed to update business profile. Please try again.",
+      }
+    );
+  }
+
+  // business contact 
+  async updateBusinessContact(businessId, contactData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(
+            `/api/v1/business-contact/${businessId}`,
+            contactData
+          ),
+        "Update Business Contact by Business ID"
+      ),
+      {
+        loading: "Updating business contact...",
+        success: "Business contact updated successfully!",
+        error: "Failed to update business contact. Please try again.",
+      }
+    );
+  }
+
   //business products
   async addBusinessProduct(businessId, productData) {
     const formData = new FormData();
@@ -360,6 +397,7 @@ export class DatabaseService {
     );
   }
 
+//  business services
   async addBusinessService(businessId, serviceData) {
     const formData = new FormData();
 
@@ -399,6 +437,39 @@ export class DatabaseService {
     );
   }
 
+
+  //business hours
+  async getBusinessHours(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-hours/${businessId}`),
+        "Get Business Hours by Business ID"
+      ),
+      {
+        loading: "Fetching business hours...",
+        success: "Business hours fetched successfully!",
+        error: "Failed to fetch business hours. Please try again.",
+      }
+    );
+  }
+
+  async updateBusinessHoursById(businessId, hourId, hoursData) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(
+            `/api/v1/business-hours/${businessId}/${hourId}`,
+            hoursData
+          ),
+        "Update Business Hours by ID"
+      ),
+      {
+        loading: "Updating business hours...",
+        success: "Business hours updated successfully!",
+        error: "Failed to update business hours. Please try again.",
+      }
+    );
+  }
 
   //location services
   async getBusinessLocation(businessId) {

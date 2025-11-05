@@ -7,7 +7,7 @@ import {
   getBusinessContact,
   updateBusinessContact,
   deleteBusinessContact,
-  getBusinessSocialLinks,
+  getBusinessSocialMedia
 } from "../controllers/businessContact.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -18,6 +18,6 @@ router.post("/:businessId", addBusinessContact);
 router.get("/:businessId", getBusinessContact);
 router.put("/:businessId", updateBusinessContact);
 router.delete("/:businessId", deleteBusinessContact);
-router.get("/social-links/:businessId", getBusinessSocialLinks);
+router.get("/social-media/:businessId", getBusinessSocialMedia);
 
 export default router;

@@ -69,7 +69,7 @@ const getBusinessContact = asyncHandler(async (req, res, next) => {
 const updateBusinessContact = asyncHandler(async (req, res, next) => {
     const { businessId } = req.params;
     console.log("req.body:", req.body);
-    const { phone, email, address, socialLinks, website } = req.body;
+    const { phone, email, address, socialMedia, website } = req.body;
 
     if(!businessId) {
       return next(new ApiError("Business ID is required", 400));
@@ -89,7 +89,7 @@ const updateBusinessContact = asyncHandler(async (req, res, next) => {
     businessContact.phone = phone || businessContact.phone;
     businessContact.email = email || businessContact.email;
     businessContact.address = address || businessContact.address;
-    businessContact.socialLinks = socialLinks || businessContact.socialLinks;
+    businessContact.socialMedia = socialMedia || businessContact.socialMedia;
     businessContact.website = website || businessContact.website;
 
     await businessContact.save({
@@ -138,7 +138,7 @@ const deleteBusinessContact = asyncHandler(async (req, res, next) => {
     )
 });
 
-const getBusinessSocialLinks = asyncHandler(async (req, res, next) => {
+const getBusinessSocialMedia = asyncHandler(async (req, res, next) => {
   const { businessId } = req.params;
 
   if (!businessId) {
@@ -170,5 +170,5 @@ export {
   getBusinessContact,
   updateBusinessContact,
   deleteBusinessContact,
-  getBusinessSocialLinks,
+  getBusinessSocialMedia,
 };

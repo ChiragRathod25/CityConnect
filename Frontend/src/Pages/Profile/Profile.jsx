@@ -51,10 +51,11 @@ const ProfilePage = () => {
 
   const ComponentToRender = componentMap[itemId] || (() => <NotFoundPageUI />);
 
+  const {businessId }= useParams();
   const handleBackToProfile = () => {
     profileType === "user-profile"
       ? navigate("/user-profile")
-      : navigate("/businessman-profile");
+      : navigate(`/dashboard/business/${businessId}`);
   };
 
   return (

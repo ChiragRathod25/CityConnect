@@ -53,6 +53,7 @@ const getBusinessHours = asyncHandler(async (req, res, next) => {
         throw new ApiError(404,"No business hours found for this business");
     }
     
+    console.log("Business Hours:", businessHours);
     res.status(200).json(new ApiResponce(
         200,
         "Business hours fetched successfully",
