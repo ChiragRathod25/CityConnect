@@ -469,7 +469,7 @@ const ShoppingCartApp = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/payment');
+    navigate('/delivery-address-form');
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);

@@ -52,6 +52,7 @@ import AboutPageUi from "./Pages/About";
 import OrderHistoryForProductUI from "./Pages/HistoryForProduct";
 import ProductDetailView from "./Pages/Product/ProductDetailView";
 import AllProductsByBusiness from "./Pages/Product/AllProductsByBusiness";
+import DeliveryAddressForm from "./Pages/CartForProduct/DeliveryAddressForm";
 
 const router = createBrowserRouter([
   {
@@ -139,11 +140,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/business/:businessId/product/:productId/edit",
-        element: <ProductForm editMode={true} />
+        element: <ProductForm editMode={true} />,
       },
       {
-        path:"/dashboard/business/:businessId/products", // get all the products of business
-        element:<AllProductsByBusiness/>
+        path: "/dashboard/business/:businessId/products", // get all the products of business
+        element: <AllProductsByBusiness />,
       },
       {
         path: "/products", // get all the products
@@ -160,8 +161,8 @@ const router = createBrowserRouter([
         element: <ServiceForm />,
       },
       {
-        path : "/dashboard/business/:businessId/service/:serviceId/edit",
-        element: <ServiceForm editMode={true} />
+        path: "/dashboard/business/:businessId/service/:serviceId/edit",
+        element: <ServiceForm editMode={true} />,
       },
       {
         path: "/dashboard/business/:businessId/service", //TODO: get serviceById
@@ -175,6 +176,10 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPageUI />,
+      },
+      {
+        path: "/delivery-address-form",
+        element: <DeliveryAddressForm />,
       },
       {
         path: "/history",
