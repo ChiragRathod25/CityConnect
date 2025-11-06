@@ -46,7 +46,8 @@ import businessHoursRoutes from "./routes/businessHour.routes.js";
 import businessLocationRoutes from "./routes/businessLocation.routes.js";
 import businessProductRoutes from "./routes/businessProduct.routes.js";
 import businessServiceRoutes from "./routes/businessService.routes.js";
-// import reviewRoutes from "./routes/review.routes.js";
+import orderCartRoutes from './routes/orderCart.routes.js';
+import orderHistoryRoutes from './routes/orderHistory.routes.js';
 
 import cartRoutes from './routes/orderCart.routes.js';
 
@@ -59,6 +60,8 @@ app.use("/api/v1/business-hours", businessHoursRoutes);
 app.use("/api/v1/business-location", businessLocationRoutes);
 app.use("/api/v1/business-product", businessProductRoutes);
 app.use("/api/v1/business-service", businessServiceRoutes);
+app.use("/api/v1/order-cart", orderCartRoutes);
+app.use("/api/v1/order-history", orderHistoryRoutes);
 // app.use("/api/v1/review", reviewRoutes);
 
 app.use('/api/cart', cartRoutes);

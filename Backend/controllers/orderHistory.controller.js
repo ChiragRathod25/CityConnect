@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-export const getAllOrders = asyncHandler(async (req, res) => {
+const getAllOrders = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const { page = 1, limit = 3, status, dateFilter, search } = req.query;
 
@@ -50,7 +50,7 @@ export const getAllOrders = asyncHandler(async (req, res) => {
   );
 });
 
-export const getOrderById = asyncHandler(async (req, res) => {
+const getOrderById = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.id;
 
@@ -65,7 +65,7 @@ export const getOrderById = asyncHandler(async (req, res) => {
   );
 });
 
-export const createOrder = asyncHandler(async (req, res) => {
+const createOrder = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const {
     items,
@@ -105,7 +105,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   );
 });
 
-export const updateOrderStatus = asyncHandler(async (req, res) => {
+const updateOrderStatus = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
@@ -133,7 +133,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   );
 });
 
-export const cancelOrder = asyncHandler(async (req, res) => {
+const cancelOrder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.id;
   const { cancelReason } = req.body;
@@ -157,7 +157,7 @@ export const cancelOrder = asyncHandler(async (req, res) => {
   );
 });
 
-export const reorder = asyncHandler(async (req, res) => {
+const reorder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.id;
 
@@ -190,7 +190,7 @@ export const reorder = asyncHandler(async (req, res) => {
   );
 });
 
-export const downloadInvoice = asyncHandler(async (req, res) => {
+const downloadInvoice = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.id;
 
@@ -217,7 +217,7 @@ export const downloadInvoice = asyncHandler(async (req, res) => {
   );
 });
 
-export const getOrderStats = asyncHandler(async (req, res) => {
+const getOrderStats = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
   const totalOrders = await Order.countDocuments({ userId });
@@ -240,3 +240,15 @@ export const getOrderStats = asyncHandler(async (req, res) => {
     })
   );
 });
+
+export {
+  getAllOrders,
+  getOrderById,
+  createOrder,
+  updateOrderStatus,
+  cancelOrder,
+  reorder,
+  downloadInvoice,
+  getOrderStats
+  
+}

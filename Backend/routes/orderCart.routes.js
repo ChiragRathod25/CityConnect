@@ -10,7 +10,12 @@ import {
   validateCart
 } from '../controllers/orderCart.controller.js';
 
-const router = express.Router();
+import { verifyJWT } from '../middlewares/auth.middleware.js';
+
+import { Router } from 'express';
+const router = Router();
+
+router.use(verifyJWT);
 
 router.get('/', getCart);
 router.get('/count', getCartCount);

@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-export const getCart = asyncHandler(async (req, res) => {
+const getCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const cart = await Cart.getCartWithProducts(userId);
@@ -30,7 +30,7 @@ export const getCart = asyncHandler(async (req, res) => {
   );
 });
 
-export const addToCart = asyncHandler(async (req, res) => {
+const addToCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { productId, quantity = 1 } = req.body;
 
@@ -70,7 +70,7 @@ export const addToCart = asyncHandler(async (req, res) => {
   );
 });
 
-export const updateCartItem = asyncHandler(async (req, res) => {
+const updateCartItem = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { productId } = req.params;
   const { quantity } = req.body;
@@ -115,7 +115,7 @@ export const updateCartItem = asyncHandler(async (req, res) => {
   );
 });
 
-export const removeFromCart = asyncHandler(async (req, res) => {
+const removeFromCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { productId } = req.params;
 
@@ -135,7 +135,7 @@ export const removeFromCart = asyncHandler(async (req, res) => {
   );
 });
 
-export const clearCart = asyncHandler(async (req, res) => {
+const clearCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const cart = await Cart.findOrCreate(userId);
@@ -154,7 +154,7 @@ export const clearCart = asyncHandler(async (req, res) => {
   );
 });
 
-export const getCartCount = asyncHandler(async (req, res) => {
+const getCartCount = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const cart = await Cart.findOne({ userId });
@@ -172,7 +172,7 @@ export const getCartCount = asyncHandler(async (req, res) => {
   );
 });
 
-export const syncCart = asyncHandler(async (req, res) => {
+const syncCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const cart = await Cart.getCartWithProducts(userId);
@@ -237,7 +237,7 @@ export const syncCart = asyncHandler(async (req, res) => {
   );
 });
 
-export const validateCart = asyncHandler(async (req, res) => {
+const validateCart = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const cart = await Cart.getCartWithProducts(userId);
@@ -285,3 +285,14 @@ export const validateCart = asyncHandler(async (req, res) => {
     new ApiResponse(200, summary, 'Cart is valid and ready for checkout')
   );
 });
+
+export {
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+  clearCart,
+  getCartCount,
+  syncCart,
+  validateCart
+}
