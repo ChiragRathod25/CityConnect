@@ -349,7 +349,7 @@ const ProductCard = ({ product, onViewDetails }) => {
 const ProductCardComponent = () => {
   const navigate = useNavigate();
   const handleViewDetails = (product) => {
-    navigate(`/card/${product.id}`);
+    navigate(`/product/${product.id}`);
   };
 
   return (

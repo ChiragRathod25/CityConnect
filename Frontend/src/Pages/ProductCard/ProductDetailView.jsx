@@ -51,7 +51,7 @@ const ProductDetailView = () => {
   }
 
   const handleBack = () => {
-    navigate("/card");
+    navigate("/products");
   };
 
   const renderStars = (rating) => {

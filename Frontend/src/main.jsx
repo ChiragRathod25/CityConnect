@@ -30,7 +30,7 @@ import ContactUsPageUI from "./Pages/ContactUs";
 import ManageCategoryUI from "./Pages/ManageCategory";
 import ManageUserUI from "./Pages/ManageUser";
 import AddBusinessCard from "./components/FormPage/AddBusinessCard";
-import AddProductCard from "./components/FormPage/AddProductCard";
+import ProductForm from "./components/FormPage/AddProductCard";
 import ServiceProviderCardUI from "./Pages/ServiceProvider";
 import Install from "./Pages/InstallApp.jsx";
 import { SideDrawer } from "./components";
@@ -41,7 +41,7 @@ import PaymentPage from "./Pages/Checkout/PaymentPage";
 import PaymentSuccess from "./Pages/Checkout/PaymentSuccess";
 import PaymentFailed from "./Pages/Checkout/PaymentFailed";
 import AiImageGeneratorUI from "./Pages/ImageGenerator";
-import AddServiceProviderForm from "./components/FormPage/AddServiceCard";
+import ServiceForm from "./components/FormPage/AddServiceCard";
 import ManageBusinessmanUI from "./Pages/ManageBusinessman";
 import AdminVerificationPanel from "./components/AdminSellerDetailViewForm";
 import ContactEditPage from "./components/businessmanProfile/Email";
@@ -131,28 +131,38 @@ const router = createBrowserRouter([
         element: <EditBusinessmanProfileNavigation />,
       },
 
+      //product related routes
       {
-        // path: "/add-productcard", //used to add product of business
         path: "/dashboard/business/:businessId/product/add",
-        element: <AddProductCard />,
+        element: <ProductForm />,
       },
       {
-        // path: "/add-productcard",  //used to add service of business
-        path: "/dashboard/business/:businessId/service/add",
-        element: <AddServiceProviderForm />,
+        path: "/dashboard/business/:businessId/product/:productId/edit",
+        element: <ProductForm editMode={true} />
       },
       {
-        path: "/dashboard/business/:businessId/service",
-        element: <ServiceProviderCardUI />,
-      },
-      {
-        path: "/card", //get information about the products of the business
+        path: "/products", //get information about the products of the business
         element: <ProductCardUI />,
       },
       {
-        path: "/card/:id", 
-        element: <ProductDetailView/>,
+        path: "/product/:id",
+        element: <ProductDetailView />,
       },
+
+      //service related routes
+      {
+        path: "/dashboard/business/:businessId/service/add",
+        element: <ServiceForm />,
+      },
+      {
+        path : "/dashboard/business/:businessId/service/:serviceId/edit",
+        element: <ServiceForm editMode={true} />
+      },
+      {
+        path: "/dashboard/business/:businessId/service", //TODO: get serviceById
+        element: <ServiceProviderCardUI />,
+      },
+
       // {
       //   path: "/edit-operating-hours", //of business , TODO: needs improvement
       //   element: <EditOperatingHours />,

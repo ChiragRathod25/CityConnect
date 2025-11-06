@@ -25,10 +25,38 @@ import databaseService from "@/services/database.services";
 import BusinessmanProfileDashboard from "@/Pages/BusinessmanProfile/BusinessmanProfile";
 import { useNavigate, useParams } from "react-router-dom";
 
-const AddServiceForm = () => {
+const ServiceForm = ({ editMode = false }) => {
+  const navigate = useNavigate();
+  const { businessId } = useParams();
 
-  const {businessId}=useParams();
-  const navigate=useNavigate();
+  const { serviceId } = useParams();
+  const fetchServiceDetails = async (serviceId) => {
+    try {
+      const response = await databaseService.getBusinessService(serviceId);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching service details:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (editMode && serviceId) {
+      fetchServiceDetails(serviceId).then((service) => {
+        if (service) {
+          setFormData(service);
+        }
+       //response:  tags: ['["sale","new","tag"]'],
+       //separate tags to display correctly
+       setFormData((prev) => ({
+         ...prev,
+          tags: JSON.parse(service?.tags || "[]"),
+        }));
+
+        //display images if already exist
+        setImagePreviews(service?.images || []);
+      });
+    }
+  }, [editMode, serviceId]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -126,17 +154,38 @@ const AddServiceForm = () => {
   };
 
   const handleSubmit = async () => {
-   
     const isValid = validateForm();
     if (!isValid) return;
     setLoading(true);
-    //prepare data 
-    const serviceData={
+    //prepare data
+    const serviceData = {
       ...formData,
+    };
+
+    // edit existing service
+    if (editMode && serviceId) {
+      try {
+        const response = await databaseService.updateBusinessService(
+          serviceId,
+          serviceData
+        );
+        console.log("Service updated:", response);
+        setSuccess(true);
+        navigate(`/business-profile`);
+      } catch (error) {
+        console.error("Error updating service:", error);
+      } finally {
+        setLoading(false);
+        return;
+      }
     }
-    try { 
-      
-      const response=await databaseService.addBusinessService(businessId,serviceData);
+
+    // add new service
+    try {
+      const response = await databaseService.addBusinessService(
+        businessId,
+        serviceData
+      );
       console.log("Service added:", response);
       setSuccess(true);
       navigate(`/business-profile`);
@@ -199,9 +248,6 @@ const AddServiceForm = () => {
     }));
   };
 
-
-
-  
   const [imagePreviews, setImagePreviews] = useState([]);
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -303,10 +349,10 @@ const AddServiceForm = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-3xl font-bold text-white mb-2"
             >
-              Add Business Service
+              {editMode ? "Edit" : "Add"} Business Service
             </motion.h1>
             <p className="text-gray-300">
-              Create your professional service listing
+              {editMode ? "Edit" : "Add"} your professional service listing
             </p>
           </div>
 
@@ -807,8 +853,6 @@ const AddServiceForm = () => {
                   <div className="font-semibold">Upload Image</div>
                   <div className="text-xs opacity-75">From device</div>
                 </motion.button>
-
-              
               </div>
 
               {errors.imageMethod && (
@@ -1039,12 +1083,12 @@ const AddServiceForm = () => {
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  Creating Service...
+                  {editMode ? "Editing" : "Creating"} Service...
                 </>
               ) : (
                 <>
                   <Building2 size={20} />
-                  Create Service
+                  {editMode ? "Edit" : "Add"} Service
                 </>
               )}
             </motion.button>
@@ -1055,4 +1099,4 @@ const AddServiceForm = () => {
   );
 };
 
-export default AddServiceForm;
+export default ServiceForm;

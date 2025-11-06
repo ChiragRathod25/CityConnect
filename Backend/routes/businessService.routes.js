@@ -18,7 +18,7 @@ router.use(verifyJWT);
 router.post("/:businessId", upload.array("images"), addService);
 router.get("/:businessId", getAllServices);
 router.get("/service/:serviceId", getServiceById);
-router.put("/service/:serviceId", updateServiceById);
+router.put("/service/:serviceId",upload.array("images"), updateServiceById);
 router.delete("/service/:serviceId", deleteServiceById);
 
 export default router;

@@ -323,11 +323,7 @@ export class DatabaseService {
   async updateBusinessProfile(businessId, businessData) {
     return toast.promise(
       handleApiRequest(
-        () =>
-          axiosInstace.put(
-            `/api/v1/business/${businessId}`,
-            businessData
-          ),
+        () => axiosInstace.put(`/api/v1/business/${businessId}`, businessData),
         "Update Business Profile by ID"
       ),
       {
@@ -338,7 +334,7 @@ export class DatabaseService {
     );
   }
 
-  // business contact 
+  // business contact
   async updateBusinessContact(businessId, contactData) {
     return toast.promise(
       handleApiRequest(
@@ -357,7 +353,7 @@ export class DatabaseService {
     );
   }
 
-  //business products
+  //business product methods
   async addBusinessProduct(businessId, productData) {
     const formData = new FormData();
 
@@ -397,7 +393,62 @@ export class DatabaseService {
     );
   }
 
-//  business services
+  async getBusinessProduct(productId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-product/product/${productId}`),
+        "Get Business Product by Business ID and Product ID"
+      ),
+      {
+        loading: "Fetching product details...",
+        success: "Product details fetched successfully!",
+        error: "Failed to fetch product details. Please try again.",
+      }
+    );
+  }
+
+  async updateBusinessProduct(productId, productData) {
+    const formData = new FormData();
+
+    // append non-file fields
+    for (const [key, value] of Object.entries(productData)) {
+      if (key === "images") continue; // handle separately below
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value)); // handle tags, etc.
+      } else {
+        formData.append(key, value);
+      }
+    }
+
+    // append actual files
+    if (Array.isArray(productData.images)) {
+      productData.images.forEach((file) => {
+        if (file instanceof File || file instanceof Blob) {
+          formData.append("images", file); // 'images' must match multer field
+        }
+      });
+    }
+    console.log("FormData images:", formData.getAll("images"));
+
+    return toast.promise(
+      handleApiRequest(() =>
+        axiosInstace.put(
+          `/api/v1/business-product/product/${productId}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+      ),
+      {
+        loading: "Updating product...",
+        success: "Product updated successfully!",
+        error: "Failed to update product. Please try again.",
+      }
+    );
+  }
+
+  //  business services methods
   async addBusinessService(businessId, serviceData) {
     const formData = new FormData();
 
@@ -437,6 +488,62 @@ export class DatabaseService {
     );
   }
 
+  async getBusinessService(serviceId) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.get(`/api/v1/business-service/service/${serviceId}`),
+        "Get Business Service by Service ID"
+      ),
+      {
+        loading: "Fetching service details...",
+        success: "Service details fetched successfully!",
+        error: "Failed to fetch service details. Please try again.",
+      }
+    );
+  }
+
+  async updateBusinessService(serviceId, serviceData) {
+    const formData = new FormData();    
+    // append non-file fields
+    for (const [key, value] of Object.entries(serviceData)) {
+      if (key === "images") continue; // handle separately below
+
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value)); // handle tags, etc.
+      } else {
+        formData.append(key, value);
+      }
+    }
+
+    // append actual files
+    if (Array.isArray(serviceData.images)) {
+      serviceData.images.forEach((file) => {
+        if (file instanceof File || file instanceof Blob) {
+          formData.append("images", file); // 'images' must match multer field
+        }
+      });
+    }
+
+    console.log("FormData images:", formData.getAll("images"));
+
+    return toast.promise(
+      handleApiRequest(() =>
+        axiosInstace.put(
+          `/api/v1/business-service/service/${serviceId}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+      ),
+      {
+        loading: "Updating service...",
+        success: "Service updated successfully!",
+        error: "Failed to update service. Please try again.",
+      }
+    );
+  }
 
   //business hours
   async getBusinessHours(businessId) {

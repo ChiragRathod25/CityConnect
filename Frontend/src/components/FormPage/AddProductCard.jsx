@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -60,8 +60,40 @@ const FileUpload = ({
   </div>
 );
 
-const AddProductCard = () => {
+const ProductForm = ({ editMode = false }) => {
   const { businessId } = useParams();
+
+  const { productId } = useParams();
+
+  const fetchProductDetails = async (productId) => {
+    try {
+      const product = await databaseService.getBusinessProduct(productId);
+      return product;
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (editMode && businessId && productId) {
+      fetchProductDetails(productId).then((product) => {
+        if (product) {
+          setFormData(product?.data);
+
+          //response:  tags: ['["sale","new","tag"]'],
+          //separate tags to display correctly
+          setFormData((prev) => ({
+            ...prev,
+            tags: JSON.parse(product?.data?.tags || "[]"),
+          }));
+
+          //display images if already exist
+          setImagePreviews(product?.data?.images || []);
+        }
+      });
+    }
+  }, [editMode, productId]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -121,10 +153,6 @@ const AddProductCard = () => {
       newErrors.images = "At least one product image is required";
     }
 
-    if (!formData.imageMethod) {
-      newErrors.imageMethod = "Please select an image method";
-    }
-
     if (formData.deliveryCharge && parseFloat(formData.deliveryCharge) < 0) {
       newErrors.deliveryCharge = "Delivery charge cannot be negative";
     }
@@ -141,12 +169,31 @@ const AddProductCard = () => {
 
     setLoading(true);
 
+    
     // Prepare data matching the model structure
 
     const productData = {
       ...formData,
     };
 
+    if(editMode && productId){
+      try {
+        const response= await databaseService.updateBusinessProduct(
+          productId,
+          productData
+        );
+        console.log("Product updated successfully:", response);
+        setSuccess(true);
+        navigate("/products");
+      } catch (error) {
+        console.error("Error updating product:", error);
+      }finally{
+        setLoading(false);
+        return;
+      }
+    }
+
+    // if not edit mode, add new product
     try {
       const response = await databaseService.addBusinessProduct(
         businessId,
@@ -155,7 +202,7 @@ const AddProductCard = () => {
       console.log("Product added successfully:", response);
       setSuccess(true);
 
-      navigate("/business-profile");
+      navigate("/products");
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -261,14 +308,13 @@ const AddProductCard = () => {
     setShowCamera(false);
   };
 
-const removeImage = (index) => {
-  setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  setFormData((prev) => ({
-    ...prev,
-    images: prev.images.filter((_, i) => i !== index),
-  }));
-};
-
+  const removeImage = (index) => {
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
 
   return (
     <div className="min-h-screen py-20 px-3 relative">
@@ -286,10 +332,10 @@ const removeImage = (index) => {
               animate={{ opacity: 1, y: 0 }}
               className="text-3xl font-bold text-white mb-2"
             >
-              Add Product Card
+              {editMode ? "Edit" : "Add"} Product Card
             </motion.h1>
             <p className="text-gray-300">
-              Create your professional product listing
+              {editMode ? "Update" : "Create"} your professional product listing
             </p>
           </div>
 
@@ -642,45 +688,44 @@ const removeImage = (index) => {
                 )}
               </AnimatePresence>
 
-            {/* 🖼️ Image Preview Grid */}
-{imagePreviews.length > 0 && (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-3"
-  >
-    {imagePreviews.map((src, index) => (
-      <motion.div
-        key={index}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="relative group"
-      >
-        <img
-          src={src}
-          alt={`preview-${index}`}
-          className="w-24 h-24 object-cover rounded-lg border shadow-sm"
-        />
+              {/* 🖼️ Image Preview Grid */}
+              {imagePreviews.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-3"
+                >
+                  {imagePreviews.map((src, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="relative group"
+                    >
+                      <img
+                        src={src}
+                        alt={`preview-${index}`}
+                        className="w-24 h-24 object-cover rounded-lg border shadow-sm"
+                      />
 
-        {/* ❌ Delete button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => removeImage(index)}
-          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-        >
-          <X size={12} />
-        </motion.button>
+                      {/* ❌ Delete button */}
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                      >
+                        <X size={12} />
+                      </motion.button>
 
-        {/* 📸 Image method label */}
-        <div className="absolute bottom-1 left-1 px-2 py-0.5 rounded text-xs text-white bg-black bg-opacity-60 capitalize">
-          {formData.imageMethod || "upload"}
-        </div>
-      </motion.div>
-    ))}
-  </motion.div>
-)}
-
+                      {/* 📸 Image method label */}
+                      <div className="absolute bottom-1 left-1 px-2 py-0.5 rounded text-xs text-white bg-black bg-opacity-60 capitalize">
+                        {formData.imageMethod || "upload"}
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
 
               {errors.images && (
                 <motion.div
@@ -957,12 +1002,12 @@ const removeImage = (index) => {
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  Adding Product...
+                  {editMode ? "Updating" : "Adding"} Product...
                 </>
               ) : (
                 <>
                   <Package size={20} />
-                  Add Product to Catalog
+                  {editMode ? "Update" : "Add"} Product to Catalog
                 </>
               )}
             </motion.button>
@@ -973,4 +1018,4 @@ const removeImage = (index) => {
   );
 };
 
-export default AddProductCard;
+export default ProductForm;
