@@ -709,6 +709,21 @@ export class DatabaseService {
     );
   }
 
+  //order
+  async createOrder(orderData) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.post("/api/v1/order-history/", orderData),
+        "Create Order"
+      ),
+      {
+        loading: "Creating order...",
+        success: "Order created successfully!",
+        error: "Failed to create order. Please try again.",
+      }
+    );
+  }
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;

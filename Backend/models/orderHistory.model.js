@@ -36,7 +36,6 @@ const orderSchema = new Schema(
   {
     orderId: {
       type: String,
-      required: true,
       unique: true,
       // Auto-generate: ORD-YYYY-XXX
     },
@@ -88,6 +87,7 @@ const orderSchema = new Schema(
         "UPI",
         "Cash on Delivery",
         "Net Banking",
+        "Razorpay",
       ],
       required: true,
     },
@@ -118,11 +118,12 @@ orderSchema.index({ status: 1, orderDate: -1 });
 orderSchema.pre("save", async function (next) {
   if (!this.orderId) {
     const year = new Date().getFullYear();
-    const count = await model("Order").countDocuments();
+    const count = await this.constructor.countDocuments();
     this.orderId = `ORD-${year}-${String(count + 1).padStart(3, "0")}`;
   }
   next();
 });
+
 
 const Order = model("OrderHistories", orderSchema);
 

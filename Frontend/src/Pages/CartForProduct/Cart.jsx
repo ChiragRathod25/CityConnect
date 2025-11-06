@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -7,14 +7,7 @@ import {
   Trash2,
   ArrowLeft,
   Package,
-  CreditCard,
-  Truck,
-  Shield,
-  Star,
-  MapPin,
   Store,
-  Heart,
-  Gift,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import databaseService from "@/services/database.services";
@@ -25,11 +18,11 @@ const transformCartItem = (item) => ({
   name: item.productId.name,
   category: item.productId.category,
   price: item.productId.price,
-  originalPrice: item.productId.price, // Add discount logic if available in API
+  originalPrice: item.productId.price,
   discount: 0,
-  rating: 4.5, // Default rating - update if available in API
-  reviewCount: 0, // Default - update if available in API
-  distance: "1.0 km", // Default - update if available in API
+  rating: 4.5,
+  reviewCount: 0,
+  distance: "1.0 km",
   image: item.productId.images?.[0] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
   quantity: item.quantity,
   inStock: item.productId.stock > 0,
@@ -62,15 +55,12 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
       }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="bg-white rounded-3xl p-4 md:p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300"
-      style={{ borderColor: "#e2e8f0" }}
+      className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all"
     >
-      <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
-        {/* Product Image */}
+      <div className="flex gap-4">
         <motion.div
           whileHover={{ scale: 1.05 }}
-          className="flex-shrink-0 w-full sm:w-32 md:w-40 h-32 md:h-40 rounded-2xl overflow-hidden"
-          style={{ backgroundColor: "#f8fafc" }}
+          className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-50"
         >
           <img
             src={item.image}
@@ -79,148 +69,61 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
           />
         </motion.div>
 
-        {/* Product Details */}
-        <div className="flex-1 space-y-3 md:space-y-4">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-            <div className="space-y-1">
-              <h3
-                className="text-lg md:text-xl mr-14 md:mr-0  font-bold leading-tight"
-                style={{ color: "#1f2937" }}
-              >
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between gap-2 mb-2">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1">
                 {item.name}
               </h3>
-              <div
-                className="flex items-center gap-2 text-sm"
-                style={{ color: "#6b7280" }}
-              >
-                <Store className="w-4 h-4" />
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <Store className="w-3 h-3" />
                 {item.category}
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3 h-3 ${
-                        i < Math.floor(item.rating)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#374151" }}
-                >
-                  {item.rating} ({item.reviewCount})
-                </span>
-              </div>
             </div>
-
-            {/* Remove Button */}
             <motion.button
-              whileHover={{ scale: 1.2, backgroundColor: "#fee2e2" }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleRemove}
-              className=" absolute  right-10 sm:relative sm:right-0 p-2 text-red-500  hover:text-red-500 rounded-xl transition-colors bg-gray-200 self-start"
+              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors h-fit"
             >
-              <Trash2 className="w-5 h-5" />
+              <Trash2 className="w-4 h-4" />
             </motion.button>
           </div>
 
-          {/* Price and Quantity */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Price Section */}
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <span
-                  className="text-2xl md:text-3xl font-bold"
-                  style={{ color: "#1f2937" }}
-                >
-                  ₹{totalPrice}
-                </span>
-                {item.discount > 0 && (
-                  <span
-                    className="text-lg line-through"
-                    style={{ color: "#6b7280" }}
-                  >
-                    ₹{originalTotal}
-                  </span>
-                )}
-              </div>
-              {savings > 0 && (
-                <div className="text-sm text-green-600 font-medium">
-                  You save ₹{savings} ({item.discount}% off)
-                </div>
-              )}
-              <div className="text-xs" style={{ color: "#6b7280" }}>
-                Price per item: ₹{item.price}
-              </div>
-            </div>
-
-            {/* Quantity Controls */}
-            <div className="flex items-center gap-3">
-              <span
-                className="text-sm font-medium"
-                style={{ color: "#374151" }}
-              >
-                Qty:
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-lg font-bold text-gray-900">
+                ₹{totalPrice}
               </span>
-              <div
-                className="flex items-center rounded-2xl overflow-hidden"
-                style={{ backgroundColor: "#f8fafc" }}
-              >
-                <motion.button
-                  whileHover={{ backgroundColor: "#e2e8f0" }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() =>
-                    onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
-                  }
-                  className="p-3 transition-colors"
-                >
-                  <Minus className="w-4 h-4" />
-                </motion.button>
-                <span
-                  className="px-4 py-3 font-bold min-w-[50px] text-center"
-                  style={{ color: "#1f2937" }}
-                >
-                  {item.quantity}
+              {savings > 0 && (
+                <span className="text-xs text-gray-400 line-through ml-2">
+                  ₹{originalTotal}
                 </span>
-                <motion.button
-                  whileHover={{ backgroundColor: "#e2e8f0" }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                  className="p-3 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                </motion.button>
-              </div>
+              )}
             </div>
-          </div>
 
-          {/* Additional Info */}
-          <div
-            className="flex flex-wrap gap-3 pt-2 border-t"
-            style={{ borderColor: "#f8fafc" }}
-          >
-            <div
-              className="flex items-center gap-1 text-xs"
-              style={{ color: "#6b7280" }}
-            >
-              <Package className="w-3 h-3" />
-              {item.weight}
-            </div>
-            <div
-              className="flex items-center gap-1 text-xs"
-              style={{ color: "#6b7280" }}
-            >
-              <MapPin className="w-3 h-3" />
-              {item.distance}
-            </div>
-            <div className="text-xs text-green-600 font-medium">
-              {item.inStock ? "✓ In Stock" : "✗ Out of Stock"}
+            <div className="flex items-center bg-gray-50 rounded-lg">
+              <motion.button
+                whileHover={{ backgroundColor: "#e5e7eb" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() =>
+                  onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
+                }
+                className="p-2 transition-colors"
+              >
+                <Minus className="w-3 h-3" />
+              </motion.button>
+              <span className="px-3 font-semibold text-sm min-w-[30px] text-center">
+                {item.quantity}
+              </span>
+              <motion.button
+                whileHover={{ backgroundColor: "#e5e7eb" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                className="p-2 transition-colors"
+              >
+                <Plus className="w-3 h-3" />
+              </motion.button>
             </div>
           </div>
         </div>
@@ -229,8 +132,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   );
 };
 
-const OrderSummary = ({ items, onCheckout, cartSummary }) => {
-  // Use API response values if available, otherwise calculate
+const OrderSummaryCard = ({ items, cartSummary }) => {
   const subtotal = cartSummary?.subtotal || items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -245,188 +147,54 @@ const OrderSummary = ({ items, onCheckout, cartSummary }) => {
   const grandTotal = cartSummary?.grandTotal || (subtotal + deliveryCharge + tax);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2, duration: 0.6 }}
-      className="bg-white rounded-3xl p-6 md:p-8 shadow-lg border sticky top-6"
-      style={{ borderColor: "#e2e8f0" }}
-    >
-      <h3 className="text-2xl font-bold mb-6" style={{ color: "#1f2937" }}>
-        Order Summary
-      </h3>
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h3>
 
-      {/* Summary Lines */}
-      <div className="space-y-4 mb-6">
-        <div className="flex justify-between items-center">
-          <span style={{ color: "#6b7280" }}>
+      <div className="space-y-3 mb-4">
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">
             Subtotal ({items.length} items)
           </span>
-          <span className="font-semibold" style={{ color: "#1f2937" }}>
-            ₹{subtotal}
-          </span>
+          <span className="font-semibold text-gray-900">₹{subtotal}</span>
         </div>
 
         {totalSavings > 0 && (
-          <div className="flex justify-between items-center text-green-600">
+          <div className="flex justify-between text-sm text-green-600">
             <span>Total Savings</span>
             <span className="font-semibold">-₹{totalSavings}</span>
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <span style={{ color: "#6b7280" }}>Delivery Charges</span>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">Delivery Charges</span>
           <span
             className={`font-semibold ${
-              deliveryCharge === 0 ? "text-green-600" : ""
+              deliveryCharge === 0 ? "text-green-600" : "text-gray-900"
             }`}
-            style={deliveryCharge !== 0 ? { color: "#1f2937" } : {}}
           >
             {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <span style={{ color: "#6b7280" }}>Tax (12%)</span>
-          <span className="font-semibold" style={{ color: "#1f2937" }}>
-            ₹{tax}
-          </span>
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600">Tax (12%)</span>
+          <span className="font-semibold text-gray-900">₹{tax}</span>
         </div>
 
-        <div className="border-t pt-4" style={{ borderColor: "#e2e8f0" }}>
+        <div className="border-t pt-3 border-gray-100">
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold" style={{ color: "#1f2937" }}>
-              Grand Total
-            </span>
-            <span className="text-2xl font-bold" style={{ color: "#1f2937" }}>
+            <span className="font-bold text-gray-900">Total Amount</span>
+            <span className="text-2xl font-bold text-gray-900">
               ₹{grandTotal}
             </span>
           </div>
         </div>
       </div>
-
-      {/* Delivery Info */}
-      <div
-        className="rounded-2xl p-4 mb-6"
-        style={{ backgroundColor: "#f8fafc" }}
-      >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-green-100 rounded-xl">
-            <Truck className="w-5 h-5 text-green-600" />
-          </div>
-          <div>
-            <div className="font-semibold" style={{ color: "#1f2937" }}>
-              Free Delivery
-            </div>
-            <div className="text-sm" style={{ color: "#6b7280" }}>
-              On orders above ₹500
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-xl">
-            <Shield className="w-5 h-5 text-blue-600" />
-          </div>
-          <div>
-            <div className="font-semibold" style={{ color: "#1f2937" }}>
-              Secure Payment
-            </div>
-            <div className="text-sm" style={{ color: "#6b7280" }}>
-              100% secure transactions
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="space-y-3">
-        <motion.button
-          whileHover={{ scale: 1.02, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onCheckout}
-          className="w-full text-white py-4 px-6 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-colors shadow-lg hover:shadow-xl"
-          style={{ backgroundColor: "#1f2937" }}
-        >
-          <CreditCard className="w-6 h-6" />
-          Proceed to Checkout
-        </motion.button>
-      </div>
-
-      {/* Trust Indicators */}
-      <div
-        className="flex justify-center gap-6 mt-6 pt-6 border-t"
-        style={{ borderColor: "#f8fafc" }}
-      >
-        <div className="text-center">
-          <div className="text-2xl font-bold" style={{ color: "#1f2937" }}>
-            100%
-          </div>
-          <div className="text-xs" style={{ color: "#6b7280" }}>
-            Secure Payment
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold" style={{ color: "#1f2937" }}>
-            24/7
-          </div>
-          <div className="text-xs" style={{ color: "#6b7280" }}>
-            Support
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold" style={{ color: "#1f2937" }}>
-            100%
-          </div>
-          <div className="text-xs" style={{ color: "#6b7280" }}>
-            Authentic
-          </div>
-        </div>
-      </div>
-    </motion.div>
+    </div>
   );
 };
 
-const EmptyCart = () => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.9 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.6 }}
-    className="text-center py-16 md:py-24"
-  >
-    <motion.div
-      animate={{ y: [0, -10, 0] }}
-      transition={{ repeat: Infinity, duration: 3 }}
-      className="mb-8"
-    >
-      <ShoppingCart
-        className="w-24 h-24 md:w-32 md:h-32 mx-auto"
-        style={{ color: "#d1d5db" }}
-      />
-    </motion.div>
-    <h2
-      className="text-2xl md:text-3xl font-bold mb-4"
-      style={{ color: "#1f2937" }}
-    >
-      Your cart is empty
-    </h2>
-    <p className="mb-8 max-w-md mx-auto" style={{ color: "#6b7280" }}>
-      Looks like you haven't added any items to your cart yet. Start shopping to
-      fill it up!
-    </p>
-    <motion.button
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.95 }}
-      className="text-white px-8 py-4 rounded-2xl font-bold text-lg transition-colors shadow-lg"
-      style={{ backgroundColor: "#1f2937" }}
-      onMouseEnter={(e) => (e.target.style.backgroundColor = "#374151")}
-      onMouseLeave={(e) => (e.target.style.backgroundColor = "#1f2937")}
-    >
-      Continue Shopping
-    </motion.button>
-  </motion.div>
-);
-
-const ShoppingCartApp = () => {
+const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [cartSummary, setCartSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -458,10 +226,7 @@ const ShoppingCartApp = () => {
 
   const updateCartItem = async (productId, quantity) => {
     try {
-      // API call to update cart item quantity
-      const response=await databaseService.updateCartItem(productId, quantity);
-      console.log("Update cart item response:", response);
-      // Refresh cart data after update
+      await databaseService.updateCartItem(productId, quantity);
       await getUserCartDetails();
     } catch (error) {
       console.error("Error updating cart item:", error);
@@ -470,9 +235,7 @@ const ShoppingCartApp = () => {
 
   const removeCartItem = async (productId) => {
     try {
-      // API call to remove cart item
       await databaseService.removeItemFromCart(productId);
-      // Refresh cart data after removal
       await getUserCartDetails();
     } catch (error) {
       console.error("Error removing cart item:", error);
@@ -483,179 +246,133 @@ const ShoppingCartApp = () => {
     getUserCartDetails();
   }, []);
 
-  useEffect(() => {
-    const handleCartUpdate = (updatedCart) => {
-      setCartItems(updatedCart);
-    };
-
-    // Subscribe to cart updates (if using a global state or context)
-    // cartContext.subscribe(handleCartUpdate);
-
-    return () => {
-      // Unsubscribe from cart updates
-      // cartContext.unsubscribe(handleCartUpdate);
-    };
-  }, []);
-
   const updateQuantity = (id, newQuantity) => {
-    // Optimistic update
     setCartItems((items) =>
       items.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
-    // Call API to update
     updateCartItem(id, newQuantity);
   };
 
   const removeItem = (id) => {
-    // Optimistic update
     setCartItems((items) => items.filter((item) => item.id !== id));
-    // Call API to remove
     removeCartItem(id);
   };
 
-  const handleCheckout = () => {
-    navigate('/delivery-address-form');
+  const handleCheckout = (cartItems, cartSummary) => {
+    console.log("Proceeding to checkout with:", { cartItems, cartSummary });
+    navigate('/delivery-address-form', { 
+      state: { 
+        cartItems, 
+        cartSummary 
+      } 
+    });
   };
 
-  const [totalItems, setTotalItems] = useState(0);
-  useEffect(() => {
-    const total = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItems(total);
-  }, [cartItems]);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f8fafc" }}>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
           >
-            <ShoppingCart className="w-16 h-16 mx-auto mb-4" style={{ color: "#1f2937" }} />
+            <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-900" />
           </motion.div>
-          <p className="text-lg font-medium" style={{ color: "#6b7280" }}>Loading your cart...</p>
+          <p className="text-lg font-medium text-gray-600">Loading your cart...</p>
         </div>
       </div>
     );
   }
 
   if (cartItems.length === 0) {
-    return <EmptyCart />;
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="min-h-screen bg-gray-50 flex items-center justify-center p-4"
+      >
+        <div className="text-center">
+          <ShoppingCart className="w-32 h-32 mx-auto text-gray-300 mb-8" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Your cart is empty
+          </h2>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            Looks like you haven't added any items to your cart yet.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-colors"
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </motion.div>
+    );
   }
 
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="min-h-screen"
-      style={{ backgroundColor: "#f8fafc" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-gray-50"
     >
-      {/* Header */}
-      <motion.header
-        variants={headerVariants}
-        style={{ borderColor: "#e2e8f0" }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-2 mb-8 md:mb-0"
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Shopping Cart</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                {totalItems} {totalItems === 1 ? "item" : "items"}
+              </p>
+            </div>
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Back</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-3">
+            <AnimatePresence>
+              {cartItems.map((item) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onUpdateQuantity={updateQuantity}
+                  onRemove={removeItem}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <OrderSummaryCard items={cartItems} cartSummary={cartSummary} />
               <motion.button
-                whileHover={{ scale: 1.02, x: -5 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex text-sm sm:text-md items-center gap-3 font-medium bg-white px-4  py-3 sm:px-6 sm:py-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border"
-                style={{ color: "#6b7280", borderColor: "#e2e8f0" }}
-                onMouseEnter={(e) => (e.target.style.color = "#1f2937")}
-                onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
+                onClick={() => handleCheckout(cartItems, cartSummary)}
+                className="w-full mt-4 bg-gray-900 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
               >
-                <ArrowLeft className="w-5 h-5" />
-                Continue Shopping
+                Proceed to Checkout
+                <ArrowLeft className="w-5 h-5 rotate-180" />
               </motion.button>
-            </motion.div>
-            <div className="flex justify-center items-center gap-6">
-              <div className="space-y-1">
-                <motion.h1
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="text-3xl md:text-4xl font-bold tracking-tight"
-                  style={{ color: "#1f2937" }}
-                >
-                  Shopping Cart
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="text-lg text-center font-medium"
-                  style={{ color: "#6b7280" }}
-                >
-                  {totalItems} {totalItems === 1 ? "item" : "items"} in your
-                  cart
-                </motion.p>
-              </div>
             </div>
           </div>
         </div>
-      </motion.header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-        {cartItems.length === 0 ? (
-          <EmptyCart />
-        ) : (
-          <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
-            {/* Cart Items */}
-            <div className="lg:col-span-2">
-              <motion.div className="space-y-4 md:space-y-6" layout>
-                <AnimatePresence>
-                  {cartItems?.map((item) => (
-                    <CartItem
-                      key={item.id}
-                      item={item}
-                      onUpdateQuantity={updateQuantity}
-                      onRemove={removeItem}
-                    />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            </div>
-
-            {/* Order Summary */}
-            <div className="lg:col-span-1 mb-10 md:mb-0">
-              <OrderSummary items={cartItems} onCheckout={handleCheckout} cartSummary={cartSummary} />
-            </div>
-          </div>
-        )}
       </div>
     </motion.div>
   );
 };
 
-export default ShoppingCartApp;
+export default CartPage;

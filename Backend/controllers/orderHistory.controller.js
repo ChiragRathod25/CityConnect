@@ -75,7 +75,8 @@ const createOrder = asyncHandler(async (req, res) => {
     discount,
     totalAmount,
     deliveryAddress,
-    paymentMethod
+    paymentMethod,
+    transactionId
   } = req.body;
 
   if (!items || items.length === 0) {
@@ -95,9 +96,11 @@ const createOrder = asyncHandler(async (req, res) => {
     totalAmount,
     deliveryAddress,
     paymentMethod,
+    transactionId,
     status: 'processing',
     paymentStatus: paymentMethod === 'Cash on Delivery' ? 'pending' : 'completed',
-    estimatedDeliveryDate: estimatedDelivery
+    estimatedDeliveryDate: estimatedDelivery,
+    orderDate: new Date()
   });
 
   return res.status(201).json(
