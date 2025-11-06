@@ -516,7 +516,7 @@ const ShoppingCartApp = () => {
   };
 
   const handleCheckout = () => {
-    navigate("/payment");
+    navigate('/delivery-address-form');
   };
 
   const [totalItems, setTotalItems] = useState(0);
