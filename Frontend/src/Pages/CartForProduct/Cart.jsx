@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -17,57 +17,27 @@ import {
   Gift,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import databaseService from "@/services/database.services";
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Artisan Coffee House Blend",
-    category: "Café & Restaurant",
-    price: 299,
-    originalPrice: 399,
-    discount: 25,
-    rating: 4.8,
-    reviewCount: 124,
-    distance: "0.5 km",
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-    quantity: 2,
-    inStock: true,
-    weight: "250g",
-    brand: "Artisan Coffee House",
-  },
-  {
-    id: 2,
-    name: "Handcrafted Leather Wallet",
-    category: "Fashion & Accessories",
-    price: 1299,
-    originalPrice: 1599,
-    discount: 19,
-    rating: 4.6,
-    reviewCount: 89,
-    distance: "1.2 km",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-    quantity: 1,
-    inStock: true,
-    weight: "120g",
-    brand: "CraftMaster",
-  },
-  {
-    id: 3,
-    name: "Premium Wireless Headphones",
-    category: "Electronics",
-    price: 2499,
-    originalPrice: 2999,
-    discount: 17,
-    rating: 4.9,
-    reviewCount: 256,
-    distance: "0.8 km",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-    quantity: 1,
-    inStock: true,
-    weight: "300g",
-    brand: "AudioTech",
-  },
-];
+// Transform API response to component format
+const transformCartItem = (item) => ({
+  id: item.productId._id,
+  name: item.productId.name,
+  category: item.productId.category,
+  price: item.productId.price,
+  originalPrice: item.productId.price, // Add discount logic if available in API
+  discount: 0,
+  rating: 4.5, // Default rating - update if available in API
+  reviewCount: 0, // Default - update if available in API
+  distance: "1.0 km", // Default - update if available in API
+  image: item.productId.images?.[0] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+  quantity: item.quantity,
+  inStock: item.productId.stock > 0,
+  weight: item.productId.weight,
+  brand: item.productId.brand,
+  deliveryCharge: item.productId.deliveryCharge,
+  stock: item.productId.stock,
+});
 
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   const [isRemoving, setIsRemoving] = useState(false);
@@ -155,7 +125,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               whileTap={{ scale: 0.95 }}
               onClick={handleRemove}
               className=" absolute  right-10 sm:relative sm:right-0 p-2 text-red-500  hover:text-red-500 rounded-xl transition-colors bg-gray-200 self-start"
-            > 
+            >
               <Trash2 className="w-5 h-5" />
             </motion.button>
           </div>
@@ -249,7 +219,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               <MapPin className="w-3 h-3" />
               {item.distance}
             </div>
-            <div className="text-xs text-green-600 font-medium">✓ In Stock</div>
+            <div className="text-xs text-green-600 font-medium">
+              {item.inStock ? "✓ In Stock" : "✗ Out of Stock"}
+            </div>
           </div>
         </div>
       </div>
@@ -257,8 +229,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   );
 };
 
-const OrderSummary = ({ items, onCheckout }) => {
-  const subtotal = items.reduce(
+const OrderSummary = ({ items, onCheckout, cartSummary }) => {
+  // Use API response values if available, otherwise calculate
+  const subtotal = cartSummary?.subtotal || items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
@@ -267,9 +240,9 @@ const OrderSummary = ({ items, onCheckout }) => {
     0
   );
   const totalSavings = originalTotal - subtotal;
-  const deliveryCharge = subtotal > 500 ? 0 : 50;
-  const tax = Math.round(subtotal * 0.12); // 12% tax
-  const grandTotal = subtotal + deliveryCharge + tax;
+  const deliveryCharge = cartSummary?.deliveryCharge || (subtotal > 500 ? 0 : 50);
+  const tax = cartSummary?.tax || Math.round(subtotal * 0.12);
+  const grandTotal = cartSummary?.grandTotal || (subtotal + deliveryCharge + tax);
 
   return (
     <motion.div
@@ -454,25 +427,103 @@ const EmptyCart = () => (
 );
 
 const ShoppingCartApp = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState([]);
+  const [cartSummary, setCartSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  const getUserCartDetails = async () => {
+    try {
+      setIsLoading(true);
+      const response = await databaseService.getUserCart();
+      console.log("User cart data:", response);
+      
+      if (response.data?.items) {
+        const transformedItems = response.data.items.map(transformCartItem);
+        setCartItems(transformedItems);
+        setCartSummary({
+          subtotal: response.data.subtotal,
+          deliveryCharge: response.data.deliveryCharge,
+          tax: response.data.tax,
+          grandTotal: response.data.grandTotal,
+          itemCount: response.data.itemCount,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateCartItem = async (productId, quantity) => {
+    try {
+      // API call to update cart item quantity
+      const response=await databaseService.updateCartItem(productId, quantity);
+      console.log("Update cart item response:", response);
+      // Refresh cart data after update
+      await getUserCartDetails();
+    } catch (error) {
+      console.error("Error updating cart item:", error);
+    }
+  };
+
+  const removeCartItem = async (productId) => {
+    try {
+      // API call to remove cart item
+      await databaseService.removeItemFromCart(productId);
+      // Refresh cart data after removal
+      await getUserCartDetails();
+    } catch (error) {
+      console.error("Error removing cart item:", error);
+    }
+  };
+
+  useEffect(() => {
+    getUserCartDetails();
+  }, []);
+
+  useEffect(() => {
+    const handleCartUpdate = (updatedCart) => {
+      setCartItems(updatedCart);
+    };
+
+    // Subscribe to cart updates (if using a global state or context)
+    // cartContext.subscribe(handleCartUpdate);
+
+    return () => {
+      // Unsubscribe from cart updates
+      // cartContext.unsubscribe(handleCartUpdate);
+    };
+  }, []);
+
   const updateQuantity = (id, newQuantity) => {
+    // Optimistic update
     setCartItems((items) =>
       items.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
+    // Call API to update
+    updateCartItem(id, newQuantity);
   };
 
   const removeItem = (id) => {
+    // Optimistic update
     setCartItems((items) => items.filter((item) => item.id !== id));
+    // Call API to remove
+    removeCartItem(id);
   };
 
   const handleCheckout = () => {
     navigate('/delivery-address-form');
   };
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const [totalItems, setTotalItems] = useState(0);
+  useEffect(() => {
+    const total = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    setTotalItems(total);
+  }, [cartItems]);
 
   // Animation variants
   const containerVariants = {
@@ -494,6 +545,26 @@ const ShoppingCartApp = () => {
       transition: { duration: 0.6, ease: "easeOut" },
     },
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f8fafc" }}>
+        <div className="text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          >
+            <ShoppingCart className="w-16 h-16 mx-auto mb-4" style={{ color: "#1f2937" }} />
+          </motion.div>
+          <p className="text-lg font-medium" style={{ color: "#6b7280" }}>Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return <EmptyCart />;
+  }
 
   return (
     <motion.div
@@ -564,7 +635,7 @@ const ShoppingCartApp = () => {
             <div className="lg:col-span-2">
               <motion.div className="space-y-4 md:space-y-6" layout>
                 <AnimatePresence>
-                  {cartItems.map((item) => (
+                  {cartItems?.map((item) => (
                     <CartItem
                       key={item.id}
                       item={item}
@@ -578,7 +649,7 @@ const ShoppingCartApp = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1 mb-10 md:mb-0">
-              <OrderSummary items={cartItems} onCheckout={handleCheckout} />
+              <OrderSummary items={cartItems} onCheckout={handleCheckout} cartSummary={cartSummary} />
             </div>
           </div>
         )}

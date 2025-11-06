@@ -26,7 +26,7 @@ const getCart = asyncHandler(async (req, res) => {
   const summary = await cart.getCartSummary();
 
   return res.status(200).json(
-    new ApiResponse(200, summary, 'Cart retrieved successfully')
+    new ApiResponse(200,  'Cart retrieved successfully', summary)
   );
 });
 
@@ -65,8 +65,10 @@ const addToCart = asyncHandler(async (req, res) => {
   const updatedCart = await Cart.getCartWithProducts(userId);
   const summary = await updatedCart.getCartSummary();
 
+  console.log("Cart after addition:", summary);
+
   return res.status(200).json(
-    new ApiResponse(200, summary, 'Item added to cart successfully')
+    new ApiResponse(200,"Item added to cart successfully", summary)
   );
 });
 
@@ -109,8 +111,8 @@ const updateCartItem = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200, 
-      summary, 
-      quantity === 0 ? 'Item removed from cart' : 'Cart updated successfully'
+      quantity === 0 ? 'Item removed from cart' : 'Cart updated successfully',
+      summary
     )
   );
 });

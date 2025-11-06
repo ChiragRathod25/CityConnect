@@ -165,6 +165,18 @@ const ProductDetailView = () => {
     },
   };
 
+  const handleAddToCart = async () => {
+    try {
+      // Replace this with your actual API call to add to cart
+      const response=await databaseService.addProductToCart(productId, quantity);
+      console.log('Add to cart response:', response);
+      alert('Product added to cart successfully!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add product to cart.');
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -526,6 +538,7 @@ const ProductDetailView = () => {
                   whileHover={{ scale: isInStock ? 1.05 : 1, y: isInStock ? -2 : 0 }}
                   whileTap={{ scale: isInStock ? 0.98 : 1 }}
                   disabled={!isInStock}
+                  onClick={() => handleAddToCart()}
                   className={`flex-1 py-4 md:py-5 px-6 md:px-8 rounded-2xl font-bold text-lg md:text-xl flex items-center justify-center gap-3 transition-all duration-300 ${
                     isInStock
                       ? "bg-white text-gray-900 hover:bg-gray-100 shadow-lg hover:shadow-xl"
