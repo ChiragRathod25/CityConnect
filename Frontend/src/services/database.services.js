@@ -637,6 +637,78 @@ export class DatabaseService {
       }
     );
   }
+
+  //cart
+  async addProductToCart(productId, quantity) {
+    return handleApiRequest(
+      () =>
+        axiosInstace.post("/api/v1/order-cart/add", {
+          productId,
+          quantity,
+        }),
+      "Add Item to Cart"
+    );
+  }
+
+  async getUserCart() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get("/api/v1/order-cart/"),
+        "Get User Cart"
+      ),
+      {
+        loading: "Fetching cart...",
+        success: "Cart fetched successfully!",
+        error: "Failed to fetch cart. Please try again.",
+      }
+    );
+  }
+
+  async updateCartItem(productId, quantity) {
+    return  toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(`/api/v1/order-cart/update/${productId}`, {
+            quantity,
+          }),
+        "Update Item in Cart"
+      ),
+      {
+        loading: "Updating cart item...",
+        success: "Cart item updated successfully!",
+        error: "Failed to update cart item. Please try again.",
+      }
+    );
+  }
+
+  async removeItemFromCart(productId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.delete(`/api/v1/order-cart/remove/${productId}`),
+        "Remove Item from Cart"
+      ),
+      {
+        loading: "Removing cart item...",
+        success: "Cart item removed successfully!",
+        error: "Failed to remove cart item. Please try again.",
+      }
+    );
+  }
+
+  async clearCart() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.delete(`/api/v1/order-cart/clear`),
+        "Clear Cart"
+      ),
+      {
+        loading: "Clearing cart...",
+        success: "Cart cleared successfully!",
+        error: "Failed to clear cart. Please try again.",
+      }
+    );
+  }
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;
