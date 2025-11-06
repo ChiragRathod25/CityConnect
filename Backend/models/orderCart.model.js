@@ -199,4 +199,3 @@ cartSchema.set("toJSON", { virtuals: true });
 cartSchema.set("toObject", { virtuals: true });
 
 export const Cart = mongoose.model("Cart", cartSchema);
-

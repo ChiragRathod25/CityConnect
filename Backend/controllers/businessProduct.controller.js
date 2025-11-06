@@ -7,6 +7,7 @@ import {
   deleteFromCloudinary,
   uploadOnCloudinary,
 } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 const addProduct = asyncHandler(async (req, res, next) => {
   const { businessId } = req.params;
@@ -84,7 +85,7 @@ const addProduct = asyncHandler(async (req, res, next) => {
     .json(new ApiResponce(201, "Product created successfully", newProduct));
 });
 
-const getAllProducts = asyncHandler(async (req, res, next) => {
+const getAllProductsByBusinessId = asyncHandler(async (req, res, next) => {
   const { businessId } = req.params;
 
   const business = await Business.findById(businessId);
@@ -92,8 +93,12 @@ const getAllProducts = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Business not found");
   }
 
-  const products = await BusinessProduct.find({ businessId });
+  console.log("Fetching products for business:", businessId);
+  const products = await BusinessProduct.find({
+    businessId: new mongoose.Types.ObjectId(businessId),
+  })
 
+  console.log("Fetched products:", products);
   res
     .status(200)
     .json(new ApiResponce(200, "Products fetched successfully", products));
@@ -279,13 +284,21 @@ const removeProductImage = asyncHandler(async (req, res, next) => {
     .json(new ApiResponce(200, "Image removed successfully", product));
 });
 
+const getAllProducts = asyncHandler(async (req, res, next) => {
+  const products = await BusinessProduct.find({});
+  res
+    .status(200)
+    .json(new ApiResponce(200, "Products fetched successfully", products));
+});
+
 export {
   addProduct,
-  getAllProducts,
+  getAllProductsByBusinessId,
   getProductById,
   updateProductById,
   deleteProductById,
   deleteAllProducts,
   addProductImages,
   removeProductImage,
+  getAllProducts,
 };

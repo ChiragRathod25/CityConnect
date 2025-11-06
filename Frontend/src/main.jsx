@@ -34,7 +34,7 @@ import ProductForm from "./components/FormPage/AddProductCard";
 import ServiceProviderCardUI from "./Pages/ServiceProvider";
 import Install from "./Pages/InstallApp.jsx";
 import { SideDrawer } from "./components";
-import ProductCardUI from "./Pages/ProductCard";
+import ProductCardUI from "./Pages/Product";
 import EditOperatingHours from "./components/businessmanProfile/EditOperatingHours";
 import CartPageUI from "./Pages/CartForProduct";
 import PaymentPage from "./Pages/Checkout/PaymentPage";
@@ -50,7 +50,8 @@ import ContactUsForAdmin from "./Pages/AdminContactUs";
 import FeedbackComponent from "./components/Feedback";
 import AboutPageUi from "./Pages/About";
 import OrderHistoryForProductUI from "./Pages/HistoryForProduct";
-import ProductDetailView from "./Pages/ProductCard/ProductDetailView";
+import ProductDetailView from "./Pages/Product/ProductDetailView";
+import AllProductsByBusiness from "./Pages/Product/AllProductsByBusiness";
 
 const router = createBrowserRouter([
   {
@@ -141,11 +142,15 @@ const router = createBrowserRouter([
         element: <ProductForm editMode={true} />
       },
       {
-        path: "/products", //get information about the products of the business
+        path:"/dashboard/business/:businessId/products", // get all the products of business
+        element:<AllProductsByBusiness/>
+      },
+      {
+        path: "/products", // get all the products
         element: <ProductCardUI />,
       },
       {
-        path: "/product/:id",
+        path: "/product/:productId",
         element: <ProductDetailView />,
       },
 

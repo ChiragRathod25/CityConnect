@@ -448,6 +448,34 @@ export class DatabaseService {
     );
   }
 
+  async getProductsByBusinessId(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-product/${businessId}`),
+        "Get Products by Business ID"
+      ),
+      {
+        loading: "Fetching products...",
+        success: "Products fetched successfully!",
+        error: "Failed to fetch products. Please try again.",
+      }
+    );
+  }
+
+  async getAllProducts() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-product/products/all`),
+        "Get All Products"
+      ),
+      {
+        loading: "Fetching all products...",
+        success: "All products fetched successfully!",
+        error: "Failed to fetch products. Please try again.",
+      }
+    );
+  }
+
   //  business services methods
   async addBusinessService(businessId, serviceData) {
     const formData = new FormData();
@@ -491,8 +519,7 @@ export class DatabaseService {
   async getBusinessService(serviceId) {
     return toast.promise(
       handleApiRequest(
-        () =>
-          axiosInstace.get(`/api/v1/business-service/service/${serviceId}`),
+        () => axiosInstace.get(`/api/v1/business-service/service/${serviceId}`),
         "Get Business Service by Service ID"
       ),
       {
@@ -504,7 +531,7 @@ export class DatabaseService {
   }
 
   async updateBusinessService(serviceId, serviceData) {
-    const formData = new FormData();    
+    const formData = new FormData();
     // append non-file fields
     for (const [key, value] of Object.entries(serviceData)) {
       if (key === "images") continue; // handle separately below
