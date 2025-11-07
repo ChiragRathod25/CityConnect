@@ -55,6 +55,7 @@ import AllProductsByBusiness from "./Pages/Product/AllProductsByBusiness";
 import DeliveryAddressForm from "./Pages/CartForProduct/DeliveryAddressForm";
 import AllServicesByBusiness from "./Pages/ServiceProvider/AllServicesByBusiness";
 import AllServices from "./Pages/ServiceProvider/AllServices";
+import OrderPageForBusinessmanUI from "./Pages/OrderForBusinessman";
 
 const router = createBrowserRouter([
   {
@@ -194,6 +195,10 @@ const router = createBrowserRouter([
       {
         path: "/history",
         element: <OrderHistoryForProductUI />,
+      },
+      {
+        path: "/order",
+        element: <OrderPageForBusinessmanUI />,
       },
 
       ///admin side

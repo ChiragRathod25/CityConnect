@@ -1,4 +1,4 @@
-import { Home, Grid3X3, User, MapPin } from 'lucide-react';
+import { Home, Grid3X3, User, Info } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -23,7 +23,7 @@ const BottomTabBar = () => {
   const tabs = [
     { name: 'Home', icon: Home, path: '/' },
     { name: 'Category', icon: Grid3X3, path: '/category' },
-    { name: 'Nearby', icon: MapPin, path: '/nearby' },
+    { name: 'About', icon: Info, path: '/about' },
     { name: 'Profile', icon: User, path: getProfileRoute() },
   ];
 
