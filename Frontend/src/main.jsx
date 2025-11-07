@@ -168,22 +168,32 @@ const router = createBrowserRouter([
         element: <ServiceForm editMode={true} />,
       },
       {
-        path: "/dashboard/business/:businessId/services", 
-        element:<AllServicesByBusiness />
+        path: "/dashboard/business/:businessId/services",
+        element: <AllServicesByBusiness />,
       },
       {
-        path: "/services",  //display all services
-        element : <AllServices />
+        path: "/services", //display all services
+        element: <AllServices />,
       },
       {
         path: "/service/:serviceId", //display service detail view
-        element:  <ServiceProviderCardUI />,
+        element: <ServiceProviderCardUI />,
       },
 
       // {
       //   path: "/edit-operating-hours", //of business , TODO: needs improvement
       //   element: <EditOperatingHours />,
       // },
+      {
+        path: "/dashboard/:businessId/orders",
+        element: <OrderPageForBusinessmanUI />,
+      },
+      {
+        path: "/history", //user orders
+        element: <OrderHistoryForProductUI />,
+      },
+
+      //user checkout flow
       {
         path: "/cart",
         element: <CartPageUI />,
@@ -193,12 +203,16 @@ const router = createBrowserRouter([
         element: <DeliveryAddressForm />,
       },
       {
-        path: "/history",
-        element: <OrderHistoryForProductUI />,
+        path: "/payment",
+        element: <PaymentPage />,
       },
       {
-        path: "/order",
-        element: <OrderPageForBusinessmanUI />,
+        path: "/payment-success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "/payment-failed",
+        element: <PaymentFailed />,
       },
 
       ///admin side
@@ -230,19 +244,6 @@ const router = createBrowserRouter([
       {
         path: "/add",
         element: <AddBusinessCard />,
-      },
-
-      {
-        path: "/payment",
-        element: <PaymentPage />,
-      },
-      {
-        path: "/payment-success",
-        element: <PaymentSuccess />,
-      },
-      {
-        path: "/payment-failed",
-        element: <PaymentFailed />,
       },
 
       //not used routes, or least important

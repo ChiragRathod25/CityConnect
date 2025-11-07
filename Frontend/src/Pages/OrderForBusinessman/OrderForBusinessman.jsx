@@ -26,213 +26,8 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-
-const businessOrders = [
-  {
-    id: "ORD-2024-001",
-    date: "2024-11-05",
-    status: "delivered",
-    total: 4096,
-    userId: "USR-101",
-    customerName: "Rahul Sharma",
-    customerEmail: "rahul.sharma@email.com",
-    customerPhone: "+91 98765 43210",
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Credit Card",
-    deliveryDate: "2024-11-07",
-  },
-  {
-    id: "ORD-2024-002",
-    date: "2024-11-04",
-    status: "processing",
-    total: 1299,
-    userId: "USR-102",
-    customerName: "Priya Patel",
-    customerEmail: "priya.patel@email.com",
-    customerPhone: "+91 98765 43211",
-    items: [
-      {
-        name: "Handcrafted Leather Wallet",
-        quantity: 1,
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion & Accessories",
-      },
-    ],
-    deliveryAddress: "456 Park Avenue, Mumbai, Maharashtra",
-    paymentMethod: "UPI",
-    deliveryDate: "2024-11-10",
-  },
-  {
-    id: "ORD-2024-003",
-    date: "2024-11-03",
-    status: "shipped",
-    total: 3598,
-    userId: "USR-101",
-    customerName: "Rahul Sharma",
-    customerEmail: "rahul.sharma@email.com",
-    customerPhone: "+91 98765 43210",
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 3,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Debit Card",
-    deliveryDate: "2024-11-08",
-  },
-  {
-    id: "ORD-2024-004",
-    date: "2024-11-02",
-    status: "cancelled",
-    total: 598,
-    userId: "USR-103",
-    customerName: "Amit Kumar",
-    customerEmail: "amit.kumar@email.com",
-    customerPhone: "+91 98765 43212",
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "789 Lake View, Bangalore, Karnataka",
-    paymentMethod: "Cash on Delivery",
-    deliveryDate: null,
-  },
-  {
-    id: "ORD-2024-005",
-    date: "2024-11-01",
-    status: "delivered",
-    total: 2499,
-    userId: "USR-104",
-    customerName: "Sneha Desai",
-    customerEmail: "sneha.desai@email.com",
-    customerPhone: "+91 98765 43213",
-    items: [
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "321 Garden Road, Ahmedabad, Gujarat",
-    paymentMethod: "UPI",
-    deliveryDate: "2024-11-03",
-  },
-  {
-    id: "ORD-2024-006",
-    date: "2024-10-30",
-    status: "delivered",
-    total: 1897,
-    userId: "USR-102",
-    customerName: "Priya Patel",
-    customerEmail: "priya.patel@email.com",
-    customerPhone: "+91 98765 43211",
-    items: [
-      {
-        name: "Handcrafted Leather Wallet",
-        quantity: 1,
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion & Accessories",
-      },
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "456 Park Avenue, Mumbai, Maharashtra",
-    paymentMethod: "Credit Card",
-    deliveryDate: "2024-11-01",
-  },
-  {
-    id: "ORD-2024-007",
-    date: "2024-10-28",
-    status: "delivered",
-    total: 897,
-    userId: "USR-105",
-    customerName: "Vikram Singh",
-    customerEmail: "vikram.singh@email.com",
-    customerPhone: "+91 98765 43214",
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 3,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "654 Hill View, Pune, Maharashtra",
-    paymentMethod: "Cash on Delivery",
-    deliveryDate: "2024-10-30",
-  },
-  {
-    id: "ORD-2024-008",
-    date: "2024-10-25",
-    status: "processing",
-    total: 5495,
-    userId: "USR-101",
-    customerName: "Rahul Sharma",
-    customerEmail: "rahul.sharma@email.com",
-    customerPhone: "+91 98765 43210",
-    items: [
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 2,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-      {
-        name: "Handcrafted Leather Wallet",
-        quantity: 1,
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion & Accessories",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "UPI",
-    deliveryDate: "2024-11-12",
-  },
-];
+import databaseService from "@/services/database.services";
+import { useParams } from "react-router-dom";
 
 const statusConfig = {
   delivered: {
@@ -532,7 +327,7 @@ const OrderCard = ({ order, onViewDetails }) => {
         <div className="space-y-2 flex-1">
           <div className="flex items-center gap-3 flex-wrap">
             <h3 className="text-lg md:text-xl font-bold" style={{ color: "#1f2937" }}>
-              {order.id}
+              {order.orderId}
             </h3>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
               <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
@@ -541,7 +336,7 @@ const OrderCard = ({ order, onViewDetails }) => {
           </div>
           <div className="flex items-center gap-2 text-sm" style={{ color: "#6b7280" }}>
             <Calendar className="w-4 h-4" />
-            {new Date(order.date).toLocaleDateString("en-IN", {
+            {new Date(order.orderDate).toLocaleDateString("en-IN", {
               day: "numeric",
               month: "long",
               year: "numeric",
@@ -553,7 +348,7 @@ const OrderCard = ({ order, onViewDetails }) => {
           <div className="space-y-1">
             <div className="flex items-center gap-2" style={{ color: "#1f2937" }}>
               <User className="w-4 h-4" style={{ color: "#6b7280" }} />
-              <span className="font-semibold">{order.customerName}</span>
+              <span className="font-semibold">{order.userDetails?.firstName || order.userDetails?.username || 'N/A'} {order.userDetails?.lastName || ''}</span>
             </div>
             <div className="flex items-center gap-2 text-sm" style={{ color: "#6b7280" }}>
               <span className="font-medium">{order.userId}</span>
@@ -561,21 +356,10 @@ const OrderCard = ({ order, onViewDetails }) => {
           </div>
           <div className="text-right">
             <div className="text-sm" style={{ color: "#6b7280" }}>Total Amount</div>
-            <div className="text-2xl md:text-3xl font-bold" style={{ color: "#1f2937" }}>₹{order.total}</div>
+            <div className="text-2xl md:text-3xl font-bold" style={{ color: "#1f2937" }}>₹{order.totalAmount}</div>
           </div>
         </div>
       </div>
-
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-3 rounded-xl" style={{ backgroundColor: "#f8fafc" }}>
-        <div className="flex items-center gap-2 text-sm" style={{ color: "#6b7280" }}>
-          <Mail className="w-4 h-4" />
-          <span className="truncate">{order.customerEmail}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm" style={{ color: "#6b7280" }}>
-          <Phone className="w-4 h-4" />
-          <span>{order.customerPhone}</span>
-        </div>
-      </div> */}
 
       <div className="space-y-3 mb-4">
         {order.items.slice(0, 2).map((item, index) => (
@@ -607,7 +391,9 @@ const OrderCard = ({ order, onViewDetails }) => {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="flex items-start gap-2" style={{ color: "#6b7280" }}>
             <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <span className="line-clamp-2">{order.deliveryAddress}</span>
+            <span className="line-clamp-2">
+              {order.deliveryAddress?.fullAddress}, {order.deliveryAddress?.city}, {order.deliveryAddress?.state} - {order.deliveryAddress?.pincode}
+            </span>
           </div>
           <div className="flex items-center gap-2" style={{ color: "#6b7280" }}>
             <CreditCard className="w-4 h-4 flex-shrink-0" />
@@ -654,7 +440,7 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
           <div className="space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "#1f2937" }}>Order Details</h2>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-lg font-semibold" style={{ color: "#6b7280" }}>{order.id}</span>
+              <span className="text-lg font-semibold" style={{ color: "#6b7280" }}>{order.orderId}</span>
               <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
                 <StatusIcon className={`w-5 h-5 ${statusInfo.color}`} />
                 <span className={`font-semibold ${statusInfo.color}`}>{statusInfo.label}</span>
@@ -679,14 +465,16 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
                 <User className="w-5 h-5" style={{ color: "#6b7280" }} />
                 <div>
                   <div className="text-xs font-medium" style={{ color: "#6b7280" }}>Customer Name</div>
-                  <div className="font-semibold" style={{ color: "#1f2937" }}>{order.customerName}</div>
+                  <div className="font-semibold" style={{ color: "#1f2937" }}>
+                    {order.userDetails?.firstName || order.userDetails?.username || 'N/A'} {order.userDetails?.lastName || ''}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5" style={{ color: "#6b7280" }} />
                 <div>
                   <div className="text-xs font-medium" style={{ color: "#6b7280" }}>Email</div>
-                  <div className="font-semibold" style={{ color: "#1f2937" }}>{order.customerEmail}</div>
+                  <div className="font-semibold" style={{ color: "#1f2937" }}>{order.userDetails?.email || 'N/A'}</div>
                 </div>
               </div>
             </div>
@@ -702,7 +490,7 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
                 <Phone className="w-5 h-5" style={{ color: "#6b7280" }} />
                 <div>
                   <div className="text-xs font-medium" style={{ color: "#6b7280" }}>Phone</div>
-                  <div className="font-semibold" style={{ color: "#1f2937" }}>{order.customerPhone}</div>
+                  <div className="font-semibold" style={{ color: "#1f2937" }}>{order.userDetails?.phoneNumber || 'N/A'}</div>
                 </div>
               </div>
             </div>
@@ -715,19 +503,19 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
               <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Order Date</div>
               <div className="flex items-center gap-2" style={{ color: "#1f2937" }}>
                 <Calendar className="w-5 h-5" />
-                {new Date(order.date).toLocaleDateString("en-IN", {
+                {new Date(order.orderDate).toLocaleDateString("en-IN", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
               </div>
             </div>
-            {order.deliveryDate && (
+            {order.estimatedDeliveryDate && (
               <div>
-                <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Delivery Date</div>
+                <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Estimated Delivery Date</div>
                 <div className="flex items-center gap-2" style={{ color: "#1f2937" }}>
                   <Truck className="w-5 h-5" />
-                  {new Date(order.deliveryDate).toLocaleDateString("en-IN", {
+                  {new Date(order.estimatedDeliveryDate).toLocaleDateString("en-IN", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -735,6 +523,18 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
                 </div>
               </div>
             )}
+            <div>
+              <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Payment Status</div>
+              <div className="flex items-center gap-2">
+                <div className={`px-3 py-1 rounded-lg text-sm font-semibold ${
+                  order.paymentStatus === 'completed' ? 'bg-green-100 text-green-700' : 
+                  order.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                  'bg-red-100 text-red-700'
+                }`}>
+                  {order.paymentStatus?.charAt(0).toUpperCase() + order.paymentStatus?.slice(1)}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="space-y-4">
             <div>
@@ -744,11 +544,21 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
                 {order.paymentMethod}
               </div>
             </div>
+            {order.transactionId && (
+              <div>
+                <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Transaction ID</div>
+                <div className="flex items-center gap-2 font-mono text-sm" style={{ color: "#1f2937" }}>
+                  {order.transactionId}
+                </div>
+              </div>
+            )}
             <div>
               <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>Delivery Address</div>
               <div className="flex items-start gap-2" style={{ color: "#1f2937" }}>
                 <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                {order.deliveryAddress}
+                <span>
+                  {order.deliveryAddress?.fullAddress}, {order.deliveryAddress?.city}, {order.deliveryAddress?.state} - {order.deliveryAddress?.pincode}
+                </span>
               </div>
             </div>
           </div>
@@ -768,7 +578,13 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
                     <Store className="w-4 h-4" />
                     {item.category}
                   </div>
-                  <div className="flex items-center justify-between">
+                  {item.brand && (
+                    <div className="text-sm mb-1" style={{ color: "#6b7280" }}>Brand: {item.brand}</div>
+                  )}
+                  {item.weight && (
+                    <div className="text-sm mb-1" style={{ color: "#6b7280" }}>Weight: {item.weight}</div>
+                  )}
+                  <div className="flex items-center justify-between mt-2">
                     <span style={{ color: "#6b7280" }}>Quantity: {item.quantity}</span>
                     <span className="text-lg font-bold" style={{ color: "#1f2937" }}>₹{item.price * item.quantity}</span>
                   </div>
@@ -778,10 +594,34 @@ const OrderDetailsModal = ({ order, onClose, onDownloadInvoice }) => {
           </div>
         </div>
 
+        <div className="mb-6 p-4 rounded-2xl" style={{ backgroundColor: "#f8fafc" }}>
+          <h3 className="text-lg font-bold mb-4" style={{ color: "#1f2937" }}>Order Summary</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "#6b7280" }}>Subtotal</span>
+              <span className="font-semibold" style={{ color: "#1f2937" }}>₹{order.subtotal}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "#6b7280" }}>Delivery Charge</span>
+              <span className="font-semibold" style={{ color: "#1f2937" }}>₹{order.deliveryCharge}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "#6b7280" }}>Tax</span>
+              <span className="font-semibold" style={{ color: "#1f2937" }}>₹{order.tax}</span>
+            </div>
+            {order.discount > 0 && (
+              <div className="flex justify-between text-sm">
+                <span style={{ color: "#6b7280" }}>Discount</span>
+                <span className="font-semibold text-green-600">-₹{order.discount}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="pt-6 border-t" style={{ borderColor: "#e2e8f0" }}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xl font-bold" style={{ color: "#1f2937" }}>Total Amount</span>
-            <span className="text-3xl font-bold" style={{ color: "#1f2937" }}>₹{order.total}</span>
+            <span className="text-3xl font-bold" style={{ color: "#1f2937" }}>₹{order.totalAmount}</span>
           </div>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -806,24 +646,50 @@ const BusinessOrderDashboard = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [dateFilter, setDateFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [businessOrders, setBusinessOrders] = useState([]);
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalRevenue: 0,
+    deliveredOrders: 0,
+    uniqueCustomers: 0
+  });
+  const [loading, setLoading] = useState(true);
 
-  const ordersPerPage = 5;
+  const { businessId } = useParams();
 
-  const calculateStats = () => {
-    const totalOrders = businessOrders.length;
-    const totalRevenue = businessOrders.reduce((sum, order) => {
-      if (order.status !== "cancelled") {
-        return sum + order.total;
+  const fetchBusinessOrders = async (businessId) => {
+    try {
+      setLoading(true);
+      const response = await databaseService.getOrdersByBusinessId(businessId);
+      console.log("Fetched business orders:", response);
+      
+      if (response.data && response.data.orders) {
+        setBusinessOrders(response.data.orders);
+        
+        // Set stats from API response
+        if (response.data.stats) {
+          setStats({
+            totalOrders: response.data.stats.totalOrders || 0,
+            totalRevenue: response.data.stats.totalSales || 0,
+            deliveredOrders: response.data.orders.filter(o => o.status === 'delivered').length,
+            uniqueCustomers: response.data.stats.totalCustomers || 0
+          });
+        }
       }
-      return sum;
-    }, 0);
-    const deliveredOrders = businessOrders.filter((order) => order.status === "delivered").length;
-    const uniqueCustomers = new Set(businessOrders.map((order) => order.userId)).size;
-
-    return { totalOrders, totalRevenue, deliveredOrders, uniqueCustomers };
+    } catch (error) {
+      console.error("Error fetching business orders:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const stats = calculateStats();
+  useEffect(() => {
+    if (businessId) {
+      fetchBusinessOrders(businessId);
+    }
+  }, [businessId]);
+
+  const ordersPerPage = 5;
 
   const getFilteredOrders = () => {
     let filtered = [...businessOrders];
@@ -831,11 +697,14 @@ const BusinessOrderDashboard = () => {
     if (searchTerm) {
       filtered = filtered.filter((order) => {
         const searchLower = searchTerm.toLowerCase();
-        const matchesOrderId = order.id.toLowerCase().includes(searchLower);
-        const matchesUserId = order.userId.toLowerCase().includes(searchLower);
-        const matchesCustomerName = order.customerName.toLowerCase().includes(searchLower);
+        const matchesOrderId = order.orderId?.toLowerCase().includes(searchLower);
+        const matchesUserId = order.userId?.toLowerCase().includes(searchLower);
+        const matchesCustomerName = 
+          order.userDetails?.firstName?.toLowerCase().includes(searchLower) ||
+          order.userDetails?.lastName?.toLowerCase().includes(searchLower) ||
+          order.userDetails?.username?.toLowerCase().includes(searchLower);
         const matchesProductName = order.items.some((item) =>
-          item.name.toLowerCase().includes(searchLower)
+          item.name?.toLowerCase().includes(searchLower)
         );
         return matchesOrderId || matchesUserId || matchesCustomerName || matchesProductName;
       });
@@ -857,7 +726,7 @@ const BusinessOrderDashboard = () => {
           break;
       }
 
-      filtered = filtered.filter((order) => new Date(order.date) >= filterDate);
+      filtered = filtered.filter((order) => new Date(order.orderDate) >= filterDate);
     }
 
     if (statusFilter !== "all") {
@@ -877,17 +746,23 @@ const BusinessOrderDashboard = () => {
     const seen = new Set();
 
     businessOrders.forEach((order) => {
-      if (order.id.toLowerCase().includes(searchLower) && !seen.has(order.id)) {
-        suggestions.push({ main: order.id, sub: "Order ID" });
-        seen.add(order.id);
+      if (order.orderId?.toLowerCase().includes(searchLower) && !seen.has(order.orderId)) {
+        suggestions.push({ main: order.orderId, sub: "Order ID" });
+        seen.add(order.orderId);
       }
-      if (order.userId.toLowerCase().includes(searchLower) && !seen.has(order.userId)) {
-        suggestions.push({ main: order.userId, sub: order.customerName });
+      if (order.userId?.toLowerCase().includes(searchLower) && !seen.has(order.userId)) {
+        const customerName = order.userDetails?.firstName 
+          ? `${order.userDetails.firstName} ${order.userDetails.lastName || ''}`.trim()
+          : order.userDetails?.username || '';
+        suggestions.push({ main: order.userId, sub: customerName });
         seen.add(order.userId);
       }
-      if (order.customerName.toLowerCase().includes(searchLower) && !seen.has(order.customerName)) {
-        suggestions.push({ main: order.customerName, sub: order.userId });
-        seen.add(order.customerName);
+      const customerName = order.userDetails?.firstName 
+        ? `${order.userDetails.firstName} ${order.userDetails.lastName || ''}`.trim()
+        : order.userDetails?.username || '';
+      if (customerName.toLowerCase().includes(searchLower) && !seen.has(customerName)) {
+        suggestions.push({ main: customerName, sub: order.userId });
+        seen.add(customerName);
       }
     });
 
@@ -902,21 +777,27 @@ const BusinessOrderDashboard = () => {
   };
 
   const handleDownloadInvoice = (order) => {
+    const customerName = order.userDetails?.firstName 
+      ? `${order.userDetails.firstName} ${order.userDetails.lastName || ''}`.trim()
+      : order.userDetails?.username || 'N/A';
+
     const invoiceContent = `
 INVOICE
 ========================================
 
-Order ID: ${order.id}
-Date: ${new Date(order.date).toLocaleDateString("en-IN")}
+Order ID: ${order.orderId}
+Date: ${new Date(order.orderDate).toLocaleDateString("en-IN")}
 
 Customer Information:
-Name: ${order.customerName}
+Name: ${customerName}
 User ID: ${order.userId}
-Email: ${order.customerEmail}
-Phone: ${order.customerPhone}
+Email: ${order.userDetails?.email || 'N/A'}
+Phone: ${order.userDetails?.phoneNumber || 'N/A'}
 
 Delivery Address:
-${order.deliveryAddress}
+${order.deliveryAddress?.fullAddress}
+${order.deliveryAddress?.city}, ${order.deliveryAddress?.state}
+Pincode: ${order.deliveryAddress?.pincode}
 
 Order Items:
 ${order.items
@@ -924,18 +805,28 @@ ${order.items
     (item, index) => `
 ${index + 1}. ${item.name}
    Category: ${item.category}
+   ${item.brand ? `Brand: ${item.brand}` : ''}
+   ${item.weight ? `Weight: ${item.weight}` : ''}
    Quantity: ${item.quantity}
    Price: ₹${item.price}
    Subtotal: ₹${item.price * item.quantity}`
   )
   .join("\n")}
 
+Order Summary:
+Subtotal: ₹${order.subtotal}
+Delivery Charge: ₹${order.deliveryCharge}
+Tax: ₹${order.tax}
+${order.discount > 0 ? `Discount: -₹${order.discount}` : ''}
+
 Payment Method: ${order.paymentMethod}
-Order Status: ${statusConfig[order.status].label}
-${order.deliveryDate ? `Delivery Date: ${new Date(order.deliveryDate).toLocaleDateString("en-IN")}` : ""}
+Payment Status: ${order.paymentStatus?.charAt(0).toUpperCase() + order.paymentStatus?.slice(1)}
+${order.transactionId ? `Transaction ID: ${order.transactionId}` : ''}
+Order Status: ${statusConfig[order.status]?.label || order.status}
+${order.estimatedDeliveryDate ? `Estimated Delivery: ${new Date(order.estimatedDeliveryDate).toLocaleDateString("en-IN")}` : ""}
 
 ========================================
-TOTAL AMOUNT: ₹${order.total}
+TOTAL AMOUNT: ₹${order.totalAmount}
 ========================================
 
 Thank you for your business!
@@ -945,7 +836,7 @@ Thank you for your business!
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Invoice_${order.id}.txt`;
+    a.download = `Invoice_${order.orderId}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -960,6 +851,17 @@ Thank you for your business!
   const startIndex = (currentPage - 1) * ordersPerPage;
   const endIndex = startIndex + ordersPerPage;
   const currentOrders = filteredOrders.slice(startIndex, endIndex);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f8fafc" }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-lg font-semibold" style={{ color: "#6b7280" }}>Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -978,6 +880,7 @@ Thank you for your business!
             <motion.button
               whileHover={{ scale: 1.02, x: -5 }}
               whileTap={{ scale: 0.98 }}
+              onClick={() => window.history.back()}
               className="flex text-sm sm:text-md items-center gap-3 font-medium bg-white px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border"
               style={{ color: "#6b7280", borderColor: "#e2e8f0" }}
             >
@@ -1109,7 +1012,7 @@ Thank you for your business!
                 className="space-y-6"
               >
                 {currentOrders.map((order) => (
-                  <OrderCard key={order.id} order={order} onViewDetails={setSelectedOrder} />
+                  <OrderCard key={order._id} order={order} onViewDetails={setSelectedOrder} />
                 ))}
               </motion.div>
             </AnimatePresence>

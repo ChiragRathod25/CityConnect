@@ -22,157 +22,8 @@ import {
   Filter,
   ChevronDown,
 } from "lucide-react";
+import databaseService from "@/services/database.services";
 
-// Sample order data
-const orderHistory = [
-  {
-    id: "ORD-2024-001",
-    date: "2024-10-28",
-    status: "delivered",
-    total: 4096,
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Credit Card",
-    deliveryDate: "2024-10-30",
-  },
-  {
-    id: "ORD-2024-002",
-    date: "2024-10-25",
-    status: "processing",
-    total: 1299,
-    items: [
-      {
-        name: "Handcrafted Leather Wallet",
-        quantity: 1,
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion & Accessories",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "UPI",
-    deliveryDate: "2024-11-05",
-  },
-  {
-    id: "ORD-2024-003",
-    date: "2024-10-20",
-    status: "delivered",
-    total: 3598,
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 3,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Debit Card",
-    deliveryDate: "2024-10-22",
-  },
-  {
-    id: "ORD-2024-004",
-    date: "2024-10-18",
-    status: "cancelled",
-    total: 598,
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Cash on Delivery",
-    deliveryDate: null,
-  },
-  {
-    id: "ORD-2024-005",
-    date: "2024-10-15",
-    status: "delivered",
-    total: 2499,
-    items: [
-      {
-        name: "Premium Wireless Headphones",
-        quantity: 1,
-        price: 2499,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "UPI",
-    deliveryDate: "2024-10-17",
-  },
-  {
-    id: "ORD-2024-006",
-    date: "2024-09-12",
-    status: "delivered",
-    total: 1897,
-    items: [
-      {
-        name: "Handcrafted Leather Wallet",
-        quantity: 1,
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion & Accessories",
-      },
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 2,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Credit Card",
-    deliveryDate: "2024-09-14",
-  },
-  {
-    id: "ORD-2024-007",
-    date: "2024-08-10",
-    status: "delivered",
-    total: 897,
-    items: [
-      {
-        name: "Artisan Coffee House Blend",
-        quantity: 3,
-        price: 299,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Café & Restaurant",
-      },
-    ],
-    deliveryAddress: "123 Main Street, Surat, Gujarat",
-    paymentMethod: "Cash on Delivery",
-    deliveryDate: "2024-08-12",
-  },
-];
 
 const statusConfig = {
   delivered: {
@@ -588,6 +439,79 @@ const OrderDetailsModal = ({ order, onClose }) => {
   const statusInfo = statusConfig[order.status];
   const StatusIcon = statusInfo.icon;
 
+  const handleDownloadInvoice = async () => {
+    try {
+      // Create invoice content
+      const invoiceContent = `
+═══════════════════════════════════════════════════════════════
+                          INVOICE
+═══════════════════════════════════════════════════════════════
+
+Order ID: ${order.id}
+Order Date: ${new Date(order.date).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}
+${order.deliveryDate ? `Delivery Date: ${new Date(order.deliveryDate).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}` : ''}
+
+Status: ${statusInfo.label}
+Payment Method: ${order.paymentMethod}
+${order.transactionId ? `Transaction ID: ${order.transactionId}` : ''}
+Payment Status: ${order.paymentStatus}
+
+───────────────────────────────────────────────────────────────
+DELIVERY ADDRESS
+───────────────────────────────────────────────────────────────
+${order.deliveryAddress}
+
+───────────────────────────────────────────────────────────────
+ORDER ITEMS
+───────────────────────────────────────────────────────────────
+${order.items.map((item, index) => `
+${index + 1}. ${item.name}
+   Category: ${item.category}
+   ${item.brand ? `Brand: ${item.brand}` : ''}
+   ${item.weight ? `Weight: ${item.weight}` : ''}
+   Price: ₹${item.price} × ${item.quantity}
+   Total: ₹${item.price * item.quantity}
+`).join('\n')}
+
+───────────────────────────────────────────────────────────────
+PRICE BREAKDOWN
+───────────────────────────────────────────────────────────────
+Subtotal:                                            ₹${order.subtotal}
+Delivery Charge:                                     ₹${order.deliveryCharge}
+Tax:                                                 ₹${order.tax}
+${order.discount > 0 ? `Discount:                                            -₹${order.discount}` : ''}
+
+═══════════════════════════════════════════════════════════════
+TOTAL AMOUNT:                                        ₹${order.total}
+═══════════════════════════════════════════════════════════════
+
+Thank you for your order!
+`;
+
+      // Create blob and download
+      const blob = new Blob([invoiceContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Invoice_${order.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert("Failed to download invoice. Please try again.");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -664,6 +588,21 @@ const OrderDetailsModal = ({ order, onClose }) => {
                 </div>
               </div>
             )}
+            {!order.deliveryDate && order.estimatedDeliveryDate && (
+              <div>
+                <div className="text-sm font-semibold mb-2" style={{ color: "#6b7280" }}>
+                  Estimated Delivery
+                </div>
+                <div className="flex items-center gap-2" style={{ color: "#1f2937" }}>
+                  <Clock className="w-5 h-5" />
+                  {new Date(order.estimatedDeliveryDate).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+            )}
           </div>
           <div className="space-y-4">
             <div>
@@ -672,7 +611,15 @@ const OrderDetailsModal = ({ order, onClose }) => {
               </div>
               <div className="flex items-center gap-2" style={{ color: "#1f2937" }}>
                 <CreditCard className="w-5 h-5" />
-                {order.paymentMethod}
+                <div>
+                  <div>{order.paymentMethod}</div>
+                  {order.transactionId && (
+                    <div className="text-xs text-gray-500">ID: {order.transactionId}</div>
+                  )}
+                  <div className={`text-xs ${order.paymentStatus === 'completed' ? 'text-green-600' : 'text-yellow-600'}`}>
+                    {order.paymentStatus === 'completed' ? '✓ Paid' : 'Pending Payment'}
+                  </div>
+                </div>
               </div>
             </div>
             <div>
@@ -719,9 +666,11 @@ const OrderDetailsModal = ({ order, onClose }) => {
                   <div className="flex items-center gap-2 text-sm mb-2" style={{ color: "#6b7280" }}>
                     <Store className="w-4 h-4" />
                     {item.category}
+                    {item.brand && ` • ${item.brand}`}
+                    {item.weight && ` • ${item.weight}`}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span style={{ color: "#6b7280" }}>Quantity: {item.quantity}</span>
+                    <span style={{ color: "#6b7280" }}>₹{item.price} × {item.quantity}</span>
                     <span className="text-lg font-bold" style={{ color: "#1f2937" }}>
                       ₹{item.price * item.quantity}
                     </span>
@@ -729,6 +678,33 @@ const OrderDetailsModal = ({ order, onClose }) => {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+
+        {/* Price Breakdown */}
+        <div className="mb-6 p-4 rounded-2xl" style={{ backgroundColor: "#f8fafc" }}>
+          <h3 className="text-lg font-bold mb-3" style={{ color: "#1f2937" }}>
+            Price Details
+          </h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span style={{ color: "#6b7280" }}>Subtotal</span>
+              <span style={{ color: "#1f2937" }}>₹{order.subtotal}</span>
+            </div>
+            <div className="flex justify-between">
+              <span style={{ color: "#6b7280" }}>Delivery Charge</span>
+              <span style={{ color: "#1f2937" }}>₹{order.deliveryCharge}</span>
+            </div>
+            <div className="flex justify-between">
+              <span style={{ color: "#6b7280" }}>Tax</span>
+              <span style={{ color: "#1f2937" }}>₹{order.tax}</span>
+            </div>
+            {order.discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>-₹{order.discount}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -746,6 +722,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              onClick={handleDownloadInvoice}
               className="flex-1 px-6 py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-colors"
               style={{ backgroundColor: "#1f2937", color: "white" }}
             >
@@ -777,11 +754,57 @@ const OrderHistoryApp = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [dateFilter, setDateFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [orderHistory, setOrderHistory] = useState([]);
+
+  const fetchOrderHistory = async () => {
+    try {
+      const response = await databaseService.getAllOrdersByUserId();
+      console.log("Fetched order history:", response.data);
+      
+      // Transform backend data to match component structure
+      const transformedOrders = response?.data?.orders?.map(order => ({
+        id: order.orderId,
+        date: order.orderDate,
+        deliveryDate: order.deliveryDate || null,
+        estimatedDeliveryDate: order.estimatedDeliveryDate || null,
+        total: order.totalAmount,
+        subtotal: order.subtotal,
+        tax: order.tax,
+        deliveryCharge: order.deliveryCharge,
+        discount: order.discount,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        transactionId: order.transactionId,
+        deliveryAddress: order.deliveryAddress.fullAddress || 
+          `${order.deliveryAddress.street}, ${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}`,
+        items: order.items.map(item => ({
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          brand: item.brand,
+          weight: item.weight
+        })),
+        _id: order._id
+      })) || [];
+      
+      setOrderHistory(transformedOrders);
+    } catch (error) {
+      console.error("Error fetching order history:", error);
+    }
+  }
+  
+  useEffect(() => {
+    fetchOrderHistory();
+  }, []);
   
   const ordersPerPage = 3;
 
   // Filter orders based on search, date, and status
   const getFilteredOrders = () => {
+    if(!orderHistory) return [];
     let filtered = [...orderHistory];
 
     // Search filter
@@ -836,7 +859,7 @@ const OrderHistoryApp = () => {
     const suggestions = new Set();
     const searchLower = searchTerm.toLowerCase();
 
-    orderHistory.forEach((order) => {
+    orderHistory?.forEach((order) => {
       if (order.id.toLowerCase().includes(searchLower)) {
         suggestions.add(order.id);
       }

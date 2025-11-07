@@ -752,6 +752,34 @@ export class DatabaseService {
     );
   }
 
+  async getAllOrdersByUserId() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get("/api/v1/order-history/"),
+        "Get All Orders by User ID"
+      ),
+      {
+        loading: "Fetching your orders...",
+        success: "Orders fetched successfully!",
+        error: "Failed to fetch orders. Please try again.",
+      }
+    );
+  }
+
+  async getOrdersByBusinessId(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/order-history/business/${businessId}`),
+        "Get Orders by Business ID"
+      ),
+      {
+        loading: "Fetching orders for business...",
+        success: "Orders fetched successfully!",
+        error: "Failed to fetch orders. Please try again.",
+      }
+    );
+  }
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;
