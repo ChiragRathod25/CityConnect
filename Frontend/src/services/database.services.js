@@ -572,6 +572,34 @@ export class DatabaseService {
     );
   }
 
+  async getAllServicesByBusinessId(businessId) {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-service/${businessId}`),
+        "Get All Services by Business ID"
+      ),
+      {
+        loading: "Fetching services...",
+        success: "Services fetched successfully!",
+        error: "Failed to fetch services. Please try again.",
+      }
+    );
+  }
+
+  async getAllServices() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get(`/api/v1/business-service/services/all`),
+        "Get All Services"
+      ),
+      {
+        loading: "Fetching all services...",
+        success: "All services fetched successfully!",
+        error: "Failed to fetch services. Please try again.",
+      }
+    );
+  }
+
   //business hours
   async getBusinessHours(businessId) {
     return toast.promise(

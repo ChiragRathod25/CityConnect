@@ -53,6 +53,8 @@ import OrderHistoryForProductUI from "./Pages/HistoryForProduct";
 import ProductDetailView from "./Pages/Product/ProductDetailView";
 import AllProductsByBusiness from "./Pages/Product/AllProductsByBusiness";
 import DeliveryAddressForm from "./Pages/CartForProduct/DeliveryAddressForm";
+import AllServicesByBusiness from "./Pages/ServiceProvider/AllServicesByBusiness";
+import AllServices from "./Pages/ServiceProvider/AllServices";
 
 const router = createBrowserRouter([
   {
@@ -165,8 +167,16 @@ const router = createBrowserRouter([
         element: <ServiceForm editMode={true} />,
       },
       {
-        path: "/dashboard/business/:businessId/service", //TODO: get serviceById
-        element: <ServiceProviderCardUI />,
+        path: "/dashboard/business/:businessId/services", 
+        element:<AllServicesByBusiness />
+      },
+      {
+        path: "/services",  //display all services
+        element : <AllServices />
+      },
+      {
+        path: "/service/:serviceId", //display service detail view
+        element:  <ServiceProviderCardUI />,
       },
 
       // {

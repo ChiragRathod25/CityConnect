@@ -277,8 +277,7 @@ export const ProductCard = ({ product, onViewDetails }) => {
       </div>
     </div>
   );
-};
-
+}
 
 
 const ProductCardComponent = () => {

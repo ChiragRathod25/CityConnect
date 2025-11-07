@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Business } from "../models/business.model.js";
 import { BusinessService } from "../models/businessService.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { BusinessContact } from "../models/businessContact.model.js";
 
 const addService = asyncHandler(async (req, res, next) => {
   const { businessId } = req.params;
@@ -69,7 +70,7 @@ const addService = asyncHandler(async (req, res, next) => {
     .json(new ApiResponce(201, "Service added successfully", service));
 });
 
-const getAllServices = asyncHandler(async (req, res, next) => {
+const getAllServicesByBusinessId = asyncHandler(async (req, res, next) => {
   const { businessId } = req.params;
   const business = await Business.findById(businessId);
   if (!business) {
@@ -80,15 +81,24 @@ const getAllServices = asyncHandler(async (req, res, next) => {
     .status(200)
     .json(new ApiResponce(200, "Services fetched successfully", services));
 });
+
 const getServiceById = asyncHandler(async (req, res, next) => {
   const { serviceId } = req.params;
   const service = await BusinessService.findById(serviceId);
   if (!service) {
     throw new ApiError(404, "Service not found");
   }
+  //inlcude businessContactDetails
+  const businessContanctDetails=await BusinessContact.findOne({businessId:service.businessId});
+  const serviceWithContactDetails={
+    ...service.toObject(),
+    businessContactDetails:businessContanctDetails
+  };
+
+  console.log("Fetched service:", serviceWithContactDetails);
   res
     .status(200)
-    .json(new ApiResponce(200, "Service fetched successfully", service));
+    .json(new ApiResponce(200, "Service fetched successfully", serviceWithContactDetails));
 });
 
 const updateServiceById = asyncHandler(async (req, res, next) => {
@@ -162,10 +172,18 @@ const deleteServiceById = asyncHandler(async (req, res, next) => {
     .json(new ApiResponce(200, "Service deleted successfully", null));
 });
 
+const getAllServices= asyncHandler(async (req, res, next) => {
+  const services = await BusinessService.find({ isActive: true });
+  res
+    .status(200)
+    .json(new ApiResponce(200, "Services fetched successfully", services));
+});
+
 export {
   addService,
-  getAllServices,
+  getAllServicesByBusinessId,
   getServiceById,
   updateServiceById,
   deleteServiceById,
+  getAllServices
 };
