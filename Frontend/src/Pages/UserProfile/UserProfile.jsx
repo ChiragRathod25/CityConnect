@@ -188,8 +188,8 @@ const UserProfileDashboard = () => {
   };
 
   const headerStats = [
-    { label: 'Orders', value: userProfile?.completedOrders, suffix: '' },
-    { label: 'Wishlist', value: userProfile?.wishlistItems, suffix: '' },
+    { label: 'Orders', value: userProfile?.completedOrders || 0, suffix: '' },
+    { label: 'Wishlist', value: userProfile?.wishlistItems || 0, suffix: '' },
     { label: 'Status', value: 'Active', suffix: '' }
   ];
 
@@ -279,8 +279,8 @@ const UserProfileDashboard = () => {
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
                   <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
                     userProfile?.isEmailVerified 
-                      ? 'bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30' 
-                      : 'bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30'
+                      ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30' 
+                      : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
                   } shadow-lg`}>
                     {userProfile?.isEmailVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">
@@ -290,8 +290,8 @@ const UserProfileDashboard = () => {
                   </div>
                   <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
                     userProfile?.isPhoneVerified 
-                      ? 'bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30' 
-                      : 'bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30'
+                      ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30' 
+                      : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
                   } shadow-lg`}>
                     {userProfile?.isPhoneVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">

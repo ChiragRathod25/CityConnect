@@ -25,11 +25,9 @@ function AuthLayout({ children, authentication = true }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100  ">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-1  sm:mt-8">
+      <div>
         {children}
       </div>
-    </div>
   );
 }
 

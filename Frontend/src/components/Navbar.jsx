@@ -277,7 +277,7 @@ const Navbar = () => {
                     <motion.button
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center sm:space-x-2 px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl hover:from-gray-800 hover:to-black transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
+                      className="flex items-center border border-gray-200 sm:space-x-2 px-4 py-2 bg-gray-50 backdrop-blur-sm text-gray-900 rounded-xl hover:bg-gray-100  font-medium"
                     >
                       <User size={18} />
                       <span className="hidden sm:inline">Profile</span>

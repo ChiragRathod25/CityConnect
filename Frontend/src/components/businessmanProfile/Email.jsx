@@ -62,27 +62,23 @@ const ContactEditPage = ({ type = "change-email" }) => {
     const newErrors = {};
 
     if (!newContact)
-      newErrors.newContact = `New ${
-        isEmail ? "email" : "phone number"
-      } is required`;
+      newErrors.newContact = `New ${isEmail ? "email" : "phone number"
+        } is required`;
     else if (isEmail && !validateEmail(newContact))
       newErrors.newContact = "Please enter a valid email";
     else if (!isEmail && !validatePhone(newContact))
       newErrors.newContact = "Please enter a valid phone number";
 
     if (!confirmContact)
-      newErrors.confirmContact = `Please confirm your ${
-        isEmail ? "email" : "phone number"
-      }`;
+      newErrors.confirmContact = `Please confirm your ${isEmail ? "email" : "phone number"
+        }`;
     else if (newContact !== confirmContact)
-      newErrors.confirmContact = `${
-        isEmail ? "Emails" : "Phone numbers"
-      } do not match`;
+      newErrors.confirmContact = `${isEmail ? "Emails" : "Phone numbers"
+        } do not match`;
 
     if (newContact === currentContact)
-      newErrors.newContact = `New ${
-        isEmail ? "email" : "phone number"
-      } must be different`;
+      newErrors.newContact = `New ${isEmail ? "email" : "phone number"
+        } must be different`;
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
@@ -201,82 +197,79 @@ const ContactEditPage = ({ type = "change-email" }) => {
   const ContactTypeCapital = isEmail ? "Email" : "Phone Number";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 pb-10 via-white to-gray-100">
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* Header & Steps */}
         <div
-          className={`bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mb-6 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
+          className={`bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mb-6 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
         >
-          <div className="relative bg-gradient-to-r from-gray-600 via-gray-500 to-gray-700 p-6 flex items-center space-x-4">
+          <div className="relative bg-gradient-to-r from-gray-600 via-gray-500 to-gray-700 p-6 flex flex-col items-center justify-center text-center space-y-3">
             <div className="p-3 bg-white/10 rounded-xl">
-              <ContactIcon className="w-6 h-6 text-white" />
+              <ContactIcon className="w-6 h-6 animate-bounce text-white" />
             </div>
             <div className="text-white">
               <h1 className="text-2xl font-bold">
                 {step === "edit"
                   ? `Change ${ContactTypeCapital}`
                   : step === "verify"
-                  ? `Verify ${ContactTypeCapital}`
-                  : `${ContactTypeCapital} Updated`}
+                    ? `Verify ${ContactTypeCapital}`
+                    : `${ContactTypeCapital} Updated`}
               </h1>
               <p className="text-sm">
                 {step === "edit"
                   ? `Update your ${contactType}`
                   : step === "verify"
-                  ? "Enter verification code"
-                  : `${ContactTypeCapital} successfully updated`}
+                    ? "Enter verification code"
+                    : `${ContactTypeCapital} successfully updated`}
               </p>
             </div>
           </div>
 
           {/* Progress Steps */}
-          <div className="bg-gray-50 border-t border-gray-200 p-4 flex items-center justify-center space-x-4">
-            {["Edit", "Verify", "Complete"].map((label, idx) => {
-              const active = ["edit", "verify", "success"][idx] === step;
-              const completed =
-                idx < ["edit", "verify", "success"].indexOf(step);
-              return (
-                <div key={idx} className="flex items-center space-x-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${
-                      completed || active
+          <div className="bg-gray-50 border-t border-gray-200 p-4">
+            <div className="flex items-center justify-center space-x-2 sm:space-x-4 min-w-max">
+              {["Edit", "Verify", "Complete"].map((label, idx) => {
+                const active = ["edit", "verify", "success"][idx] === step;
+                const completed =
+                  idx < ["edit", "verify", "success"].indexOf(step);
+                return (
+                  <div key={idx} className="flex items-center space-x-1 sm:space-x-2">
+                    <div
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold transition-all duration-300 flex-shrink-0 ${completed || active
                         ? "bg-green-500 text-white"
                         : "bg-gray-300 text-gray-600"
-                    }`}
-                  >
-                    {completed ? <CheckCircle className="w-4 h-4" /> : idx + 1}
-                  </div>
-                  <span
-                    className={`text-sm ${
-                      active
+                        }`}
+                    >
+                      {completed ? <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" /> : idx + 1}
+                    </div>
+                    <span
+                      className={`text-xs sm:text-sm whitespace-nowrap ${active
                         ? "text-gray-600"
                         : completed
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                  {idx < 2 && (
-                    <div
-                      className={`w-12 h-1 rounded-full ${
-                        completed ? "bg-green-500" : "bg-gray-300"
-                      }`}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                          ? "text-green-600"
+                          : "text-gray-500"
+                        }`}
+                    >
+                      {label}
+                    </span>
+                    {idx < 2 && (
+                      <div
+                        className={`w-8 sm:w-12 h-1 rounded-full flex-shrink-0 ${completed ? "bg-green-500" : "bg-gray-300"
+                          }`}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Content */}
         <div
-          className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-6 transition-all duration-500 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
+          className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-6 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
         >
           {/* Step 1: Edit */}
           {step === "edit" && (
@@ -319,11 +312,10 @@ const ContactEditPage = ({ type = "change-email" }) => {
                       value={value}
                       onChange={(e) => setter(e.target.value)}
                       placeholder={placeholder}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:ring-gray-100 focus:border-gray-500 text-sm transition-all duration-300 ${
-                        error
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300 bg-gray-50"
-                      }`}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:ring-gray-100 focus:border-gray-500 text-sm transition-all duration-300 ${error
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-gray-50"
+                        }`}
                     />
                     {error && (
                       <p className="mt-2 text-xs text-red-600 flex items-center">
@@ -349,16 +341,18 @@ const ContactEditPage = ({ type = "change-email" }) => {
                 <Button
                   onClick={handleContactSubmit}
                   disabled={loading}
-                  className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all duration-300"
+                  className="w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all duration-300"
                 >
-                  {loading ? (
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />{" "}
-                      <span>Send Verification Code</span>
-                    </>
-                  )}
+                  <div className="flex items-center justify-center gap-2">
+                    {loading ? (
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>Send Verification Code</span>
+                      </>
+                    )}
+                  </div>
                 </Button>
               </div>
             </div>
@@ -389,13 +383,12 @@ const ContactEditPage = ({ type = "change-email" }) => {
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(e, idx)}
                     onPaste={handleOtpPaste}
-                    className={`w-12 h-12 text-center text-lg font-bold rounded-xl border-2 focus:outline-none transition-all duration-300 ${
-                      errors.otp
-                        ? "border-red-400 bg-red-50"
-                        : digit
+                    className={`w-12 h-12 text-center text-lg font-bold rounded-xl border-2 focus:outline-none transition-all duration-300 ${errors.otp
+                      ? "border-red-400 bg-red-50"
+                      : digit
                         ? "border-green-400 bg-green-50 text-green-700"
                         : "border-gray-300 bg-white focus:border-gray-500"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
