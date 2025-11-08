@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { GoogleTranslate } from '.';
 
 const SideDrawer = ({ isOpen, onClose }) => {
-  const user = useSelector((state) => state.auth.userData);
+  const user = useSelector((state) => state.auth?.userData?.user);
   const navigate = useNavigate();
   
   // State for dropdowns
@@ -114,7 +114,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 cursor-pointer group"
               onClick={() => {
                 onClose();
-                navigate('/profile');
+                navigate('/user-profile');
               }}
             >
               <div className="relative">
