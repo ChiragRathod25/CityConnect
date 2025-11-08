@@ -185,7 +185,7 @@ const router = createBrowserRouter([
       //   element: <EditOperatingHours />,
       // },
       {
-        path: "/dashboard/:businessId/orders",
+        path: "/dashboard/business/:businessId/orders",
         element: <OrderPageForBusinessmanUI />,
       },
       {

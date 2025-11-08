@@ -388,6 +388,7 @@ const EditLocationComponent = ({
 
 // Demo Implementation
 const EditLocationAndAddress = ({ onBack }) => {
+  
   const [currentLocation, setCurrentLocation] = useState({
     address: "",
     street: "",
