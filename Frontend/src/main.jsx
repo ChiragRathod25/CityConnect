@@ -56,6 +56,7 @@ import DeliveryAddressForm from "./Pages/CartForProduct/DeliveryAddressForm";
 import AllServicesByBusiness from "./Pages/ServiceProvider/AllServicesByBusiness";
 import AllServices from "./Pages/ServiceProvider/AllServices";
 import OrderPageForBusinessmanUI from "./Pages/OrderForBusinessman";
+import BusinessProfilePageUI from "./Pages/BusinessProfile";
 
 const router = createBrowserRouter([
   {
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
       {
         path: "/category/:slug",
         element: <SubcategoryPage />,
+      },
+      {
+        path: "/business",
+        element: <BusinessProfilePageUI />,
       },
 
       //on the businessman side
@@ -185,7 +190,7 @@ const router = createBrowserRouter([
       //   element: <EditOperatingHours />,
       // },
       {
-        path: "/dashboard/business/:businessId/orders",
+        path: "/dashboard/:businessId/orders",
         element: <OrderPageForBusinessmanUI />,
       },
       {
