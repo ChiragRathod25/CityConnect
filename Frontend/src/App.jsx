@@ -13,6 +13,7 @@ import {
 import MyToaster from "./MyToaster";
 import LoadingComponent from "./components/LoadingComponent";
 import useScrollToTop from "./utils/useScrollToTop";
+import AIChatbotPageUI from "./Pages/Chatbot";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -88,6 +89,7 @@ function App() {
       <Layout>
         <main>
           <MyToaster />
+          <AIChatbotPageUI/>
           <Outlet />
         </main>
       </Layout>
