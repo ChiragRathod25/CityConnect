@@ -50,6 +50,7 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "Business ID is required");
   }
 
+  console.log("Fetching business profile for ID:", businessId);
   const business = await Business.aggregate([
     {
       $match: {

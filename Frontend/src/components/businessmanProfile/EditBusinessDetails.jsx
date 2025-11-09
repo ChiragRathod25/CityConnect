@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import databaseService from "@/services/database.services";
 import MoveBackButton from "../ui/MoveBackButton";
+import { useParams } from "react-router-dom";
 
 const FormInput = ({ label, icon: Icon, error, className = "", ...props }) => (
   <div className="space-y-2">
@@ -175,8 +176,7 @@ export default function EditBusinessDetails({onBack}) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Simulated businessId - replace with actual useParams() in your app
-  const businessId = "690649b2b7f1561d678bcc62";
+  const { businessId } = useParams();
 
   const [formData, setFormData] = useState({
     name: "",
