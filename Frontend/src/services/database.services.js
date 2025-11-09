@@ -816,6 +816,13 @@ export class DatabaseService {
     );
   }
 
+  async getPersonalizedRecommendations(){
+    return handleApiRequest(
+      () => axiosInstace.get("/api/v1/recommendation"),
+      "Get Personalized Recommendations"
+    );
+  }
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;

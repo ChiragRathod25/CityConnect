@@ -25,12 +25,15 @@ import {
   MessageCircle,
   Bookmark,
   Pause,
+  Tag,
+  Package,
 } from "lucide-react";
 import DotGrid from "@/components/DotGrid";
 import { AnimatedBackground } from "../Category/ReusableComponent";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import databaseService from "@/services/database.services";
 
-// Mock data
+// Mock data (for other sections, recommendations are now fetched)
 const mockSlides = [
   {
     title: "Discover Local Businesses",
@@ -129,21 +132,6 @@ const mockBusinessList = [
   },
 ];
 
-const mockRecommendations = [
-  {
-    ...mockBusinessList[0],
-    matchScore: 92,
-  },
-  {
-    ...mockBusinessList[1],
-    matchScore: 88,
-  },
-  {
-    ...mockBusinessList[2],
-    matchScore: 85,
-  },
-];
-
 // Optimized Button Component
 const GradientButton = React.memo(
   ({
@@ -185,10 +173,139 @@ const GradientButton = React.memo(
   }
 );
 
+// *** NEW SKELETON COMPONENT FOR LOADING ***
+const ProductCardSkeleton = () => (
+  <div className="relative bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-gray-200">
+    <div className="w-full h-40 sm:h-48 md:h-52 bg-gray-300 animate-pulse" />
+    <div className="p-3 md:p-5">
+      <div className="h-6 w-3/4 bg-gray-300 rounded-md mb-2 animate-pulse" />
+      <div className="h-4 w-1/2 bg-gray-300 rounded-md mb-4 animate-pulse" />
+      <div className="h-4 w-full bg-gray-300 rounded-md mb-2 animate-pulse" />
+      <div className="h-4 w-5/6 bg-gray-300 rounded-md mb-4 animate-pulse" />
+      <div className="flex gap-2">
+        <div className="flex-1 h-10 bg-gray-300 rounded-lg animate-pulse" />
+        <div className="w-10 h-10 bg-gray-300 rounded-lg animate-pulse" />
+      </div>
+    </div>
+  </div>
+);
+
+
+// Product Card Component
+const ProductCard = React.memo(
+  ({ product, onLike, onSave, isLiked, isSaved }) => {
+    const placeholderImage =
+      "https://via.placeholder.com/400x300.png?text=No+Image";
+    const imageUrl =
+      product.images && product.images.length > 0
+        ? product.images[0]
+        : placeholderImage;
+
+
+        const navigate=useNavigate();
+    return (
+      <div className="group relative">
+        <div className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-gray-300 transform hover:scale-105">
+          {/* Image Container */}
+          <div className="relative overflow-hidden">
+            <img
+              src={imageUrl}
+              alt={product.name}
+              className="w-full h-40 sm:h-48 md:h-52 object-cover transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+            />
+
+            {/* Top badges row */}
+            <div className="absolute top-2 md:top-3 left-2 md:left-3 right-2 md:right-3 flex justify-between items-start">
+              {product.stock > 0 ? (
+                <div className="bg-green-600/90 backdrop-blur-sm text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                  <Package size={10} />
+                  In Stock
+                </div>
+              ) : (
+                <div className="bg-red-600/90 backdrop-blur-sm text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium">
+                  Sold Out
+                </div>
+              )}
+            </div>
+
+            {/* Action buttons */}
+            <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 flex gap-2">
+              <button
+                onClick={() => onSave?.(product._id)}
+                className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                  isSaved
+                    ? "bg-blue-600 text-white"
+                    : "bg-white/90 text-gray-700 hover:bg-blue-600 hover:text-white"
+                } shadow-lg transform hover:scale-110`}
+              >
+                <Bookmark size={12} className={isSaved ? "fill-current" : ""} />
+              </button>
+
+              <button
+                onClick={() => onLike?.(product._id)}
+                className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                  isLiked
+                    ? "bg-red-600 text-white"
+                    : "bg-white/90 text-gray-700 hover:bg-red-600 hover:text-white"
+                } shadow-lg transform hover:scale-110`}
+              >
+                <Heart size={12} className={isLiked ? "fill-current" : ""} />
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-3 md:p-5">
+            <div className="flex items-start justify-between mb-2 md:mb-3">
+              <div className="flex-1">
+                <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1 line-clamp-1">
+                  {product.name}
+                </h3>
+
+                <p className="text-gray-600 text-sm flex items-center gap-2 mb-2">
+                  <Tag size={12} className="text-gray-400" />
+                  {product.category || "Uncategorized"}
+                </p>
+              </div>
+
+              <div className="text-gray-800 text-lg font-bold">
+                ₹{product.price}
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+              {product.description}
+            </p>
+
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <button className="flex-1 bg-black text-white py-2 md:py-2.5 px-3 md:px-4 rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base transform hover:scale-105"
+              onClick={()=>navigate('/product/'+product._id)}
+              >
+                View Details
+                <ArrowRight size={14} />
+              </button>
+
+              <button className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 transform hover:scale-105">
+                <ShoppingBag size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+);
+
 // Enhanced Business Card Component
 const BusinessCard = React.memo(
-  ({ business, showMatchScore = false, onLike, onSave, isLiked, isSaved }) => (
-    <div className="group relative">
+  ({ business, showMatchScore = false, onLike, onSave, isLiked, isSaved }) => {
+
+    const navigate=useNavigate()
+    return (
+        <div className="group relative">
       <div className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-gray-300 transform hover:scale-105">
         {/* Image Container */}
         <div className="relative overflow-hidden">
@@ -328,7 +445,9 @@ const BusinessCard = React.memo(
 
           {/* Action buttons */}
           <div className="flex gap-2">
-            <button className="flex-1 bg-black text-white py-2 md:py-2.5 px-3 md:px-4 rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base transform hover:scale-105">
+            <button className="flex-1 bg-black text-white py-2 md:py-2.5 px-3 md:px-4 rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base transform hover:scale-105"
+            onClick={()=>navigate('/business/'+business._id)}
+            >
               View Details
               <ArrowRight size={14} />
             </button>
@@ -340,8 +459,9 @@ const BusinessCard = React.memo(
         </div>
       </div>
     </div>
-  )
-);
+    )
+  }
+)
 
 // Modern Video Player Component
 const ModernVideoPlayer = React.memo(({ src, poster, className = "" }) => {
@@ -419,6 +539,30 @@ const StunningLandingPage = () => {
   const [savedBusinesses, setSavedBusinesses] = useState(new Set());
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
+  // *** UPDATED STATE FOR RECOMMENDATIONS ***
+  const [recommendations, setRecommendations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Start in loading state
+  const [error, setError] = useState(null);
+
+  const fetchRecommendations = async () => {
+    try {
+      const response = await databaseService.getPersonalizedRecommendations();
+      setRecommendations(response.data.recommendations || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+    
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    fetchRecommendations();
+  }, []); 
+
   // Auto-advance slider with optimization
   useEffect(() => {
     const interval = setInterval(() => {
@@ -469,9 +613,7 @@ const StunningLandingPage = () => {
           <DotGrid
             dotSize={12}
             gap={28}
-            // baseColor="#d1d5db"
             baseColor="#E9ECEF"
-            // activeColor="#374151"
             activeColor="#495057"
             proximity={120}
             speedTrigger={80}
@@ -501,9 +643,9 @@ const StunningLandingPage = () => {
               interactive platform
             </p>
             <NavLink to="/login">
-            <button className="px-8 py-4 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full font-semibold text-white hover:from-gray-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Get Started
-            </button>
+              <button className="px-8 py-4 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full font-semibold text-white hover:from-gray-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                Get Started
+              </button>
             </NavLink>
           </div>
         </div>
@@ -763,7 +905,7 @@ const StunningLandingPage = () => {
           </div>
         </div>
 
-        {/* Recommendations Section */}
+        {/* *** UPDATED Recommendations Section *** */}
         <div
           className="py-12 md:py-20 relative overflow-hidden"
           style={{ backgroundColor: "#f8fafc" }}
@@ -780,25 +922,40 @@ const StunningLandingPage = () => {
                 className="text-lg md:text-xl max-w-3xl mx-auto"
                 style={{ color: "#6b7280" }}
               >
-                Discover handpicked businesses that match your preferences and
+                Discover handpicked products that match your preferences and
                 needs
               </p>
             </div>
 
-            {/* Recommendations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12">
-              {mockRecommendations.map((business, index) => (
-                <div key={business._id}>
-                  <BusinessCard
-                    business={business}
-                    showMatchScore={true}
-                    onLike={handleLike}
-                    onSave={handleSave}
-                    isLiked={likedBusinesses.has(business._id)}
-                    isSaved={savedBusinesses.has(business._id)}
-                  />
+            {/* Recommendations Grid - UPDATED with loading/error states */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 mb-8 md:mb-12">
+              {isLoading ? (
+                // Loading State: Show 4 skeletons
+                [...Array(4)].map((_, i) => <ProductCardSkeleton key={i} />)
+              ) : error ? (
+                // Error State: Show error message
+                <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center text-red-600">
+                  <p>Failed to load recommendations: {error}</p>
                 </div>
-              ))}
+              ) : recommendations.length === 0 ? (
+                // Success but No Data:
+                <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center text-gray-600">
+                  <p>No recommendations found at this time.</p>
+                </div>
+              ) : (
+                // Success with Data:
+                recommendations.map((product) => (
+                  <div key={product._id}>
+                    <ProductCard
+                      product={product}
+                      onLike={handleLike}
+                      onSave={handleSave}
+                      isLiked={likedBusinesses.has(product._id)}
+                      isSaved={savedBusinesses.has(product._id)}
+                    />
+                  </div>
+                ))
+              )}
             </div>
 
             {/* CTA Section */}
@@ -811,16 +968,16 @@ const StunningLandingPage = () => {
                   className="text-xl md:text-2xl font-bold mb-3 md:mb-4"
                   style={{ color: "#1f2937" }}
                 >
-                  Discover More Businesses
+                  Discover More Products
                 </h3>
                 <p className="mb-4 md:mb-6" style={{ color: "#6b7280" }}>
-                  Explore our complete directory of verified local businesses in
-                  your area.
+                  Explore our complete directory of products from local
+                  businesses.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <GradientButton variant="primary">
                     <Search size={20} />
-                    View All Recommendations
+                    View All Products
                   </GradientButton>
                 </div>
               </div>
@@ -828,7 +985,7 @@ const StunningLandingPage = () => {
           </div>
         </div>
 
-        {/* Business Listings */}
+        {/* Business Listings (Unchanged) */}
         <div className="py-12 md:py-20 bg-[#ECF2F9] relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12 md:mb-16">
@@ -870,7 +1027,7 @@ const StunningLandingPage = () => {
           </div>
         </div>
 
-        {/* Features Section */}
+        {/* Features Section (Unchanged) */}
         <div className="py-12 md:py-20 bg-black relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12 md:mb-16">
@@ -969,7 +1126,7 @@ const StunningLandingPage = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
+        {/* Call to Action (Unchanged) */}
         <div
           className="py-12 md:py-20 relative overflow-hidden"
           style={{ backgroundColor: "#f8fafc" }}
@@ -1040,7 +1197,7 @@ const StunningLandingPage = () => {
           </div>
         </div>
 
-        {/* Testimonials Section */}
+        {/* Testimonials Section (Unchanged) */}
         <div className="py-20 bg-[#ECF2F9]">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
