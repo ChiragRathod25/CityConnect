@@ -171,7 +171,7 @@ const ServiceForm = ({ editMode = false }) => {
         );
         console.log("Service updated:", response);
         setSuccess(true);
-        navigate(`/business-profile`);
+        navigate(`/dashboard/business/${businessId}/services`);
       } catch (error) {
         console.error("Error updating service:", error);
       } finally {

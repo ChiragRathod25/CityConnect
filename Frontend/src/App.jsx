@@ -69,8 +69,14 @@ function App() {
             dispatch(logout());
           }
         })
+        .catch((error) => {
+          console.error("Error fetching current user:", error);
+          dispatch(logout());
+        })
         .finally(() => setLoading(false));
     };
+    console.log("Checking current user authentication status...");
+    setLoading(false);
     getCurrentUser();
   }, []);
 

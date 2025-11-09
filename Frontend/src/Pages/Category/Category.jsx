@@ -339,7 +339,7 @@ const CategoryPage = () => {
               className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4 leading-tight"
               style={{ color: "#1f2937" }}
             >
-              Discover Services
+              Discover Businesses 
             </h1>
             <p
               className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"

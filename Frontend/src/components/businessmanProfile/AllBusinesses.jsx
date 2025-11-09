@@ -58,6 +58,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import databaseService from "@/services/database.services";
+import { useNavigate } from "react-router-dom";
 
 const mockBusinesses = [
   {
@@ -285,8 +287,8 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
 };
 
 const AllBusinesses = () => {
-  const [businesses] = useState(mockBusinesses);
-  const [loading] = useState(false);
+  const [businesses, setBusinesses] = useState(mockBusinesses);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -299,18 +301,18 @@ const AllBusinesses = () => {
     // Fetch businesses on component mount
   useEffect(() => {
     // Replace with actual API call
-    // const fetchBusinesses = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const response = await databaseService.getBusinessesByOwner(ownerId);
-    //     setBusinesses(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching businesses:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-    // fetchBusinesses();
+    const fetchBusinesses = async () => {
+      setLoading(true);
+      try {
+        const response = await databaseService.getAllBusinesses();
+        setBusinesses(response.data);
+      } catch (error) {
+        console.error("Error fetching businesses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBusinesses();
   }, []);
 
   const statusColors = {
@@ -331,6 +333,11 @@ const AllBusinesses = () => {
       default:
         return <Store className="w-5 h-5" />;
     }
+  };
+
+  const navigate=useNavigate();
+  const handleViewDetails = (businessId) => {
+    navigate(`/dashboard/business/${businessId}`);
   };
 
   if (loading) {
@@ -455,7 +462,7 @@ const AllBusinesses = () => {
                       style={{ backgroundColor: "rgba(31, 41, 55, 0.8)", color: "#ffffff" }}
                     >
                       {getTypeIcon(business.type)}
-                      <span className="capitalize">{business.type}</span>
+                      <span className="capitalize">{business.type==="both" ? "Product & Service" : business.type}</span>
                     </div>
 
                     {/* Logo */}
@@ -547,6 +554,7 @@ const AllBusinesses = () => {
                     <button
                       className="w-full py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 text-white"
                       style={{ backgroundColor: "#1f2937" }}
+                      onClick={() => handleViewDetails(business._id)}
                     >
                       <span>View Details</span>
                       <ExternalLink className="w-4 h-4" />

@@ -103,28 +103,28 @@ const UserProfileDashboard = () => {
       // badge: userProfile?.isPhoneVerified ? 'Verified' : 'Pending',
       priority: userProfile?.isPhoneVerified ? 'low' : 'medium'
     },
-    { 
-      id: 'password-update', 
-      label: 'Security Settings', 
-      icon: Lock, 
-      description: 'Update password and security preferences',
-      badge: null,
-      priority: 'medium'
-    },
-    { 
-      id: 'status', 
-      label: 'Account Status', 
-      icon: Activity, 
-      description: 'Monitor your account health and activity',
-      badge: 'Premium',
-      priority: 'medium'
-    },
+    // { 
+    //   id: 'password-update', 
+    //   label: 'Security Settings', 
+    //   icon: Lock, 
+    //   description: 'Update password and security preferences',
+    //   badge: null,
+    //   priority: 'medium'
+    // },
+    // { 
+    //   id: 'status', 
+    //   label: 'Account Status', 
+    //   icon: Activity, 
+    //   description: 'Monitor your account health and activity',
+    //   badge: 'Premium',
+    //   priority: 'medium'
+    // },
     { 
       id: 'orders', 
       label: 'Order History', 
       icon: ShoppingBag, 
       description: 'Track and manage your purchases',
-      badge: `${userProfile?.completedOrders} Orders`,
+      badge: userProfile?.completedOrders ? `${userProfile.completedOrders} Orders` : null,
       priority: 'high'
     },
     {
@@ -143,14 +143,14 @@ const UserProfileDashboard = () => {
       badge: 'Explore',
       priority: 'medium'
     },
-    { 
-      id: 'seller', 
-      label: 'Become a Seller', 
-      icon: Crown, 
-      description: 'Start earning with your talents today',
-      badge: 'Hot 🔥',
-      priority: 'high'
-    },
+    // { 
+    //   id: 'seller', 
+    //   label: 'Become a Seller', 
+    //   icon: Crown, 
+    //   description: 'Start earning with your talents today',
+    //   badge: 'Hot 🔥',
+    //   priority: 'high'
+    // },
     { 
       id: 'support', 
       label: 'Help & Support', 

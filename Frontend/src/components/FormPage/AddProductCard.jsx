@@ -184,7 +184,7 @@ const ProductForm = ({ editMode = false }) => {
         );
         console.log("Product updated successfully:", response);
         setSuccess(true);
-        navigate("/products");
+        navigate(`/dashboard/business/${businessId}/products`);
       } catch (error) {
         console.error("Error updating product:", error);
       }finally{

@@ -152,7 +152,7 @@ const PaymentPage = () => {
 
         setTimeout(() => {
           setIsLoading(false);
-          navigate("/order-success", {
+          navigate("/payment-success", {
             state: {
               orderDetails: {
                 address,
@@ -199,7 +199,7 @@ const PaymentPage = () => {
               await databaseService.clearCart();
 
               setIsLoading(false);
-              navigate("/order-success", {
+              navigate("/payment-success", {
                 state: {
                   paymentId: response.razorpay_payment_id,
                   orderDetails: {

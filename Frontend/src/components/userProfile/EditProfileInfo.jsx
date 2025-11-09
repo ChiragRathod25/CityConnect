@@ -434,6 +434,15 @@ const EditUserProfileInfo = () => {
   
   useEffect(() => {
     setEditedData({ ...profileData });
+
+    //handle image if avatar is already a URL
+    if (profileData?.avatar && typeof profileData?.avatar === "string") {
+      setEditedData((prev) => ({
+        ...prev,
+        avatarPreview: profileData.avatar,
+      }));
+    }
+    console.log("profileData changed:", profileData);
   }, [profileData]);
 
   const [editedData, setEditedData] = useState({ ...profileData });
@@ -453,7 +462,8 @@ const EditUserProfileInfo = () => {
     try {
       const response = await databaseService.updateUserAvatar(avatarFile);
       // response should contain Cloudinary URL
-      return response.data.avatarUrl;
+      // console.log("response", response);
+      return response.data.avatar;
     } catch (error) {
       console.error("Error updating avatar:", error);
     }
@@ -467,7 +477,14 @@ const EditUserProfileInfo = () => {
       if (editedData?.avatar !== profileData?.avatar) {
         try {
           const updatedAvatarUrl = await updateProfileAvatar(editedData?.avatar);
-          editedData.avatar = updatedAvatarUrl; // now a Cloudinary URL
+          editedData.avatar = updatedAvatarUrl;
+
+          //update the preview as well
+          // setEditedData((prev) => ({
+          //   ...prev,
+          //   avatarPreview: updatedAvatarUrl,
+          // }));
+        
         } catch (error) {
           console.error("Error updating avatar:", error);
           setLoading(false);

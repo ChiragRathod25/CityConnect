@@ -146,6 +146,10 @@ const SubcategoryPage = ({ onProviderClick }) => {
     setShowSuggestions(false);
   };
 
+  const handleViewDetails = (businessId) => {
+    navigate(`/business/${businessId}`);
+  };
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -165,7 +169,29 @@ const SubcategoryPage = ({ onProviderClick }) => {
     );
   }
 
-  if (!category) return null;
+  if (!category)
+    return (
+      <div className="min-h-screen w-full relative bg-white">
+        <AnimatedBackground />
+        <div className="relative z-10">
+          <div className="max-w-7xl mx-auto px-4 py-12 w-2/5">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8 w-25">
+              <Button variant="ghost" onClick={() => navigate(-1)}>
+                ← Back
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-gray-500 text-lg">
+            {/* display here than there is not business of this category */}
+            No businesses found for this category.
+          </p>
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen w-full relative bg-white">
@@ -174,10 +200,12 @@ const SubcategoryPage = ({ onProviderClick }) => {
         <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" onClick={() => navigate(-1)}>
+            <Button variant="ghost" onClick={() => navigate(-1)} 
+             className="w-10"
+              >
               ← Back
             </Button>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 w-full">
               {category.name || slug}
             </h1>
           </div>
@@ -223,108 +251,111 @@ const SubcategoryPage = ({ onProviderClick }) => {
           {currentProviders.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentProviders.map((provider, index) => (
-            <motion.div
-  key={provider._id || index}
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: index * 0.05 }}
->
-  <div
-    onClick={() => onProviderClick?.(provider)}
-    className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-  >
-    {/* Image */}
-    <div className="relative h-48 w-full overflow-hidden">
-      <img
-        src={
-          provider?.images?.[0]?.url ||
-          "/assets/images/default-restaurant.jpg"
-        }
-        alt={provider.name}
-        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-      />
+                <motion.div
+                  key={provider._id || index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <div
+                    onClick={() => onProviderClick?.(provider)}
+                    className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                  >
+                    {/* Image */}
+                    <div className="relative h-48 w-full overflow-hidden">
+                      <img
+                        src={
+                          provider?.images?.[0]?.url ||
+                          "/assets/images/default-restaurant.jpg"
+                        }
+                        alt={provider.name}
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
 
-      {/* Like Button */}
-      <button className="absolute top-3 right-3 bg-white/80 backdrop-blur-md rounded-full p-2 shadow hover:bg-white transition">
-        <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
-      </button>
+                      {/* Like Button */}
+                      <button className="absolute top-3 right-3 bg-white/80 backdrop-blur-md rounded-full p-2 shadow hover:bg-white transition">
+                        <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
+                      </button>
 
-      {/* Verification Badge */}
-      <div
-        className={`absolute top-3 left-3 px-2 py-1 text-xs font-semibold rounded-full shadow ${
-          provider.isVerified
-            ? "bg-green-500 text-white"
-            : "bg-yellow-400 text-gray-800"
-        }`}
-      >
-        {provider.isVerified ? "Verified" : "Pending"}
-      </div>
-    </div>
+                      {/* Verification Badge */}
+                      <div
+                        className={`absolute top-3 left-3 px-2 py-1 text-xs font-semibold rounded-full shadow ${
+                          provider.isVerified
+                            ? "bg-green-500 text-white"
+                            : "bg-yellow-400 text-gray-800"
+                        }`}
+                      >
+                        {provider.isVerified ? "Verified" : "Pending"}
+                      </div>
+                    </div>
 
-    {/* Info */}
-    <div className="p-5">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <h3 className="text-xl font-semibold text-gray-900 truncate">
-          {provider.name}
-        </h3>
-        <span className="text-xs text-gray-500">
-          {new Date(provider.createdAt).toLocaleDateString()}
-        </span>
-      </div>
+                    {/* Info */}
+                    <div className="p-5">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-xl font-semibold text-gray-900 truncate">
+                          {provider.name}
+                        </h3>
+                        <span className="text-xs text-gray-500">
+                          {new Date(provider.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
 
-      {/* Category + Type */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded-full">
-          {provider.category || "Uncategorized"}
-        </span>
-        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
-          {provider.type || "Business"}
-        </span>
-      </div>
+                      {/* Category + Type */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded-full">
+                          {provider.category || "Uncategorized"}
+                        </span>
+                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                          {provider.type || "Business"}
+                        </span>
+                      </div>
 
-      {/* Description */}
-      <p className="text-sm text-gray-600 line-clamp-2 mb-4">
-        {provider.description ||
-          "No description available for this business."}
-      </p>
+                      {/* Description */}
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                        {provider.description ||
+                          "No description available for this business."}
+                      </p>
 
-      {/* Location */}
-      {provider.locationDetails && (
-        <div className="flex items-start gap-2 text-gray-500 text-sm mb-4">
-          <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-          <span>
-            {provider.locationDetails.address ||
-              `${provider.locationDetails.city}, ${provider.locationDetails.country}`}
-          </span>
-        </div>
-      )}
+                      {/* Location */}
+                      {provider.locationDetails && (
+                        <div className="flex items-start gap-2 text-gray-500 text-sm mb-4">
+                          <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                          <span>
+                            {provider.locationDetails.address ||
+                              `${provider.locationDetails.city}, ${provider.locationDetails.country}`}
+                          </span>
+                        </div>
+                      )}
 
-      {/* Status */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex items-center gap-1 text-xs text-gray-400">
-          <Clock className="w-4 h-4" />
-          <span>
-            Updated{" "}
-            {new Date(provider.updatedAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
-        </div>
+                      {/* Status */}
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-1 text-xs text-gray-400">
+                          <Clock className="w-4 h-4" />
+                          <span>
+                            Updated{" "}
+                            {new Date(provider.updatedAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </span>
+                        </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-sm font-medium text-rose-600 border-rose-100 hover:bg-rose-50"
-        >
-          View Details →
-        </Button>
-      </div>
-    </div>
-  </div>
-</motion.div>
-
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-sm font-medium text-rose-600 border-rose-100 hover:bg-rose-50"
+                          onClick={()=>handleViewDetails(provider._id)}
+                        >
+                          View Details →
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
           ) : (

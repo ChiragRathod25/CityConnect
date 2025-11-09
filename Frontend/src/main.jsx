@@ -109,11 +109,12 @@ const router = createBrowserRouter([
         path: "/category/:slug",
         element: <SubcategoryPage />,
       },
+  
       {
-        path: "/business",
+        path: "/business/:businessId",
         element: <BusinessProfilePageUI />,
       },
-
+      
       //on the businessman side
       {
         path: "/register-business",
@@ -190,7 +191,7 @@ const router = createBrowserRouter([
       //   element: <EditOperatingHours />,
       // },
       {
-        path: "/dashboard/:businessId/orders",
+        path: "/dashboard/business/:businessId/orders",
         element: <OrderPageForBusinessmanUI />,
       },
       {
@@ -222,32 +223,32 @@ const router = createBrowserRouter([
 
       ///admin side
       {
-        path: "/admin",
+        path: "/admin",   //deprecated
         element: <AdminProfilePageUI />,
       },
       {
-        path: "/admin/manage-category",
+        path: "/admin/manage-category", //deprecated
         element: <ManageCategoryUI />,
       },
       {
-        path: "/admin/manage-users",
+        path: "/admin/manage-users", //deprecated
         element: <ManageUserUI />,
       },
       {
-        path: "/admin/manage-businessmen",
+        path: "/admin/manage-businessmen", //deprecated
         element: <ManageBusinessmanUI />,
       },
       {
-        path: "/admin/businessman-verification",
+        path: "/admin/businessman-verification",//deprecated
         element: <AdminVerificationPanel />,
       },
       {
-        path: "/admin/contactus",
+        path: "/admin/contactus",//deprecated
         element: <ContactUsForAdmin />,
       },
 
       {
-        path: "/add",
+        path: "/add",//deprecated
         element: <AddBusinessCard />,
       },
 
@@ -265,7 +266,7 @@ const router = createBrowserRouter([
         element: <ContactUsPageUI />,
       },
       {
-        path: "/start",
+        path: "/start", //deprecated
         element: <CityConnectLanding />,
       },
       {

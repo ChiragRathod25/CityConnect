@@ -94,7 +94,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "Category", path: "/category" },
+    { name: "Businesses", path: "/category" },
     { name: "About", path: "/about" },
     { name: "Contact Us", path: "/contactus" },
     // ...(user?.role === "seller"

@@ -18,14 +18,13 @@ function Modal({ isOpen, onClose, children, title }) {
       className="
         fixed inset-0 flex justify-center items-center
         bg-[rgba(0,0,0,0.5)]
-        z-50
-      "
+        z-50"
       onClick={onClose}
     >
       <div
         className="
           bg-white
-          w-[90%] max-w-[800px]  // 90% width of window with max 800px
+          w-[90%] max-w-[800px]
           rounded-xl
           shadow-2xl
           p-6

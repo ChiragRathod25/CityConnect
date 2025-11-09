@@ -247,13 +247,14 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
     //check email is same as a backend data, 
     //get user from the backend
-    const user = await User.findById(tempData.userData.userId);
-    if (!user) {
-      throw new ApiError(404, "User not found for email update");
-    }
-    //update email in the backend
-    user.email = tempData.userData.email;
-    await user.save({ validateBeforeSave: true });
+    // const user = await User.findById(tempData.userData.userId);
+    // if (!user) {
+    //   throw new ApiError(404, "User not found for email update");
+    // }
+
+    // //update email in the backend
+    // user.email = tempData.userData.email;
+    // await user.save({ validateBeforeSave: true });
 
     return res.status(200).json(
       new ApiResponse(200, "Email verified successfully", {
@@ -365,13 +366,13 @@ const verifyPhone = asyncHandler(async (req, res) => {
 
   // check phone is same as a backend data,
   //get user from the backend
-  const user = await User.findById(tempData.userData?.userId);
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-  //update phone in the backend
-  user.phoneNumber = tempData.userData?.phoneNumber || tempData.userData?.phone;
-  await user.save({ validateBeforeSave: true });
+  // const user = await User.findById(tempData.userData?.userId);
+  // if (!user) {
+  //   throw new ApiError(404, "User not found");
+  // }
+  // //update phone in the backend
+  // user.phoneNumber = tempData.userData?.phoneNumber || tempData.userData?.phone;
+  // await user.save({ validateBeforeSave: true });
 
 
   return res.status(200).json(

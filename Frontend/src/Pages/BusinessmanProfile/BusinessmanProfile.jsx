@@ -429,6 +429,8 @@ const BusinessmanProfileDashboard = () => {
         isOpen={isMapModalOpen}
         onClose={handleCloseMap}
         title="Business Location"
+        //full width
+        style={{ maxWidth: "800px" }}
       >
         {businessProfile.locationDetails?.lat && businessProfile.locationDetails?.lng ? (
           <PathMapWithRoutingControl
@@ -523,7 +525,7 @@ const BusinessmanProfileDashboard = () => {
                     {businessProfile.name}
                   </h2>
                   <p className="text-gray-300 text-sm sm:text-base capitalize">
-                    {businessProfile.category} • {businessProfile.type}
+                    {businessProfile.category} • {businessProfile.type==="both" ? "Product & Service" : businessProfile.type}
                   </p>
                 </div>
 

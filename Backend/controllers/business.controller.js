@@ -30,6 +30,7 @@ const registerBusiness = asyncHandler(async (req, res, next) => {
     type,
     category,
     description,
+    isVerified: true, // By default, set to true, because email and phone are verified while creating user account
   });
 
   if (!business) {
@@ -90,7 +91,7 @@ const getBusinessProfileById = asyncHandler(async (req, res, next) => {
         as: "workingHoursDetails",
       },
     },
-    { $unwind: "$workingHoursDetails" },
+    // { $unwind: "$workingHoursDetails" },
   ]);
 
   const allreviews=await BusinessReview.find({businessId:businessId});
@@ -460,7 +461,7 @@ const getBusinessByCategory = asyncHandler(async (req, res, next) => {
 
   const businesses = await Business.aggregate([
     {
-      $match: { category: "restaurant" },
+      $match: { category},
     },
     {
       $lookup: {

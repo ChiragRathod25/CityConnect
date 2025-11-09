@@ -32,6 +32,7 @@
 // export default AllServices
 
 
+import databaseService from "@/services/database.services";
 import React, { useState, useEffect } from "react";
 
 const mockServices = [
@@ -306,8 +307,8 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
 };
 
 const AllServices = () => {
-  const [services] = useState(mockServices);
-  const [loading] = useState(false);
+  const [services, setServices] = useState(mockServices);
+  const [loading, setLoading  ] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -316,20 +317,21 @@ const AllServices = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentServices = services.slice(startIndex, endIndex);
 
+
   useEffect(() => {
     // Fetch services from API
-    // const fetchServices = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const response = await databaseService.getServicesByBusiness(businessId);
-    //     setServices(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching services:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-    // fetchServices();
+    const fetchServices = async () => {
+      setLoading(true);
+      try {
+        const response = await databaseService.getAllServices();
+        setServices(response.data);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
   }, []);
 
   const getServiceTypeIcon = (type) => {
@@ -545,28 +547,26 @@ const AllServices = () => {
                     </div>
 
                     {/* Tags */}
-                    {service.tags && service.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {service.tags.slice(0, 3).map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 rounded-md text-xs font-medium flex items-center space-x-1"
-                            style={{ backgroundColor: "#f3f4f6", color: "#4b5563" }}
-                          >
-                            <TagIcon className="w-3 h-3" />
-                            <span>{tag}</span>
-                          </span>
-                        ))}
-                        {service.tags.length > 3 && (
-                          <span
-                            className="px-2 py-1 rounded-md text-xs font-medium"
-                            style={{ backgroundColor: "#f3f4f6", color: "#4b5563" }}
-                          >
-                            +{service.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                  {service.tags && service.tags.length > 0 && (
+  <div className="flex flex-wrap gap-2 mb-4">
+    {service.tags[0]
+      // remove [ ] and quotes
+      .replace(/[\[\]"]/g, "")
+      // split by comma into array
+      .split(",")
+      // trim spaces and map over each tag
+      .map((tag, idx) => (
+        <span
+          key={idx}
+          className="px-2 py-1 rounded-md text-xs font-medium flex items-center space-x-1"
+          style={{ backgroundColor: "#f3f4f6", color: "#4b5563" }}
+        >
+          <TagIcon className="w-3 h-3" />
+          <span>{tag.trim()}</span>
+        </span>
+      ))}
+  </div>
+)}
 
                     {/* Action Button */}
                     <button
