@@ -304,7 +304,7 @@ const CartPage = () => {
             Looks like you haven't added any items to your cart yet.
           </p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/category')}
             className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-colors"
           >
             Continue Shopping

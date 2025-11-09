@@ -258,7 +258,7 @@ const DatePicker = ({ value, onChange, disabled }) => {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border-2 border-[#e5e7eb] z-50 overflow-hidden backdrop-blur-xl">
+          <div className="absolute -top-70 sm:-top-110 left-0 mt-2 w-full bg-white rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border-2 border-[#e5e7eb] z-50 overflow-hidden backdrop-blur-xl">
             <div className="p-3 sm:p-4 md:p-6">
               {/* Month/Year Header - Mobile Optimized */}
               <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
@@ -269,7 +269,7 @@ const DatePicker = ({ value, onChange, disabled }) => {
                   <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 rotate-90 text-[#6b7280] group-hover:text-[#1f2937]" />
                 </button>
 
-                <div className="flex items-center space-x-1 sm:space-x-2">
+                <div className="flex items-center  space-x-1 sm:space-x-2">
                   {/* Month Dropdown */}
                   <div className="relative">
                     <button
@@ -428,9 +428,9 @@ const EditUserProfileInfo = () => {
   //   bio: "Digital artist & UX designer crafting beautiful experiences. Passionate about minimalist design, emerging technologies, and creating meaningful connections through design."
   // });
   const [profileData, setProfileData] = useState(
-    useSelector((state) => state.auth.userData?.user)
+    useSelector((state) => state.auth?.userData?.user)
   );
-  const existingUserData= useSelector((state) => state.auth.userData);
+  const existingUserData= useSelector((state) => state.auth?.userData?.user);
   
   useEffect(() => {
     setEditedData({ ...profileData });

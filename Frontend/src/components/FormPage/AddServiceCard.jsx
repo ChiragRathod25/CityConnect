@@ -329,7 +329,7 @@ const ServiceForm = ({ editMode = false }) => {
 
   return (
     <div
-      className="min-h-screen py-20 px-3 relative"
+      className="min-h-screen py-10 pb-10 sm:pb-20 px-3 relative"
       style={{ backgroundColor: "#f8fafc" }}
     >
       <div className="max-w-5xl mx-auto relative z-10">

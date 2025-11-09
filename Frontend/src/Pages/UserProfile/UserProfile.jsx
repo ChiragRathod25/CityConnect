@@ -16,7 +16,10 @@ import {
   XCircle,
   Camera,
   Crown,
-  Bell
+  Bell,
+  FileText,
+  Layers,
+  ClipboardPlus
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -44,11 +47,11 @@ const UserProfileDashboard = () => {
   // });
 
 
-  const [userProfile, setUserProfile] = useState(useSelector(state=>state.auth.userData?.user));
- 
-  useEffect(()=>{
-    console.log("userProfile data in UserProfile.jsx:",userProfile);
-  },[userProfile]);
+  const [userProfile, setUserProfile] = useState(useSelector(state => state.auth.userData?.user));
+
+  useEffect(() => {
+    console.log("userProfile data in UserProfile.jsx:", userProfile);
+  }, [userProfile]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,26 +82,26 @@ const UserProfileDashboard = () => {
   };
 
   const menuItems = [
-    { 
-      id: 'profile-info', 
-      label: 'Profile Info', 
-      icon: User, 
+    {
+      id: 'profile-info',
+      label: 'Profile Info',
+      icon: User,
       description: 'Manage your personal information and preferences',
       badge: null,
       priority: 'high'
     },
-    { 
-      id: 'change-email', 
-      label: 'Update Email Address', 
-      icon: Mail, 
+    {
+      id: 'change-email',
+      label: 'Update Email Address',
+      icon: Mail,
       description: 'Update and secure your email address',
       // badge: userProfile?.isEmailVerified ? 'Verified' : 'Action Required',
       priority: userProfile?.isEmailVerified ? 'low' : 'high'
     },
-    { 
-      id: 'change-phone', 
-      label: 'Update Phone Number', 
-      icon: Phone, 
+    {
+      id: 'change-phone',
+      label: 'Update Phone Number',
+      icon: Phone,
       description: 'Update and secure your phone number',
       // badge: userProfile?.isPhoneVerified ? 'Verified' : 'Pending',
       priority: userProfile?.isPhoneVerified ? 'low' : 'medium'
@@ -119,13 +122,29 @@ const UserProfileDashboard = () => {
     //   badge: 'Premium',
     //   priority: 'medium'
     // },
-    { 
-      id: 'orders', 
-      label: 'Order History', 
-      icon: ShoppingBag, 
+    {
+      id: 'orders-history',
+      label: 'Order History',
+      icon: ShoppingBag,
       description: 'Track and manage your purchases',
       badge: userProfile?.completedOrders ? `${userProfile.completedOrders} Orders` : null,
       priority: 'high'
+    },
+    {
+      id: "allServices",
+      label: "All Services",
+      icon: Layers, // lucide recommended icon for services / multiple
+      description: "View and manage your all business services",
+      // badge: businessProfile.services?.length > 0 ? "Added" : "Pending",
+      // priority: businessProfile.services?.length > 0 ? "low" : "high",
+    },
+    {
+      id: "register-business",
+      label: "Register Business",
+      icon: ClipboardPlus, // lucide icon recommended for registration
+      description: "Register your business to get started",
+      // badge: businessProfile?.isRegistered ? "Registered" : "Pending",
+      // priority: businessProfile?.isRegistered ? "low" : "high",
     },
     {
       id: 'notifications',
@@ -135,14 +154,8 @@ const UserProfileDashboard = () => {
       badge: '3 New',
       priority: 'medium'
     },
-    { 
-      id: 'services', 
-      label: 'Browse Services', 
-      icon: Briefcase, 
-      description: 'Discover amazing services from our sellers',
-      badge: 'Explore',
-      priority: 'medium'
-    },
+
+
     // { 
     //   id: 'seller', 
     //   label: 'Become a Seller', 
@@ -151,22 +164,22 @@ const UserProfileDashboard = () => {
     //   badge: 'Hot 🔥',
     //   priority: 'high'
     // },
-    { 
-      id: 'support', 
-      label: 'Help & Support', 
-      icon: HelpCircle, 
+    {
+      id: 'support',
+      label: 'Help & Support',
+      icon: HelpCircle,
       description: '24/7 assistance and troubleshooting',
       badge: null,
       priority: 'low'
     },
-    { 
-      id: 'about', 
-      label: 'Platform Info', 
-      icon: Info, 
-      description: 'Learn about features and updates',
-      badge: null,
-      priority: 'low'
-    }
+    // {
+    //   id: 'about',
+    //   label: 'Platform Info',
+    //   icon: Info,
+    //   description: 'Learn about features and updates',
+    //   badge: null,
+    //   priority: 'low'
+    // }
   ];
 
   const handleMenuClick = (itemId) => {
@@ -203,21 +216,21 @@ const UserProfileDashboard = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Modern Profile Header */}
-        <div 
+        <div
           ref={headerRef}
           className="bg-gray-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 lg:mb-8 shadow-2xl relative overflow-hidden border border-gray-700"
           style={{ opacity: 0, transform: 'translateY(-30px)' }}
         >
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-gray-700 opacity-20 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
-          
+
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 lg:gap-8">
               {/* Avatar Section */}
               <div className="relative group">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full p-1 bg-gray-600 shadow-2xl">
-                  <img 
-                    src={userProfile?.avatar} 
+                  <img
+                    src={userProfile?.avatar}
                     alt={userProfile?.username}
                     className="w-full h-full rounded-full object-cover"
                   />
@@ -225,7 +238,7 @@ const UserProfileDashboard = () => {
                 <button className="absolute -bottom-1 sm:-bottom-2 -right-1 sm:-right-2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gray-600 rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-gray-500">
                   <Camera size={16} className="text-white sm:w-5 sm:h-5" />
                 </button>
-                
+
                 {/* Status Indicator */}
                 <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full border-2 sm:border-4 border-white shadow-lg animate-pulse"></div>
@@ -251,8 +264,8 @@ const UserProfileDashboard = () => {
                   {userProfile?.email}
                 </p>
                 <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
-                  Member since {new Date(userProfile?.joinDate).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
+                  Member since {new Date(userProfile?.joinDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}
@@ -261,7 +274,7 @@ const UserProfileDashboard = () => {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                   {headerStats.map((stat, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="bg-gray-700 bg-opacity-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center border border-gray-600 transition-all duration-300 hover:scale-105 hover:bg-opacity-70"
                     >
@@ -277,22 +290,20 @@ const UserProfileDashboard = () => {
 
                 {/* Verification Status */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
-                  <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                    userProfile?.isEmailVerified 
-                      ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30' 
-                      : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
-                  } shadow-lg`}>
+                  <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${userProfile?.isEmailVerified
+                    ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30'
+                    : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
+                    } shadow-lg`}>
                     {userProfile?.isEmailVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">
                       <span className="hidden sm:inline">Email {userProfile?.isEmailVerified ? 'Verified' : 'Unverified'}</span>
                       <span className="sm:hidden">{userProfile?.isEmailVerified ? 'Email ✓' : 'Email ✗'}</span>
                     </span>
                   </div>
-                  <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                    userProfile?.isPhoneVerified 
-                      ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30' 
-                      : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
-                  } shadow-lg`}>
+                  <div className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${userProfile?.isPhoneVerified
+                    ? 'bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30'
+                    : 'bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30'
+                    } shadow-lg`}>
                     {userProfile?.isPhoneVerified ? <CheckCircle size={14} className="sm:w-4 sm:h-4" /> : <XCircle size={14} className="sm:w-4 sm:h-4" />}
                     <span className="font-semibold text-xs sm:text-sm">
                       <span className="hidden sm:inline">Phone {userProfile?.isPhoneVerified ? 'Verified' : 'Unverified'}</span>
@@ -309,7 +320,7 @@ const UserProfileDashboard = () => {
         <div ref={menuGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-6 lg:mb-8">
           {menuItems.map((item, index) => {
             const IconComponent = item.icon;
-            
+
             return (
               <div
                 key={item.id}
@@ -320,35 +331,35 @@ const UserProfileDashboard = () => {
                 <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-6 shadow-lg hover:shadow-2xl border border-gray-200 relative overflow-hidden h-full transition-all duration-500 group-hover:border-gray-300">
                   {/* Hover Background */}
                   <div className="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
+
                   <div className="relative z-10">
                     {/* Icon and Badge Row */}
                     <div className="flex items-start justify-between mb-3 sm:mb-4">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-500 shadow-md bg-gray-800 group-hover:bg-gray-700">
-                        <IconComponent 
-                          size={20} 
+                        <IconComponent
+                          size={20}
                           className="text-white sm:w-6 sm:h-6 group-hover:rotate-12 transition-transform duration-500"
                         />
                       </div>
-                      
+
                       <div className="flex flex-col items-end gap-2">
                         {item.badge && (
                           <span className="px-2 sm:px-3 py-1 text-xs rounded-full font-semibold shadow-lg text-white bg-gray-800 group-hover:scale-110 transition-transform duration-300">
                             {item.badge}
                           </span>
                         )}
-                        <ChevronRight 
-                          size={16} 
+                        <ChevronRight
+                          size={16}
                           className="text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300 sm:w-5 sm:h-5"
                         />
                       </div>
                     </div>
-                    
+
                     {/* Title */}
                     <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-800 group-hover:text-gray-900 transition-colors duration-300">
                       {item.label}
                     </h3>
-                    
+
                     {/* Description */}
                     <p className="text-sm leading-relaxed text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
                       {item.description}
@@ -361,13 +372,13 @@ const UserProfileDashboard = () => {
         </div>
 
         {/* Logout Section */}
-        <div 
+        <div
           ref={logoutSectionRef}
           className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg border border-gray-200 relative overflow-hidden"
           style={{ opacity: 0, transform: 'translateY(30px)' }}
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 opacity-50 rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
-          
+
           <div className="relative z-10">
             <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md bg-red-100">
@@ -382,7 +393,7 @@ const UserProfileDashboard = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 onClick={() => setLogoutModal(true)}
@@ -392,7 +403,7 @@ const UserProfileDashboard = () => {
                 <span className="hidden sm:inline">Logout from this device</span>
                 <span className="sm:hidden">Logout Device</span>
               </button>
-              
+
               <button
                 onClick={() => setLogoutModal(true)}
                 className="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl group bg-red-600 text-white hover:bg-red-700 hover:scale-105 text-sm sm:text-base"
@@ -421,7 +432,7 @@ const UserProfileDashboard = () => {
                 Are you sure you want to logout? You'll need to sign in again to access your account.
               </p>
             </div>
-            
+
             <div className="flex flex-col gap-3 sm:gap-4">
               <button
                 onClick={() => handleLogout(false)}
@@ -462,7 +473,7 @@ const UserProfileDashboard = () => {
               <p className="text-gray-600 text-sm sm:text-base lg:text-lg mb-4">
                 Start your entrepreneurial journey and earn money by selling your products and services on our platform.
               </p>
-              
+
               {/* Benefits List */}
               <div className="text-left mb-6 space-y-3">
                 <div className="flex items-center gap-3">
@@ -491,7 +502,7 @@ const UserProfileDashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col gap-3 sm:gap-4">
               <button
                 onClick={handleBecomeSeller}

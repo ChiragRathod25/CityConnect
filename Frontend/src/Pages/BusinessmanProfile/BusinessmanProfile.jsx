@@ -28,6 +28,11 @@ import {
   MapPin,
   Globe,
   Clock,
+  PlusCircle,
+  Building2,
+  Sparkles,
+  ImageUp,
+  Images,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import databaseService from "@/services/database.services";
@@ -91,9 +96,8 @@ const BusinessmanProfileDashboard = () => {
     const menuItems = menuGridRef.current?.children;
     if (menuItems) {
       Array.from(menuItems).forEach((item, index) => {
-        item.style.animation = `slideInFromBottom 0.6s cubic-bezier(0.23, 1, 0.32, 1) ${
-          index * 0.1
-        }s forwards`;
+        item.style.animation = `slideInFromBottom 0.6s cubic-bezier(0.23, 1, 0.32, 1) ${index * 0.1
+          }s forwards`;
         item.style.opacity = "0";
         item.style.transform = "translateY(30px)";
       });
@@ -135,213 +139,266 @@ const BusinessmanProfileDashboard = () => {
 
   const menuItems = businessProfile
     ? [
-        {
-          id: "business-info",
-          label: "Business Information",
-          icon: Store,
-          description: `Manage ${businessProfile.name} details and settings`,
-          badge: businessProfile.type,
-          priority: "high",
-        },
-        {
-          id: "profile-info",
-          label: "Profile Info",
-          icon: User,
-          description: "Manage your personal information and preferences",
-          badge: null,
-          priority: "high",
-        },
-        {
-          id: "location",
-          label: "Business Location",
-          icon: MapPin,
-          description:
-            businessProfile.locationDetails?.address ||
-            "Set your business location",
-          badge: businessProfile.locationDetails?.city || null,
-          priority: "high",
-        },
-        {
-          id: "contact",
-          label: "Contact Information",
-          icon: Phone,
-          description: "Manage business contact details",
-          badge: businessProfile.contactDetails?.phone || null,
-          priority: "high",
-        },
-        {
-          id: "working-hours",
-          label: "Working Hours",
-          icon: Clock,
-          description: businessProfile.workingHoursDetails
-            ? `${businessProfile.workingHoursDetails.openTime} - ${businessProfile.workingHoursDetails.closeTime}`
-            : "Set your business operating hours",
-          badge: businessProfile.workingHoursDetails?.isClosed
-            ? "Closed"
-            : "Open",
-          priority: "medium",
-        },
-        {
-          id: "change-email",
-          label: "Update Email Address",
-          icon: Mail,
-          description: "Update and secure your email address",
-          badge: businessProfile.ownerDetails.isEmailVerified
-            ? "Verified"
-            : "Unverified",
-          priority: businessProfile.ownerDetails.isEmailVerified
-            ? "low"
-            : "high",
-        },
-        {
-          id: "change-phone",
-          label: "Update Phone Number",
-          icon: Phone,
-          description: "Update and secure your phone number",
-          badge: businessProfile.ownerDetails.isPhoneVerified
-            ? "Verified"
-            : "Unverified",
-          priority: businessProfile.ownerDetails.isPhoneVerified
-            ? "low"
-            : "medium",
-        },
-        {
-          id: "password-update",
-          label: "Security Settings",
-          icon: Lock,
-          description: "Update password and security preferences",
-          badge: null,
-          priority: "medium",
-        },
-        {
-          id: "status",
-          label: "Account Status",
-          icon: Activity,
-          description: "Monitor your account health and activity",
-          badge:
-            businessProfile.status.charAt(0).toUpperCase() +
-            businessProfile.status.slice(1),
-          priority: "medium",
-        },
-        {
-          id: "verification",
-          label: "Business Verification",
-          icon: Award,
-          description: businessProfile.isVerified
-            ? "Your business is verified"
-            : "Complete verification process",
-          badge: businessProfile.isVerified ? "Verified" : "Pending",
-          priority: businessProfile.isVerified ? "low" : "high",
-        },
-        {
-          id: "orders",
-          label: "Order History",
-          icon: ShoppingBag,
-          description: "Track and manage your purchases",
-          badge: "View All",
-          priority: "high",
-        },
-        {
-          id: "notifications",
-          label: "Notifications",
-          icon: Bell,
-          description: "Manage your alerts and preferences",
-          badge: null,
-          priority: "medium",
-        },
-        {
-          id: "seller-dashboard",
-          label: "Seller Dashboard",
-          icon: BarChart3,
-          description: "View your business performance and analytics",
-          badge: "Analytics",
-          priority: "high",
-        },
-        {
-          id: "products",
-          label: "Your Products",
-          icon: Package,
-          description: "Manage your product listings and inventory",
-          badge: businessProfile.type === "product" ? "Active" : null,
-          priority: "high",
-        },
-        {
-          id: "services",
-          label: "Your Services",
-          icon: Briefcase,
-          description: "Showcase your skills and expertise",
-          badge: businessProfile.type === "service" ? "Active" : null,
-          priority: "high",
-        },
-        {
-          id: "sales",
-          label: "Sales History",
-          icon: TrendingUp,
-          description: "Track your sales and revenue",
-          badge: null,
-          priority: "high",
-        },
-        {
-          id: "reviews",
-          label: "Reviews & Ratings",
-          icon: Star,
-          description: "Manage customer feedback and ratings",
-          badge: businessProfile.averageRating
-            ? `${businessProfile.averageRating.toFixed(1)}★ (${
-                businessProfile.reviewCount
-              })`
-            : null,
-          priority: "medium",
-        },
-        {
-          id: "customers",
-          label: "Customer Management",
-          icon: Users,
-          description: "Communicate with your customers",
-          badge: "Messages",
-          priority: "medium",
-        },
-        {
-          id: "analytics",
-          label: "Performance Analytics",
-          icon: Eye,
-          description: "Detailed insights and performance metrics",
-          badge: null,
-          priority: "medium",
-        },
-        {
-          id: "promotions",
-          label: "Promotions & Deals",
-          icon: Target,
-          description: "Create and manage promotional campaigns",
-          badge: null,
-          priority: "medium",
-        },
-        {
-          id: "social-media",
-          label: "Social Media",
-          icon: Globe,
-          description: "Manage your social media presence",
-          badge: businessProfile.contactDetails?.website ? "Connected" : null,
-          priority: "medium",
-        },
-        {
-          id: "support",
-          label: "Help & Support",
-          icon: HelpCircle,
-          description: "24/7 assistance and troubleshooting",
-          badge: null,
-          priority: "low",
-        },
-        {
-          id: "about",
-          label: "Platform Info",
-          icon: Info,
-          description: "Learn about features and updates",
-          badge: null,
-          priority: "low",
-        },
-      ]
+      // {
+      //   id: "business-info",
+      //   label: "Business Information",
+      //   icon: Store,
+      //   description: `Manage ${businessProfile.name} details and settings`,
+      //   badge: businessProfile.type,
+      //   priority: "high",
+      // },
+      {
+        id: "profile-info",
+        label: "Profile Info",
+        icon: User,
+        description: "Manage your personal information and preferences",
+        badge: null,
+        priority: "high",
+      },
+      // {
+      //   id: "location",
+      //   label: "Business Location",
+      //   icon: MapPin,
+      //   description:
+      //     businessProfile.locationDetails?.address ||
+      //     "Set your business location",
+      //   badge: businessProfile.locationDetails?.city || null,
+      //   priority: "high",
+      // },
+      // {
+      //   id: "contact",
+      //   label: "Contact Information",
+      //   icon: Phone,
+      //   description: "Manage business contact details",
+      //   badge: businessProfile.contactDetails?.phone || null,
+      //   priority: "high",
+      // },
+      // {
+      //   id: "working-hours",
+      //   label: "Working Hours",
+      //   icon: Clock,
+      //   description: businessProfile.workingHoursDetails
+      //     ? `${businessProfile.workingHoursDetails.openTime} - ${businessProfile.workingHoursDetails.closeTime}`
+      //     : "Set your business operating hours",
+      //   badge: businessProfile.workingHoursDetails?.isClosed
+      //     ? "Closed"
+      //     : "Open",
+      //   priority: "medium",
+      // },
+      {
+        id: "change-email",
+        label: "Update Email Address",
+        icon: Mail,
+        description: "Update and secure your email address",
+        badge: businessProfile.ownerDetails.isEmailVerified
+          ? "Verified"
+          : "Unverified",
+        priority: businessProfile.ownerDetails.isEmailVerified
+          ? "low"
+          : "high",
+      },
+      {
+        id: "change-phone",
+        label: "Update Phone Number",
+        icon: Phone,
+        description: "Update and secure your phone number",
+        badge: businessProfile.ownerDetails.isPhoneVerified
+          ? "Verified"
+          : "Unverified",
+        priority: businessProfile.ownerDetails.isPhoneVerified
+          ? "low"
+          : "medium",
+      },
+      {
+        id: "viewAllBusinesses",
+        label: "View All Businesses",
+        icon: Building2,
+        description: "See all businesses you have registered",
+        badge: "View",
+        priority: "low",
+      },
+      // {
+      //   id: "password-update",
+      //   label: "Security Settings",
+      //   icon: Lock,
+      //   description: "Update password and security preferences",
+      //   badge: null,
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "status",
+      //   label: "Account Status",
+      //   icon: Activity,
+      //   description: "Monitor your account health and activity",
+      //   badge:
+      //     businessProfile.status.charAt(0).toUpperCase() +
+      //     businessProfile.status.slice(1),
+      //   priority: "medium",
+      // },
+      {
+        id: "upload-logo",
+        label: "Upload Business Logo",
+        icon: ImageUp, // lucide best icon for logo upload
+        description: "Upload your business logo",
+        // badge: businessProfile.logo ? "Uploaded" : "Pending",
+        // priority: businessProfile.logo ? "low" : "high",
+      },
+      {
+        id: "upload-images",
+        label: "Upload Images",
+        icon: Images, // lucide icon
+        description: "Upload business images",
+        // badge: businessProfile.images?.length > 0 ? "Uploaded" : "Pending",
+        // priority: businessProfile.images?.length > 0 ? "low" : "high",
+      },
+
+      {
+        id: "add-product",
+        label: "Add Product",
+        icon: PlusCircle,
+        description: "Add your products",
+        // badge: "Required",
+        // priority: businessProfile.hasProducts && businessProfile.products.length > 0
+        //   ? "low"
+        //   : "high"
+      },
+      {
+        id: "add-service",
+        label: "Add Service",
+        icon: PlusCircle,
+        description: "Add your services",
+        // badge: "Required",
+        // priority: businessProfile.hasProducts && businessProfile.products.length > 0
+        //   ? "low"
+        //   : "high"
+      },
+      // {
+      //   id: "verification",
+      //   label: "Business Verification",
+      //   icon: Award,
+      //   description: businessProfile.isVerified
+      //     ? "Your business is verified"
+      //     : "Complete verification process",
+      //   badge: businessProfile.isVerified ? "Verified" : "Pending",
+      //   priority: businessProfile.isVerified ? "low" : "high",
+      // },
+      {
+        id: "orders",
+        label: "Order History",
+        icon: ShoppingBag,
+        description: "Track and manage your purchases",
+        badge: "View All",
+        priority: "high",
+      },
+      // {
+      //   id: "notifications",
+      //   label: "Notifications",
+      //   icon: Bell,
+      //   description: "Manage your alerts and preferences",
+      //   badge: null,
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "seller-dashboard",
+      //   label: "Seller Dashboard",
+      //   icon: BarChart3,
+      //   description: "View your business performance and analytics",
+      //   badge: "Analytics",
+      //   priority: "high",
+      // },
+      {
+        id: "products",
+        label: "Your Products",
+        icon: Package,
+        description: "Manage your product listings and inventory",
+        badge: businessProfile.type === "product" ? "Active" : null,
+        priority: "high",
+      },
+      {
+        id: "services",
+        label: "Your Services",
+        icon: Briefcase,
+        description: "Showcase your skills and expertise",
+        badge: businessProfile.type === "service" ? "Active" : null,
+        priority: "high",
+      },
+      {
+        id: "aiImageGenerator",
+        label: "AI Image Generator",
+        icon: Sparkles, // lucide good icon for AI / magic feature
+        description: "Generate AI images for your business",
+        // badge: businessProfile.aiImages?.length > 0 ? "Generated" : "Pending",
+        // priority: businessProfile.aiImages?.length > 0 ? "low" : "high",
+      },
+
+      // {
+      //   id: "sales",
+      //   label: "Sales History",
+      //   icon: TrendingUp,
+      //   description: "Track your sales and revenue",
+      //   badge: null,
+      //   priority: "high",
+      // },
+      // {
+      //   id: "reviews",
+      //   label: "Reviews & Ratings",
+      //   icon: Star,
+      //   description: "Manage customer feedback and ratings",
+      //   badge: businessProfile.averageRating
+      //     ? `${businessProfile.averageRating.toFixed(1)}★ (${businessProfile.reviewCount
+      //     })`
+      //     : null,
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "customers",
+      //   label: "Customer Management",
+      //   icon: Users,
+      //   description: "Communicate with your customers",
+      //   badge: "Messages",
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "analytics",
+      //   label: "Performance Analytics",
+      //   icon: Eye,
+      //   description: "Detailed insights and performance metrics",
+      //   badge: null,
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "promotions",
+      //   label: "Promotions & Deals",
+      //   icon: Target,
+      //   description: "Create and manage promotional campaigns",
+      //   badge: null,
+      //   priority: "medium",
+      // },
+      // {
+      //   id: "social-media",
+      //   label: "Social Media",
+      //   icon: Globe,
+      //   description: "Manage your social media presence",
+      //   badge: businessProfile.contactDetails?.website ? "Connected" : null,
+      //   priority: "medium",
+      // },
+      {
+        id: "support",
+        label: "Help & Support",
+        icon: HelpCircle,
+        description: "24/7 assistance and troubleshooting",
+        badge: null,
+        priority: "low",
+      },
+      // {
+      //   id: "about",
+      //   label: "Platform Info",
+      //   icon: Info,
+      //   description: "Learn about features and updates",
+      //   badge: null,
+      //   priority: "low",
+      // },
+    ]
     : [];
 
   const handleMenuClick = (itemId) => {
@@ -357,33 +414,33 @@ const BusinessmanProfileDashboard = () => {
 
   const headerStats = businessProfile
     ? [
-        {
-          label: "Reviews",
-          value: businessProfile.reviewCount || 0,
-          suffix: "",
-        },
-        {
-          label: "Rating",
-          value: businessProfile.averageRating
-            ? businessProfile.averageRating.toFixed(1)
-            : "N/A",
-          suffix: " ★",
-        },
-        {
-          label: "Type",
-          value:
-            businessProfile.type.charAt(0).toUpperCase() +
-            businessProfile.type.slice(1),
-          suffix: "",
-        },
-        {
-          label: "Category",
-          value:
-            businessProfile.category.charAt(0).toUpperCase() +
-            businessProfile.category.slice(1),
-          suffix: "",
-        },
-      ]
+      {
+        label: "Reviews",
+        value: businessProfile.reviewCount || 0,
+        suffix: "",
+      },
+      {
+        label: "Rating",
+        value: businessProfile.averageRating
+          ? businessProfile.averageRating.toFixed(1)
+          : "N/A",
+        suffix: " ★",
+      },
+      {
+        label: "Type",
+        value:
+          businessProfile.type.charAt(0).toUpperCase() +
+          businessProfile.type.slice(1),
+        suffix: "",
+      },
+      {
+        label: "Category",
+        value:
+          businessProfile.category.charAt(0).toUpperCase() +
+          businessProfile.category.slice(1),
+        suffix: "",
+      },
+    ]
     : [];
 
   if (loading) {
@@ -485,11 +542,10 @@ const BusinessmanProfileDashboard = () => {
                 {/* Status Indicator */}
                 <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2">
                   <div
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 sm:border-4 border-white shadow-lg ${
-                      businessProfile.status === "active"
-                        ? "bg-green-500 animate-pulse"
-                        : "bg-yellow-500"
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 sm:border-4 border-white shadow-lg ${businessProfile.status === "active"
+                      ? "bg-green-500 animate-pulse"
+                      : "bg-yellow-500"
+                      }`}
                   ></div>
                 </div>
               </div>
@@ -525,7 +581,7 @@ const BusinessmanProfileDashboard = () => {
                     {businessProfile.name}
                   </h2>
                   <p className="text-gray-300 text-sm sm:text-base capitalize">
-                    {businessProfile.category} • {businessProfile.type==="both" ? "Product & Service" : businessProfile.type}
+                    {businessProfile.category} • {businessProfile.type === "both" ? "Product & Service" : businessProfile.type}
                   </p>
                 </div>
 
@@ -594,11 +650,10 @@ const BusinessmanProfileDashboard = () => {
                 {/* Verification Status */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
                   <div
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessProfile.ownerDetails.isEmailVerified
-                        ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
-                        : "bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30"
-                    } shadow-lg`}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${businessProfile.ownerDetails.isEmailVerified
+                      ? "bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30"
+                      : "bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30"
+                      } shadow-lg`}
                   >
                     {businessProfile.ownerDetails.isEmailVerified ? (
                       <CheckCircle size={14} className="sm:w-4 sm:h-4" />
@@ -621,11 +676,10 @@ const BusinessmanProfileDashboard = () => {
                     </span>
                   </div>
                   <div
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessProfile.ownerDetails.isPhoneVerified
-                        ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
-                        : "bg-red-600 bg-opacity-20 text-red-300 border-red-500 border-opacity-30"
-                    } shadow-lg`}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${businessProfile.ownerDetails.isPhoneVerified
+                      ? "bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30"
+                      : "bg-red-600 bg-opacity-20 text-white border-red-500 border-opacity-30"
+                      } shadow-lg`}
                   >
                     {businessProfile.ownerDetails.isPhoneVerified ? (
                       <CheckCircle size={14} className="sm:w-4 sm:h-4" />
@@ -648,11 +702,10 @@ const BusinessmanProfileDashboard = () => {
                     </span>
                   </div>
                   <div
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${
-                      businessProfile.isVerified
-                        ? "bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30"
-                        : "bg-yellow-600 bg-opacity-20 text-yellow-300 border-yellow-500 border-opacity-30"
-                    } shadow-lg`}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 ${businessProfile.isVerified
+                      ? "bg-green-600 bg-opacity-20 text-white border-green-500 border-opacity-30"
+                      : "bg-yellow-600 bg-opacity-20 text-white border-yellow-500 border-opacity-30"
+                      } shadow-lg`}
                   >
                     <Store size={14} className="sm:w-4 sm:h-4" />
                     <span className="font-semibold text-xs sm:text-sm">
