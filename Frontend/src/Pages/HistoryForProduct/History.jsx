@@ -922,24 +922,6 @@ const OrderHistoryApp = () => {
       <motion.header variants={headerVariants}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-2 mb-8 md:mb-0"
-            >
-              <motion.button
-                whileHover={{ scale: 1.02, x: -5 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex text-sm sm:text-md items-center gap-3 font-medium bg-white px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border"
-                style={{ color: "#6b7280", borderColor: "#e2e8f0" }}
-                onMouseEnter={(e) => (e.target.style.color = "#1f2937")}
-                onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Back to
-              </motion.button>
-            </motion.div>
             <div className="flex justify-center items-center gap-6">
               <div className="space-y-1 text-center">
                 <motion.h1

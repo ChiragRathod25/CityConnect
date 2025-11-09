@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Menu, Search, ChevronDown, MapPin, User, X } from "lucide-react";
+import { Menu, Search, ChevronDown, MapPin, User, X, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -31,7 +31,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state) => state.auth.status);
-  const user = useSelector((state) => state.auth.userData);
+  const user = useSelector((state) => state.auth?.userData?.user);
 
   // Handle scroll effect
   useEffect(() => {
@@ -101,23 +101,22 @@ const Navbar = () => {
     //   ? [{ name: "My Business", path: "/mybusiness" }]
     //   : []),
   ];
+  console.log("user:", user);
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-5000 transition-all duration-500 ${
-        isScrolled ? "px-4 pt-4" : "px-0 pt-0"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-5000 transition-all duration-500 ${isScrolled ? "px-4 pt-4" : "px-0 pt-0"
+        }`}
     >
       <motion.nav
         ref={dropdownRef}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`bg-white border border-gray-200 shadow-xl transition-all duration-500 ${
-          isScrolled
-            ? "rounded-2xl mx-auto max-w-7xl shadow-2xl"
-            : "rounded-none shadow-lg"
-        }`}
+        className={`bg-white border border-gray-200 shadow-xl transition-all duration-500 ${isScrolled
+          ? "rounded-2xl mx-auto max-w-7xl shadow-2xl"
+          : "rounded-none shadow-lg"
+          }`}
         style={{
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
@@ -153,23 +152,23 @@ const Navbar = () => {
               {navItems.map((item, index) => (
                 <NavLink to={item.path} key={item.name}>
                   <motion.a
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.2 }}
-                  className="relative px-4 py-2 text-gray-800 font-semibold rounded-lg hover:text-black hover:shadow-lg transition-all duration-200 group overflow-hidden hover:shadow-gray-300 hover:bg-[#e9ecef]"
-                  style={{ caretColor: "transparent" }}
-                >
-                  <span className="relative z-10">{item.name}</span>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-slate-800 via-gray-900 to-black opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl"
-                    initial={{ scale: 0, borderRadius: "50%" }}
-                    whileHover={{ scale: 1, borderRadius: "8px" }}
-                    transition={{ duration: 0.2 }}
-                  ></motion.div>
-                </motion.a>
-                   </NavLink>
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.2 }}
+                    className="relative px-4 py-2 text-gray-800 font-semibold rounded-lg hover:text-black hover:shadow-lg transition-all duration-200 group overflow-hidden hover:shadow-gray-300 hover:bg-[#e9ecef]"
+                    style={{ caretColor: "transparent" }}
+                  >
+                    <span className="relative z-10">{item.name}</span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-slate-800 via-gray-900 to-black opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl"
+                      initial={{ scale: 0, borderRadius: "50%" }}
+                      whileHover={{ scale: 1, borderRadius: "8px" }}
+                      transition={{ duration: 0.2 }}
+                    ></motion.div>
+                  </motion.a>
+                </NavLink>
               ))}
             </div>
 
@@ -260,24 +259,47 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-1">
+              <div className="bg-gray-50 rounded-xl">
                 <GoogleTranslate />
               </div>
 
+
+
               {/* Profile Icon (only show if logged in) */}
               <div className="flex items-center">
-                {isLoggedIn && (
-                  <NavLink
-                    to={
-                      user.role == "seller"
-                        ? "/businessman-profile"
-                        : "user-profile"
-                    }
-                  >
+                {isLoggedIn ? (
+                  <>
+                    <NavLink
+                      // to={user?.role === "business" ? `/dashboard/businessman-profile` : "/user-profile"}
+                      to="/user-profile"
+                    >
+                      <motion.button
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center border border-gray-200 sm:space-x-2 px-4 py-2 bg-gray-50 backdrop-blur-sm text-gray-900 rounded-xl hover:bg-gray-100 font-medium"
+                      >
+                        <User size={18} />
+                        <span className="hidden sm:inline">Profile</span>
+                      </motion.button>
+                    </NavLink>
+                    <div className="sm:px-2 hidden sm:inline pl-1">
+                      <NavLink to="/cart">
+                        <motion.button
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center border border-gray-200 px-4 py-2 sm:py-3 bg-gray-50 backdrop-blur-sm text-gray-900 rounded-xl hover:bg-gray-100 font-medium"
+                        >
+                          <ShoppingCart size={18} />
+                        </motion.button>
+                      </NavLink>
+                    </div>
+                  </>
+                ) : (
+                  <NavLink to="/login">
                     <motion.button
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center border border-gray-200 sm:space-x-2 px-4 py-2 bg-gray-50 backdrop-blur-sm text-gray-900 rounded-xl hover:bg-gray-100  font-medium"
+                      className="flex items-center border border-gray-200 sm:space-x-2 px-4 py-2 bg-gray-50 backdrop-blur-sm text-gray-900 rounded-xl hover:bg-gray-100 font-medium"
                     >
                       <User size={18} />
                       <span className="hidden sm:inline">Profile</span>
@@ -285,6 +307,7 @@ const Navbar = () => {
                   </NavLink>
                 )}
               </div>
+
 
               {/* Mobile Menu Button */}
               <motion.button
@@ -437,6 +460,19 @@ const Navbar = () => {
                         {item.name}
                       </motion.a>
                     ))}
+                    {isLoggedIn && (
+                      <motion.a
+                        href={'/cart'}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 4 * 0.1, duration: 0.3 }}
+                        whileHover={{ scale: 1.02, x: 10 }}
+                        className="block px-5 flex item-center justify-center py-4 text-gray-800 text-center font-semibold hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300 bg-gray-100 border border-transparent hover:border-gray-200"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <ShoppingCart size={24} className="mx-1" /> Cart
+                      </motion.a>
+                    )}
                   </div>
                 </div>
               </motion.div>

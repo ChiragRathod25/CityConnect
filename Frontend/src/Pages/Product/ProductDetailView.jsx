@@ -189,7 +189,7 @@ const ProductDetailView = () => {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white shadow-sm border-b border-gray-200"
+        className="bg-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
           <motion.button

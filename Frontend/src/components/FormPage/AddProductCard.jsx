@@ -25,7 +25,7 @@ import databaseService from "@/services/database.services";
 
 // Mock AnimatedBackground component
 const AnimatedBackground = () => (
-  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-70" />
+  <div className="absolute inset-0 bg-gray-50 opacity-70" />
 );
 
 // Mock FileUpload component
@@ -317,7 +317,7 @@ const ProductForm = ({ editMode = false }) => {
   };
 
   return (
-    <div className="min-h-screen py-20 px-3 relative">
+    <div className="min-h-screen py-10 pb-10 sm:pb-20 px-3 relative">
       <AnimatedBackground />
       <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
