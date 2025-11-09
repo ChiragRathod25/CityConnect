@@ -252,7 +252,7 @@ const PaymentPage = () => {
   };
 
   const handleEditAddress = () => {
-    navigate("/delivery-address", {
+    navigate("/delivery-address-form", {
       state: {
         cartItems,
         cartSummary,

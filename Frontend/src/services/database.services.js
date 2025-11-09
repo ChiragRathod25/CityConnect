@@ -214,9 +214,45 @@ export class DatabaseService {
 
   //business registration services can be added here
   async registerBusinessBasicInfo(businessData) {
+
+
+    // name: formData.businessName,
+    //     type: formData.businessType,
+    //     category: formData.businessCategory,
+    //     description: formData.businessDescription,
+    //     establishedYear: formData.establishedYear,
+    //     numberOfEmployees: formData.numberOfEmployees,
+    //     annualRevenue: formData.annualRevenue,
+    //     logo: formData.logo,
+    //     images: formData.images,
+
+    const formData= new FormData();
+    for (const [key, value] of Object.entries(businessData)) {
+      if (key === "logo" || key === "images") {
+        // handle file fields separately
+        if (Array.isArray(value)) {
+          value.forEach((file) => {
+            if (file instanceof File || file instanceof Blob) {
+              formData.append(key, file); // 'images' must match multer field
+            }
+          });
+        } else {
+          if (value instanceof File || value instanceof Blob) {
+            formData.append(key, value); // 'logo' must match multer field
+          }
+        }
+      } else {
+        formData.append(key, value);
+      }
+    } 
+    
+    
+
     return toast.promise(
       handleApiRequest(
-        () => axiosInstace.post("/api/v1/business/register", businessData),
+        () => axiosInstace.post("/api/v1/business/register", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        }),
         "Register Business Basic Info"
       ),
       {
