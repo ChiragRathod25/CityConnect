@@ -33,7 +33,7 @@ const SubcategoryPage = ({ onProviderClick }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const providersPerPage = 6;
-
+  
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
@@ -265,7 +265,7 @@ const SubcategoryPage = ({ onProviderClick }) => {
                     <div className="relative h-48 w-full overflow-hidden">
                       <img
                         src={
-                          provider?.images?.[0]?.url ||
+                          provider?.images?.[0] ||
                           "/assets/images/default-restaurant.jpg"
                         }
                         alt={provider.name}
