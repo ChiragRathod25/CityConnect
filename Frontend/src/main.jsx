@@ -151,14 +151,14 @@ const router = createBrowserRouter([
         path: "/dashboard/business/:businessId/product/:productId/edit",
         element: <ProductForm editMode={true} />,
       },
-      // {
-      //   path: "/dashboard/business/:businessId/products", // get all the products of business
-      //   element: <AllProductsByBusiness />,
-      // },
-      // {
-      //   path: "/products", // get all the products
-      //   element: <ProductCardUI />,
-      // },
+      {
+        path: "/dashboard/business/:businessId/products", // get all the products of business
+        element: <AllProductsByBusiness />,
+      },
+      {
+        path: "/products", // get all the products
+        element: <ProductCardUI />,
+      },
       {
         path: "/product/:productId",
         element: <ProductDetailView />,
@@ -173,10 +173,10 @@ const router = createBrowserRouter([
         path: "/dashboard/business/:businessId/service/:serviceId/edit",
         element: <ServiceForm editMode={true} />,
       },
-      // {
-      //   path: "/dashboard/business/:businessId/services",
-      //   element: <AllServicesByBusiness />,
-      // },
+      {
+        path: "/dashboard/business/:businessId/services",
+        element: <AllServicesByBusiness />,
+      },
       {
         path: "/services", //display all services
         element: <AllServices />,

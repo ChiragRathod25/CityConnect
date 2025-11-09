@@ -543,6 +543,7 @@ const StunningLandingPage = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Start in loading state
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fetchRecommendations = async () => {
     try {
@@ -974,7 +975,9 @@ const StunningLandingPage = () => {
                   Explore our complete directory of products from local
                   businesses.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center"
+                onClick={() => navigate('/products')}
+                >
                   <GradientButton variant="primary">
                     <Search size={20} />
                     View All Products
@@ -1018,7 +1021,9 @@ const StunningLandingPage = () => {
               ))}
             </div>
 
-            <div className="text-center">
+            <div className="text-center"
+            onClick={() => navigate('/category')}
+            >
               <GradientButton variant="primary">
                 <Store size={20} />
                 View All Categories
