@@ -119,6 +119,7 @@ businessProductSchema.pre("save", function (next) {
   next();
 });
 
+
 export const BusinessProduct = mongoose.model(
   "BusinessProduct",
   businessProductSchema

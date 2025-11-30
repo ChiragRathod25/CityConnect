@@ -30,7 +30,6 @@ const generateOTP = () => {
   return otp;
 };
 
-
 // createTempContactSession.controller.js
 const createTempContactSession = asyncHandler(async (req, res) => {
   const { userId, newContact, type } = req.body; // type = "email" or "phone"
@@ -64,7 +63,6 @@ const createTempContactSession = asyncHandler(async (req, res) => {
     })
   );
 });
-
 
 // Step 1: Store registration data temporarily (no user creation yet)
 const InitialUserRegister = asyncHandler(async (req, res) => {
@@ -840,9 +838,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 const updateUserEmail = asyncHandler(async (req, res) => {
 
 });
-const updateUserMobile = asyncHandler(async (req, res) => {
-
-});
+const updateUserMobile = asyncHandler(async (req, res) => {});
 
 const updatePassword = asyncHandler(async (req, res) => {});
 
