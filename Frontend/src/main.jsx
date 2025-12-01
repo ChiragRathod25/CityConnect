@@ -223,23 +223,23 @@ const router = createBrowserRouter([
 
       ///admin side
       {
-        path: "/admin",   //deprecated
+        path: "/admin",   
         element: <AdminProfilePageUI />,
       },
       {
-        path: "/admin/manage-category", //deprecated
-        element: <ManageCategoryUI />,
-      },
-      {
-        path: "/admin/manage-users", //deprecated
+        path: "/admin/manage-users", 
         element: <ManageUserUI />,
       },
       {
-        path: "/admin/manage-businessmen", //deprecated
+        path: "/admin/manage-category", 
+        element: <CategoryPageUi />,
+      },
+      {
+        path: "/admin/manage-businessmen",
         element: <ManageBusinessmanUI />,
       },
       {
-        path: "/admin/businessman-verification",//deprecated
+        path: "/admin/businessman-verification",
         element: <AdminVerificationPanel />,
       },
       {

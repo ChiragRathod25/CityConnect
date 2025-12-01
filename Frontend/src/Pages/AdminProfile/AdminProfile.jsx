@@ -24,36 +24,58 @@ import {
   FolderTree,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import databaseService from "@/services/database.services";
+import { logout } from "@/slices/userSlice/authSlices";
 
 const AdminProfileDashboard = () => {
   const [logoutModal, setLogoutModal] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [adminStats, setAdminStats] = useState({
+    totalUsers: 0,
+    totalBusinessmen: 0,
+    totalServices: 0,
+    totalProducts: 0,
+    emailVerified: 0,
+    phoneVerified: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
   const headerRef = useRef(null);
   const menuGridRef = useRef(null);
   const logoutSectionRef = useRef(null);
   const navigate = useNavigate();
 
-  const [adminProfile] = useState({
-    name: "Admin Manager",
-    email: "admin@business.com",
-    phone: "+1 234 567 8900",
-    isEmailVerified: true,
-    isPhoneVerified: true,
-    status: "active",
-    avatar: "/api/placeholder/120/120",
-    joinDate: "2022-01-15",
-    adminStats: {
-      totalUsers: 1247,
-      totalBusinessmen: 89,
-      totalServices: 456,
-      totalProducts: 892,
-      emailVerified: 1089,
-      phoneVerified: 967,
-      pendingApprovals: 23,
-      activeReports: 7,
-    },
-  });
+  // Get user data from Redux
+  const user = useSelector((state) => state.auth.userData?.user);
+
+  // Fetch admin stats
+  const getAdminStats = async () => {
+    try {
+      setLoading(true);
+      const response = await databaseService.getAdminDashboardStats();
+      console.log("Admin Stats Response:", response);
+
+      if (response.success && response.data) {
+        setAdminStats({
+          totalUsers: response.data.totalUsers || 0,
+          totalBusinessmen: response.data.totalBusinessmen || 0,
+          totalServices: response.data.totalServices || 0,
+          totalProducts: response.data.totalProducts || 0,
+          emailVerified: response.data.emailVerified || 0,
+          phoneVerified: response.data.phoneVerified || 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAdminStats();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -84,13 +106,28 @@ const AdminProfileDashboard = () => {
     }
   };
 
+  // Get user display name
+  const getUserDisplayName = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName} ${user.lastName}`;
+    } else if (user?.username) {
+      return user.username;
+    }
+    return "Admin Manager";
+  };
+
+  // Get user avatar
+  const getUserAvatar = () => {
+    return user?.avatar || user?.image || "/api/placeholder/120/120";
+  };
+
   const menuItems = [
     {
       id: "manage-users",
       label: "Manage Users",
       icon: Users,
       description: "View, edit, and manage all registered users",
-      badge: `${adminProfile.adminStats.totalUsers} Users`,
+      badge: `${adminStats.totalUsers} Users`,
       priority: "high",
     },
     {
@@ -98,20 +135,19 @@ const AdminProfileDashboard = () => {
       label: "Manage Businessmen",
       icon: Briefcase,
       description: "Oversee business accounts and verifications",
-      badge: `${adminProfile.adminStats.totalBusinessmen} Active`,
+      badge: `${adminStats.totalBusinessmen} Active`,
       priority: "high",
     },
     {
       id: "manage-category",
       label: "Manage Categories",
-      icon: FolderTree, // or you can use Layers, Grid, etc.
+      icon: FolderTree,
       description: "Add, edit, update and delete product categories",
-      // badge: `${categories.length} Categories`, // or however many categories you have
       priority: "high",
     },
     {
       id: "contactus",
-      label: "Contact Us Management",
+      label: "Contact Us Details",
       icon: MessageSquare,
       description: "Handle customer inquiries and support requests",
       badge: "15 New",
@@ -125,79 +161,77 @@ const AdminProfileDashboard = () => {
       badge: "10 Panel",
       priority: "medium",
     },
-    {
-      id: "manage-services",
-      label: "Manage Services",
-      icon: Settings,
-      description: "Monitor and approve service listings",
-      badge: `${adminProfile.adminStats.totalServices} Services`,
-      priority: "high",
-    },
-    {
-      id: "manage-products",
-      label: "Manage Products",
-      icon: Package,
-      description: "Oversee product listings and inventory",
-      badge: `${adminProfile.adminStats.totalProducts} Products`,
-      priority: "high",
-    },
-    
-    {
-      id: "content-moderation",
-      label: "Content Moderation",
-      icon: Eye,
-      description: "Review and moderate user-generated content",
-      badge: `${adminProfile.adminStats.activeReports} Reports`,
-      priority: "medium",
-    },
-    {
-      id: "system-settings",
-      label: "System Settings",
-      icon: Database,
-      description: "Configure platform settings and preferences",
-      badge: null,
-      priority: "medium",
-    },
-    {
-      id: "security-center",
-      label: "Security Center",
-      icon: Lock,
-      description: "Monitor security threats and access controls",
-      badge: "Secure",
-      priority: "medium",
-    },
-    {
-      id: "notifications",
-      label: "Notifications",
-      icon: Bell,
-      description: "Manage system-wide notifications",
-      badge: "8 Alerts",
-      priority: "medium",
-    },
-    {
-      id: "reports-logs",
-      label: "Reports & Logs",
-      icon: FileText,
-      description: "Access system logs and generate reports",
-      badge: null,
-      priority: "low",
-    },
-    {
-      id: "platform-activity",
-      label: "Platform Activity",
-      icon: Activity,
-      description: "Monitor real-time platform activity",
-      badge: "Live",
-      priority: "medium",
-    },
-    {
-      id: "revenue-tracking",
-      label: "Revenue Tracking",
-      icon: TrendingUp,
-      description: "Track platform revenue and transactions",
-      badge: "$52.4k",
-      priority: "high",
-    },
+    // {
+    //   id: "manage-services",
+    //   label: "Manage Services",
+    //   icon: Settings,
+    //   description: "Monitor and approve service listings",
+    //   badge: `${adminStats.totalServices} Services`,
+    //   priority: "high",
+    // },
+    // {
+    //   id: "manage-products",
+    //   label: "Manage Products",
+    //   icon: Package,
+    //   description: "Oversee product listings and inventory",
+    //   badge: `${adminStats.totalProducts} Products`,
+    //   priority: "high",
+    // },
+    // {
+    //   id: "content-moderation",
+    //   label: "Content Moderation",
+    //   icon: Eye,
+    //   description: "Review and moderate user-generated content",
+    //   priority: "medium",
+    // },
+    // {
+    //   id: "system-settings",
+    //   label: "System Settings",
+    //   icon: Database,
+    //   description: "Configure platform settings and preferences",
+    //   badge: null,
+    //   priority: "medium",
+    // },
+    // {
+    //   id: "security-center",
+    //   label: "Security Center",
+    //   icon: Lock,
+    //   description: "Monitor security threats and access controls",
+    //   badge: "Secure",
+    //   priority: "medium",
+    // },
+    // {
+    //   id: "notifications",
+    //   label: "Notifications",
+    //   icon: Bell,
+    //   description: "Manage system-wide notifications",
+    //   badge: "8 Alerts",
+    //   priority: "medium",
+    // },
+    // {
+    //   id: "reports-logs",
+    //   label: "Reports & Logs",
+    //   icon: FileText,
+    //   description: "Access system logs and generate reports",
+    //   badge: null,
+    //   priority: "low",
+    // },
+    // {
+    //   id: "platform-activity",
+    //   label: "Platform Activity",
+    //   icon: Activity,
+    //   description: "Monitor real-time platform activity",
+    //   badge: "Live",
+    //   priority: "medium",
+    // },
+    // {
+    //   id: "revenue-tracking",
+    //   label: "Revenue Tracking",
+    //   icon: TrendingUp,
+    //   description: "Track platform revenue and transactions",
+    //   badge: "$52.4k",
+    //   priority: "high",
+    // },
     {
       id: "feedback-reviews",
       label: "Feedback & Reviews",
@@ -207,7 +241,7 @@ const AdminProfileDashboard = () => {
       priority: "low",
     },
     {
-      id: "help-support",
+      id: "contactus",
       label: "Help & Support",
       icon: HelpCircle,
       description: "Admin support and documentation",
@@ -217,48 +251,62 @@ const AdminProfileDashboard = () => {
   ];
 
   const handleMenuClick = (itemId) => {
-    // console.log(`Navigating to: /admin/${itemId}`);
     navigate(`/admin/${itemId}`);
   };
+
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     console.log("Admin logout");
     setLogoutModal(false);
+    dispatch(logout());
+
     // Add logout logic here
   };
 
   const headerStats = [
     {
       label: "Total Users",
-      value: adminProfile.adminStats.totalUsers,
+      value: adminStats.totalUsers,
       suffix: "",
     },
     {
       label: "Total Businessmen",
-      value: adminProfile.adminStats.totalBusinessmen,
+      value: adminStats.totalBusinessmen,
       suffix: "",
     },
     {
       label: "Total Services",
-      value: adminProfile.adminStats.totalServices,
+      value: adminStats.totalServices,
       suffix: "",
     },
     {
       label: "Total Products",
-      value: adminProfile.adminStats.totalProducts,
+      value: adminStats.totalProducts,
       suffix: "",
     },
     {
       label: "Email Verified",
-      value: adminProfile.adminStats.emailVerified,
+      value: adminStats.emailVerified,
       suffix: "",
     },
     {
       label: "Phone Verified",
-      value: adminProfile.adminStats.phoneVerified,
+      value: adminStats.phoneVerified,
       suffix: "",
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
@@ -284,8 +332,8 @@ const AdminProfileDashboard = () => {
               <div className="relative group">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full p-1 bg-gray-600 shadow-2xl">
                   <img
-                    src={adminProfile.avatar}
-                    alt={adminProfile.name}
+                    src={getUserAvatar()}
+                    alt={getUserDisplayName()}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -294,21 +342,23 @@ const AdminProfileDashboard = () => {
                 </button>
 
                 {/* Status Indicator */}
-                <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full border-2 sm:border-4 border-white shadow-lg animate-pulse"></div>
-                </div>
+                {user?.status === "active" && (
+                  <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full border-2 sm:border-4 border-white shadow-lg animate-pulse"></div>
+                  </div>
+                )}
               </div>
 
               {/* Profile Info */}
               <div className="flex-1 text-center lg:text-left w-full">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 mb-4">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
-                    {adminProfile.name}
+                    {getUserDisplayName()}
                   </h1>
                   <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
                     <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
                       <Shield size={12} className="sm:w-4 sm:h-4" />
-                      <span>Admin</span>
+                      <span>{user?.role || "Admin"}</span>
                     </span>
                     <span className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full font-semibold shadow-lg flex items-center gap-1.5 sm:gap-2 bg-gray-600 text-white transform hover:scale-105 transition-transform duration-300">
                       <Globe size={12} className="sm:w-4 sm:h-4" />
@@ -318,15 +368,22 @@ const AdminProfileDashboard = () => {
                 </div>
 
                 <p className="text-base sm:text-lg lg:text-xl mb-3 sm:mb-4 text-gray-300 font-medium">
-                  {adminProfile.email}
+                  {user?.email || "admin@business.com"}
                 </p>
+                {user?.phoneNumber && (
+                  <p className="text-base sm:text-lg mb-3 sm:mb-4 text-gray-300 font-medium">
+                    {user.phoneNumber}
+                  </p>
+                )}
                 <p className="mb-4 sm:mb-6 text-gray-400 text-sm sm:text-base">
                   Admin since{" "}
-                  {new Date(adminProfile.joinDate).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "2022-01-15"}
                 </p>
 
                 {/* Stats Grid */}
@@ -349,27 +406,33 @@ const AdminProfileDashboard = () => {
 
                 {/* Verification Status */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-4">
-                  <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
-                    <CheckCircle size={14} className="sm:w-4 sm:h-4" />
-                    <span className="font-semibold text-xs sm:text-sm">
-                      <span className="hidden sm:inline">Email Verified</span>
-                      <span className="sm:hidden">Email ✓</span>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
-                    <CheckCircle size={14} className="sm:w-4 sm:h-4" />
-                    <span className="font-semibold text-xs sm:text-sm">
-                      <span className="hidden sm:inline">Phone Verified</span>
-                      <span className="sm:hidden">Phone ✓</span>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
-                    <Shield size={14} className="sm:w-4 sm:h-4" />
-                    <span className="font-semibold text-xs sm:text-sm">
-                      <span className="hidden sm:inline">Admin Verified</span>
-                      <span className="sm:hidden">Admin ✓</span>
-                    </span>
-                  </div>
+                  {user?.isEmailVerified && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
+                      <CheckCircle size={14} className="sm:w-4 sm:h-4" />
+                      <span className="font-semibold text-xs sm:text-sm">
+                        <span className="hidden sm:inline">Email Verified</span>
+                        <span className="sm:hidden">Email ✓</span>
+                      </span>
+                    </div>
+                  )}
+                  {user?.isPhoneVerified && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
+                      <CheckCircle size={14} className="sm:w-4 sm:h-4" />
+                      <span className="font-semibold text-xs sm:text-sm">
+                        <span className="hidden sm:inline">Phone Verified</span>
+                        <span className="sm:hidden">Phone ✓</span>
+                      </span>
+                    </div>
+                  )}
+                  {user?.role === "admin" && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:scale-105 bg-green-600 bg-opacity-20 text-green-300 border-green-500 border-opacity-30 shadow-lg">
+                      <Shield size={14} className="sm:w-4 sm:h-4" />
+                      <span className="font-semibold text-xs sm:text-sm">
+                        <span className="hidden sm:inline">Admin Verified</span>
+                        <span className="sm:hidden">Admin ✓</span>
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -433,6 +496,7 @@ const AdminProfileDashboard = () => {
             );
           })}
         </div>
+
         {/* Logout Section */}
         <div
           ref={logoutSectionRef}
@@ -443,7 +507,7 @@ const AdminProfileDashboard = () => {
 
           <div className="relative md:flex md:justify-between md:items-center z-10">
             <div className="flex items-center gap-3 md:space-x-3 sm:gap-4 mb-6 sm:mb-0 ">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex   items-center justify-center shadow-md bg-red-100">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md bg-red-100">
                 <Shield
                   size={20}
                   className="text-red-600 animate-bounce sm:w-6 sm:h-6 lg:w-7 lg:h-7"
@@ -459,7 +523,7 @@ const AdminProfileDashboard = () => {
               </div>
             </div>
 
-            <div className="flex  justify-center sm:justify-start">
+            <div className="flex justify-center sm:justify-start">
               <button
                 onClick={() => setLogoutModal(true)}
                 className="flex w-full sm:w-64 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl group bg-red-600 text-white hover:bg-red-700 hover:scale-105 text-sm sm:text-xl"

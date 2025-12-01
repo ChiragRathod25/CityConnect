@@ -823,6 +823,90 @@ export class DatabaseService {
     );
   }
 
+
+  //admin
+  async getAdminDashboardStats() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get("/api/v1/admin/dashboard/stats"),
+        "Get Admin Dashboard Stats"
+      ),
+      {
+        loading: "Fetching dashboard stats...",
+        success: "Dashboard stats fetched successfully!",
+        error: "Failed to fetch dashboard stats. Please try again.",
+      }
+    );
+  }
+  async updateUserStatus(userId, status) {
+    try {
+      console.log("Updating user status for user ID:", userId, "to", status);
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(`/api/v1/admin/user/${userId}/status`, { status }),
+        "Update User Status"
+      ),
+      {
+        loading: "Updating user status...",
+        success: "User status updated successfully!",
+        error: "Failed to update user status. Please try again.",
+      }
+    );
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      throw error;
+    }
+  }
+  
+  async getAllUsers() {
+    return toast.promise(
+      handleApiRequest(
+        () => axiosInstace.get("/api/v1/admin/getAllUsers"),
+        "Get All Users"
+      ),
+      {
+        loading: "Fetching users...",
+        success: "Users fetched successfully!",
+        error: "Failed to fetch users. Please try again.",
+      }
+    );
+  }
+
+  async getAllBusinessesWithAllDetails() 
+  {
+  return toast.promise(
+    handleApiRequest(
+      () => axiosInstace.get("/api/v1/admin/businesses/details"),
+      "Get All Businesses with All Details"
+    ),
+    {
+      loading: "Fetching businesses with details...",
+      success: "Businesses with details fetched successfully!",
+      error: "Failed to fetch businesses with details. Please try again.",
+    }
+  );
+    
+  }
+
+  async updateBusinessStatus(businessId, status) {
+    return toast.promise(
+      handleApiRequest(
+        () =>
+          axiosInstace.put(`/api/v1/admin/business/${businessId}/status`, {
+            status,
+          }),
+        "Update Business Status"
+      ),
+      {
+        loading: "Updating business status...",
+        success: "Business status updated successfully!",
+        error: "Failed to update business status. Please try again.",
+      }
+    );
+  }
+  
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;
