@@ -138,14 +138,14 @@ const UserProfileDashboard = () => {
         : null,
       priority: "high",
     },
-    {
-      id: "allServices",
-      label: "All Services",
-      icon: Layers, // lucide recommended icon for services / multiple
-      description: "View and manage your all business services",
-      // badge: businessProfile.services?.length > 0 ? "Added" : "Pending",
-      // priority: businessProfile.services?.length > 0 ? "low" : "high",
-    },
+    // {
+    //   id: "allServices",
+    //   label: "All Services",
+    //   icon: Layers, // lucide recommended icon for services / multiple
+    //   description: "View and manage your all business services",
+    //   // badge: businessProfile.services?.length > 0 ? "Added" : "Pending",
+    //   // priority: businessProfile.services?.length > 0 ? "low" : "high",
+    // },
     {
       id: "register-business",
       label: "Register Business",
@@ -153,6 +153,14 @@ const UserProfileDashboard = () => {
       description: "Register your business to get started",
       // badge: businessProfile?.isRegistered ? "Registered" : "Pending",
       // priority: businessProfile?.isRegistered ? "low" : "high",
+    },
+    {
+      id: "/dashboard/businesses",
+      label: "Manage Businesses",
+      icon: Briefcase,
+      description: "View and manage your registered businesses",
+      badge: null,
+      priority: "high",
     },
     {
       id: "notifications",

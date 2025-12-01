@@ -31,7 +31,7 @@ const ProfilePage = () => {
     // 'password-update': SecuritySettings,
     // 'status': AccountStatus,
     'orders-history': OrderHistoryForProductUI,
-    "allServices" : AllServices,
+    // "allServices" : AllServices,
     "register-business": ModernSellerForm,
     // 'notifications': Notifications,
     // 'services': BrowseServices,
