@@ -437,7 +437,7 @@ const AllBusinesses = () => {
                   <div className="relative h-48">
                     <div className="absolute inset-0 overflow-hidden rounded-t-2xl">
                       <img
-                        src={business.images[0] || "https://via.placeholder.com/800x600?text=No+Image"}
+                        src={business.images[0] || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop&q=80"}
                         alt={business.name}
                         className="w-full h-full object-cover"
                       />
@@ -479,7 +479,7 @@ const AllBusinesses = () => {
                             className="w-full h-full flex items-center justify-center"
                             style={{ backgroundColor: "#e2e8f0" }}
                           >
-                            <Store className="w-8 h-8" style={{ color: "#6b7280" }} />
+                            <Store className="w-8 h-8" style={{ color: "#154ab2ff" }} />
                           </div>
                         )}
                       </div>

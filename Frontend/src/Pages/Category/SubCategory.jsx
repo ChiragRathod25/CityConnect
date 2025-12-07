@@ -266,7 +266,7 @@ const SubcategoryPage = ({ onProviderClick }) => {
                       <img
                         src={
                           provider?.images?.[0] ||
-                          "/assets/images/default-restaurant.jpg"
+                          "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop&q=80"
                         }
                         alt={provider.name}
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
