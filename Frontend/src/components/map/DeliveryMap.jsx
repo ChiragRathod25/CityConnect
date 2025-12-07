@@ -194,9 +194,9 @@ const DeliveryMap = ({
       setUserPosition(defaultPosition);
     },
     {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000,
+      enableHighAccuracy: false,
+      timeout: 20000,
+      maximumAge: 0
     }
   );
 };
