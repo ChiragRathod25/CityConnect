@@ -133,38 +133,78 @@ const DeliveryMap = ({
     getCurrentLocation();
   };
 
+  // const getCurrentLocation = () => {
+  //   if (!navigator.geolocation) {
+  //     setLocationError("Geolocation is not supported by your browser");
+  //     setIsLoadingLocation(false);
+  //     return;
+  //   }
+
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       const coords = [position.coords.latitude, position.coords.longitude];
+  //       console.log('User location found:', coords);
+  //       setUserPosition(coords);
+  //       setIsLoadingLocation(false);
+  //       setLocationError(null);
+  //     },
+  //     (error) => {
+  //       console.error('Geolocation error:', error);
+  //       setLocationError(`Unable to retrieve your location: ${error.message}`);
+  //       setIsLoadingLocation(false);
+  //       setUserPosition(defaultPosition);
+  //     },
+  //     {
+  //       enableHighAccuracy: true,
+  //       timeout: 10000,
+  //       maximumAge: 300000
+  //     }
+  //   );
+  // };
+
+  // useEffect(() => {
+  //   getCurrentLocation();
+  // }, []);
+
   const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser");
+  if (!navigator.geolocation) {
+    setLocationError("Geolocation is not supported by your browser");
+    setIsLoadingLocation(false);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const coords = [position.coords.latitude, position.coords.longitude];
+      console.log("User location found:", coords);
+      setUserPosition(coords);
       setIsLoadingLocation(false);
-      return;
+      setLocationError(null);
+    },
+    (error) => {
+      console.error("Geolocation error:", error);
+
+      let msg = "Unable to retrieve your location.";
+      if (error.code === error.PERMISSION_DENIED) msg = "Please allow location access.";
+      else if (error.code === error.POSITION_UNAVAILABLE) msg = "Location info unavailable.";
+      else if (error.code === error.TIMEOUT) msg = "Location request timed out.";
+
+      setLocationError(msg);
+      setIsLoadingLocation(false);
+      setUserPosition(defaultPosition);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 300000,
     }
+  );
+};
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = [position.coords.latitude, position.coords.longitude];
-        console.log('User location found:', coords);
-        setUserPosition(coords);
-        setIsLoadingLocation(false);
-        setLocationError(null);
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        setLocationError(`Unable to retrieve your location: ${error.message}`);
-        setIsLoadingLocation(false);
-        setUserPosition(defaultPosition);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      }
-    );
-  };
+useEffect(() => {
+  getCurrentLocation();
+}, []);
 
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
 
   return (
     <div className="delivery-map-container">
