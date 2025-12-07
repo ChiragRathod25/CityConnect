@@ -106,6 +106,121 @@ const GoogleTranslate = () => {
     };
   }, [selectedLanguage]);
 
+  // const handleLanguageChange = (langCode) => {
+  //   if (!isTranslateReady) return;
+
+  //   setSelectedLanguage(langCode);
+  //   setIsOpen(false);
+
+  //   try {
+  //     if (langCode === 'en') {
+  //       // Special handling for English - reset to original
+  //       setGoogleTransCookie('', true); // Delete all googtrans cookies
+        
+  //       // Try multiple methods to reset to English
+  //       const resetToEnglish = () => {
+  //         // Method 1: Reset through select element first
+  //         const selectElement = document.querySelector('.goog-te-combo');
+  //         if (selectElement) {
+  //           selectElement.value = '';
+  //           selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+  //           console.log('Reset to English via select element');
+  //         }
+          
+  //         // Method 2: Try finding and clicking the restore/original button
+  //         setTimeout(() => {
+  //           const restoreButtons = [
+  //             '.goog-te-menu-value span',
+  //             '.goog-te-gadget-simple .goog-te-menu-value span',
+  //             'a[onclick*="restore"]',
+  //             'span[onclick*="restore"]'
+  //           ];
+            
+  //           for (const selector of restoreButtons) {
+  //             const btn = document.querySelector(selector);
+  //             if (btn && btn.textContent.includes('English')) {
+  //               btn.click();
+  //               break;
+  //             }
+  //           }
+  //         }, 100);
+          
+  //         // Method 3: Manual DOM restoration
+  //         setTimeout(() => {
+  //           // Remove translated classes and attributes
+  //           const translatedElements = document.querySelectorAll('[class*="translated"]');
+  //           translatedElements.forEach(el => {
+  //             el.classList.remove('translated-ltr');
+  //             el.classList.remove('translated-rtl');
+  //           });
+            
+  //           // Reset body attributes
+  //           if (document.body) {
+  //             document.body.removeAttribute('translate');
+  //             document.body.classList.remove('translated-ltr', 'translated-rtl');
+  //           }
+            
+  //           // Reset html attributes
+  //           if (document.documentElement) {
+  //             document.documentElement.removeAttribute('translate');
+  //             document.documentElement.classList.remove('translated-ltr', 'translated-rtl');
+  //           }
+  //         }, 200);
+  //       };
+        
+  //       resetToEnglish();
+        
+  //     } else {
+  //       // For other languages, set cookie and trigger translation
+  //       setGoogleTransCookie(`/en/${langCode}`);
+        
+  //       const selectElement = document.querySelector('.goog-te-combo');
+  //       console.log('Select Element for', langCode, ':', selectElement);
+  //       if (selectElement) {
+  //         selectElement.value = langCode;
+  //         selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+  //         selectElement.dispatchEvent(new Event('input', { bubbles: true }));
+  //       }
+
+  //       // Fallback method with timeout
+  //       setTimeout(() => {
+  //         const translateButton = document.querySelector('.goog-te-gadget-simple a');
+  //         if (translateButton) {
+  //           translateButton.click();
+            
+  //           setTimeout(() => {
+  //             const langOption = document.querySelector(`option[value="${langCode}"]`);
+  //             if (langOption) {
+  //               langOption.selected = true;
+  //               const selectEl = langOption.parentElement;
+  //               if (selectEl) {
+  //                 selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+  //               }
+  //             }
+  //           }, 100);
+  //         }
+  //       }, 100);
+
+  //       // Ultimate fallback: reload if translation doesn't work
+  //       // setTimeout(() => {
+  //       //   const bodyLang = document.body.getAttribute('class') || '';
+  //       //   if (!bodyLang.includes('translated') && langCode !== 'en') {
+  //       //     window.location.reload();
+  //       //   }
+  //       // }, 1500);
+  //     }
+
+  //   } catch (error) {
+  //     console.error('Translation error:', error);
+  //     // Set cookie as last resort without reload
+  //     if (langCode === 'en') {
+  //       setGoogleTransCookie('', true);
+  //     } else {
+  //       setGoogleTransCookie(`/en/${langCode}`);
+  //     }
+  //   }
+  // };
+
   const handleLanguageChange = (langCode) => {
     if (!isTranslateReady) return;
 
@@ -114,110 +229,49 @@ const GoogleTranslate = () => {
 
     try {
       if (langCode === 'en') {
-        // Special handling for English - reset to original
+        // Reset to English - simplest and most reliable method
         setGoogleTransCookie('', true); // Delete all googtrans cookies
         
-        // Try multiple methods to reset to English
-        const resetToEnglish = () => {
-          // Method 1: Reset through select element first
-          const selectElement = document.querySelector('.goog-te-combo');
-          if (selectElement) {
-            selectElement.value = '';
-            selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log('Reset to English via select element');
-          }
-          
-          // Method 2: Try finding and clicking the restore/original button
-          setTimeout(() => {
-            const restoreButtons = [
-              '.goog-te-menu-value span',
-              '.goog-te-gadget-simple .goog-te-menu-value span',
-              'a[onclick*="restore"]',
-              'span[onclick*="restore"]'
-            ];
-            
-            for (const selector of restoreButtons) {
-              const btn = document.querySelector(selector);
-              if (btn && btn.textContent.includes('English')) {
-                btn.click();
-                break;
-              }
-            }
-          }, 100);
-          
-          // Method 3: Manual DOM restoration
-          setTimeout(() => {
-            // Remove translated classes and attributes
-            const translatedElements = document.querySelectorAll('[class*="translated"]');
-            translatedElements.forEach(el => {
-              el.classList.remove('translated-ltr');
-              el.classList.remove('translated-rtl');
-            });
-            
-            // Reset body attributes
-            if (document.body) {
-              document.body.removeAttribute('translate');
-              document.body.classList.remove('translated-ltr', 'translated-rtl');
-            }
-            
-            // Reset html attributes
-            if (document.documentElement) {
-              document.documentElement.removeAttribute('translate');
-              document.documentElement.classList.remove('translated-ltr', 'translated-rtl');
-            }
-          }, 200);
-        };
+        // Set the select element to empty/default
+        const selectElement = document.querySelector('.goog-te-combo');
+        if (selectElement) {
+          selectElement.value = '';
+          selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+        }
         
-        resetToEnglish();
+        // Reload page to ensure clean reset
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
         
       } else {
         // For other languages, set cookie and trigger translation
         setGoogleTransCookie(`/en/${langCode}`);
         
         const selectElement = document.querySelector('.goog-te-combo');
-        console.log('Select Element for', langCode, ':', selectElement);
         if (selectElement) {
           selectElement.value = langCode;
           selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-          selectElement.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
-        // Fallback method with timeout
+        // Fallback: reload if translation doesn't trigger
         setTimeout(() => {
-          const translateButton = document.querySelector('.goog-te-gadget-simple a');
-          if (translateButton) {
-            translateButton.click();
-            
-            setTimeout(() => {
-              const langOption = document.querySelector(`option[value="${langCode}"]`);
-              if (langOption) {
-                langOption.selected = true;
-                const selectEl = langOption.parentElement;
-                if (selectEl) {
-                  selectEl.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-              }
-            }, 100);
+          const bodyLang = document.body.className || '';
+          if (!bodyLang.includes('translated') && langCode !== 'en') {
+            window.location.reload();
           }
-        }, 100);
-
-        // Ultimate fallback: reload if translation doesn't work
-        // setTimeout(() => {
-        //   const bodyLang = document.body.getAttribute('class') || '';
-        //   if (!bodyLang.includes('translated') && langCode !== 'en') {
-        //     window.location.reload();
-        //   }
-        // }, 1500);
+        }, 1500);
       }
 
     } catch (error) {
       console.error('Translation error:', error);
-      // Set cookie as last resort without reload
+      // Fallback: set cookie and reload
       if (langCode === 'en') {
         setGoogleTransCookie('', true);
       } else {
         setGoogleTransCookie(`/en/${langCode}`);
       }
+      setTimeout(() => window.location.reload(), 100);
     }
   };
 

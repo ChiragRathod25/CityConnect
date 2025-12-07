@@ -251,7 +251,7 @@ const UserProfileDashboard = () => {
               <div className="relative group">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full p-1 bg-gray-600 shadow-2xl">
                   <img
-                    src={userProfile?.avatar}
+                    src={userProfile?.avatar || `https://ui-avatars.com/api/?name=${userProfile?.firstName} ${userProfile?.lastName}&background=random`}
                     alt={userProfile?.username}
                     className="w-full h-full rounded-full object-cover"
                   />

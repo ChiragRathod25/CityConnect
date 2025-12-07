@@ -118,7 +118,7 @@ const AdminProfileDashboard = () => {
 
   // Get user avatar
   const getUserAvatar = () => {
-    return user?.avatar || user?.image || "/api/placeholder/120/120";
+    return user?.avatar  || `https://ui-avatars.com/api/?name=${user?.firstName} ${user?.lastName}&background=random`;
   };
 
   const menuItems = [
